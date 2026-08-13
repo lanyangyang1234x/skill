@@ -1,0 +1,282 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{sage-math}[2026/08/01 Sage-Olive landscape Chinese mathematics style]
+
+\RequirePackage[most]{tcolorbox}
+\RequirePackage{tikz}
+\RequirePackage{etoolbox}
+\RequirePackage{scrlayer-scrpage}
+\RequirePackage{xcolor}
+\RequirePackage{amsmath}
+\RequirePackage{enumitem}
+\RequirePackage{setspace}
+\RequirePackage{graphicx}
+\usetikzlibrary{calc}
+
+% Center floats after LaTeX and the float package reset each float body.
+% This covers figure, figure*, and [H] figures; an environment-begin hook does not.
+\makeatletter
+\AtBeginDocument{\g@addto@macro\@floatboxreset{\centering}}
+\makeatother
+
+\definecolor{SageInk}{HTML}{173B63}
+\definecolor{SageBrick}{HTML}{315779}
+\definecolor{SageGreen}{HTML}{526158}
+\definecolor{SageTaupe}{HTML}{74685B}
+\definecolor{SagePlum}{HTML}{675864}
+\definecolor{SageProof}{HTML}{66635F}
+\definecolor{SageGold}{HTML}{C8A96A}
+\definecolor{SageCover}{HTML}{B7C5AE}
+\definecolor{SageCoverInk}{HTML}{39463A}
+\definecolor{SageCoverCream}{HTML}{F7F1E3}
+\definecolor{SageCoverGold}{HTML}{9E7B3E}
+
+% Older mathematical sources occasionally contain classic font switches.
+\DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
+\DeclareOldFontCommand{\rm}{\normalfont\rmfamily}{\mathrm}
+
+\newcommand{\SageCoverSeries}{中文数学文献}
+\newcommand{\SageChineseTitle}{中文标题}
+\newcommand{\SageChineseSubtitle}{}
+\newcommand{\SageEnglishTitle}{}
+\newcommand{\SageAuthor}{作者}
+\newcommand{\SageAuthorRole}{原著}
+\newcommand{\SageEditionLine}{中文 \LaTeX{} 重排版}
+\newcommand{\SageScopeLine}{}
+\newcommand{\SageDateLine}{}
+\newcommand{\SageCoverImage}{assets/cover/selected-cover}
+\newcommand{\SageChineseEditor}{中文译制负责人}
+\newcommand{\SageProductionTool}{OpenAI Codex}
+\newcommand{\SageChineseEditorRole}{中文翻译、术语核对、校审及 \LaTeX{} 重排制作}
+\newcommand{\SageCopyrightDate}{完成时间}
+\newcommand{\SageSourceLanguage}{原文语言}
+\newcommand{\SageLeftHeader}{中文标题}
+\newcommand{\SageRightHeader}{作者}
+
+\newcommand{\SageSetHeaders}[2]{%
+  \renewcommand{\SageLeftHeader}{#1}%
+  \renewcommand{\SageRightHeader}{#2}%
+}
+
+\newcommand{\SageApplyTypography}{%
+  \allowdisplaybreaks[3]
+  \setstretch{1.32}%
+  \setlength{\parskip}{0.46em plus 0.10em minus 0.04em}%
+  \setlength{\parindent}{2em}%
+  \setlength{\emergencystretch}{3em}%
+  \setlength{\abovedisplayskip}{1.00em plus 0.25em minus 0.15em}%
+  \setlength{\belowdisplayskip}{1.00em plus 0.25em minus 0.15em}%
+  \setlength{\abovedisplayshortskip}{0.70em plus 0.15em minus 0.10em}%
+  \setlength{\belowdisplayshortskip}{0.78em plus 0.15em minus 0.10em}%
+  \setlist{itemsep=0.34em,topsep=0.50em,parsep=0.12em,leftmargin=2.15em}%
+  \raggedbottom
+  \setcounter{topnumber}{4}%
+  \setcounter{bottomnumber}{2}%
+  \setcounter{totalnumber}{6}%
+  \renewcommand{\topfraction}{0.9}%
+  \renewcommand{\bottomfraction}{0.8}%
+  \renewcommand{\textfraction}{0.08}%
+  \renewcommand{\floatpagefraction}{0.75}%
+}
+
+\setkomafont{section}{\sffamily\fontsize{23pt}{30pt}\selectfont\bfseries\color{SageInk}}
+\setkomafont{subsection}{\sffamily\fontsize{16pt}{23pt}\selectfont\bfseries\color{SageInk}}
+\setkomafont{subsubsection}{\sffamily\large\bfseries\color{SageInk}}
+\setkomafont{paragraph}{\sffamily\normalsize\bfseries\color{SageInk}}
+\setkomafont{sectionentry}{\sffamily\large\bfseries\color{SageInk}}
+\setkomafont{sectionentrypagenumber}{\sffamily\normalsize\bfseries\color{SageInk}}
+\RedeclareSectionCommand[beforeskip=1.3\baselineskip,afterskip=1.05\baselineskip]{section}
+\RedeclareSectionCommand[beforeskip=1.15\baselineskip,afterskip=0.65\baselineskip]{subsection}
+
+\clearpairofpagestyles
+\setlength{\footheight}{20pt}
+\ihead{\sffamily\small\color{black!52}\SageLeftHeader}
+\ohead{\sffamily\small\color{black!52}\SageRightHeader}
+\cfoot{\color{black!55}\pagemark}
+\KOMAoptions{headsepline=0.35pt}
+\addtokomafont{headsepline}{\color{black!30}}
+\pagestyle{scrheadings}
+
+\tcbset{
+  sage statement/.style={
+    enhanced jigsaw,
+    breakable,
+    frame hidden,
+    boxrule=0pt,
+    arc=0pt,
+    left=11pt,
+    right=9pt,
+    top=8pt,
+    bottom=8pt,
+    before skip=0.85\baselineskip,
+    after skip=0.85\baselineskip
+  }
+}
+
+\makeatletter
+\newcommand{\SageStyleEnvironment}[3]{%
+  \AtBeginDocument{%
+    \@ifundefined{#1}{}{%
+      \tcolorboxenvironment{#1}{%
+        sage statement,
+        colback=#2!#3,
+        borderline west={1.25pt}{0pt}{#2}%
+      }%
+    }%
+  }%
+}
+\makeatother
+
+\SageStyleEnvironment{definition}{SageGreen}{4}
+\SageStyleEnvironment{theorem}{SageBrick}{4}
+\SageStyleEnvironment{proposition}{SageTaupe}{4}
+\SageStyleEnvironment{lemma}{SagePlum}{4}
+\SageStyleEnvironment{corollary}{SageTaupe}{3}
+\SageStyleEnvironment{conjecture}{SagePlum}{3}
+\SageStyleEnvironment{remark}{SageGreen}{2}
+\SageStyleEnvironment{example}{SageGold}{3}
+\SageStyleEnvironment{exercise}{SageGold}{3}
+\SageStyleEnvironment{proof}{SageProof}{1}
+
+% Common source-book abbreviations. Undefined environments are skipped safely.
+\SageStyleEnvironment{defi}{SageGreen}{4}
+\SageStyleEnvironment{thm}{SageBrick}{4}
+\SageStyleEnvironment{thm*}{SageBrick}{4}
+\SageStyleEnvironment{prop}{SageTaupe}{4}
+\SageStyleEnvironment{lem}{SagePlum}{4}
+\SageStyleEnvironment{cor}{SageTaupe}{3}
+\SageStyleEnvironment{rem}{SageGreen}{2}
+\SageStyleEnvironment{rem*}{SageGreen}{2}
+\SageStyleEnvironment{obs}{SageGreen}{2}
+
+\newcommand{\SageProofEnd}{%
+  \mathord{\tikz[baseline=-0.48ex]{%
+    \draw[color=SageInk!72,line width=0.58pt,rounded corners=0.22pt]
+      (0,0) rectangle (0.78ex,0.78ex);%
+  }}%
+}
+
+\AtBeginDocument{%
+  \renewcommand{\contentsname}{目录}%
+  \renewcommand{\abstractname}{摘要}%
+  \renewcommand{\figurename}{图}%
+  \renewcommand{\tablename}{表}%
+  \renewcommand{\refname}{参考文献}%
+  \renewcommand{\qedsymbol}{\ensuremath{\SageProofEnd}}%
+}
+
+\newcommand{\MakeSageCover}{%
+  \begin{titlepage}
+    \thispagestyle{empty}
+    \begin{tikzpicture}[remember picture,overlay]
+      \path[clip] (current page.south west) rectangle (current page.north east);
+      \node[anchor=center,inner sep=0pt] at (current page.center) {%
+        \includegraphics[width=\paperwidth,height=\paperheight]{\SageCoverImage}};
+      \fill[black,opacity=0.22]
+        (current page.south west) rectangle (current page.north east);
+
+      \node[anchor=north west,text=SageCoverCream!92,inner sep=0pt]
+        at ([xshift=1.65cm,yshift=-1.55cm]current page.north west)
+        {\sffamily\fontsize{10.5pt}{14pt}\selectfont
+          \addfontfeatures{LetterSpace=8}\SageCoverSeries};
+      \draw[SageCoverGold,line width=1.1pt]
+        ([xshift=1.65cm,yshift=-3.15cm]current page.north west) --
+        ([xshift=4.25cm,yshift=-3.15cm]current page.north west);
+      \node[anchor=north west,text=SageCoverCream,inner sep=0pt,
+        text width=0.82\paperwidth,align=left]
+        at ([xshift=1.65cm,yshift=-3.75cm]current page.north west)
+        {\sffamily\fontsize{38pt}{47pt}\selectfont\bfseries\SageChineseTitle};
+      \ifstrempty{\SageChineseSubtitle}{}{%
+        \node[anchor=north west,text=SageCoverCream!84,inner sep=0pt,
+          text width=0.82\paperwidth,align=left]
+          at ([xshift=1.68cm,yshift=-8.55cm]current page.north west)
+          {\sffamily\fontsize{13.5pt}{18pt}\selectfont\SageChineseSubtitle};
+      }
+      \ifstrempty{\SageEnglishTitle}{}{%
+        \node[anchor=north west,text=SageCoverCream!72,inner sep=0pt,
+          text width=0.82\paperwidth,align=left]
+          at ([xshift=1.68cm,yshift=-9.45cm]current page.north west)
+          {\sffamily\fontsize{10.5pt}{14pt}\selectfont
+            \addfontfeatures{LetterSpace=5}\SageEnglishTitle};
+      }
+
+      \node[anchor=south west,text=SageCoverCream,inner sep=0pt]
+        at ([xshift=1.65cm,yshift=4.25cm]current page.south west)
+        {\fontsize{16pt}{21pt}\selectfont\SageAuthor};
+      \node[anchor=south west,text=SageCoverCream!72,inner sep=0pt]
+        at ([xshift=1.67cm,yshift=3.45cm]current page.south west)
+        {\fontsize{10.5pt}{14pt}\selectfont\SageAuthorRole};
+      \draw[SageCoverGold,line width=0.75pt]
+        ([xshift=1.65cm,yshift=2.68cm]current page.south west) --
+        ([xshift=5.15cm,yshift=2.68cm]current page.south west);
+      \node[anchor=south west,text=SageCoverCream!92,inner sep=0pt,
+        text width=0.82\paperwidth,align=left]
+        at ([xshift=1.65cm,yshift=1.88cm]current page.south west)
+        {\fontsize{11pt}{15pt}\selectfont\SageEditionLine};
+      \ifstrempty{\SageScopeLine}{}{%
+        \node[anchor=south west,text=SageCoverGold!92,inner sep=0pt]
+          at ([xshift=1.65cm,yshift=1.28cm]current page.south west)
+          {\fontsize{9.5pt}{12pt}\selectfont\bfseries\SageScopeLine};
+      }
+      \ifstrempty{\SageDateLine}{}{%
+        \node[anchor=south east,text=SageCoverCream!58,inner sep=0pt]
+          at ([xshift=-1.65cm,yshift=0.72cm]current page.south east)
+          {\fontsize{8.5pt}{11pt}\selectfont\SageDateLine};
+      }
+    \end{tikzpicture}
+    \null
+  \end{titlepage}
+  \color{black}
+}
+
+\newcommand{\MakeSageCopyright}{%
+  \begingroup
+    \thispagestyle{empty}
+    \vspace*{0.32\paperheight}
+    \begin{minipage}{0.90\textwidth}
+      \raggedright
+      \setstretch{1}
+      \setlength{\parskip}{0.38em}
+      {\sffamily\fontsize{25pt}{33pt}\selectfont\bfseries\color{SageInk}版权及使用说明\par}
+      \vspace{0.95cm}
+      {\color{SageGold}\rule{3.1cm}{1.05pt}\par}
+      \vspace{1.05cm}
+
+      {\fontsize{10pt}{15.5pt}\selectfont
+        \setlength{\parindent}{0pt}
+        原著：\SageAuthor\par
+        \SageChineseEditorRole：由\SageChineseEditor 使用 \SageProductionTool 完成\par
+        完成时间：\SageCopyrightDate\par
+        \vspace{0.75cm}
+
+        \setlength{\parindent}{2em}
+        本中文译本由\SageChineseEditor 使用 \SageProductionTool 完成，仅供个人学习、教学与非商业学术交流使用。严禁以任何形式用于商业出版、销售、收费传播或其他营利活动。\par
+
+        \vspace{0.28cm}
+        \begin{center}
+          \bfseries 本中文整理文件不出售，请勿购买；全部内容均免费分享。
+        \end{center}
+        \vspace{0.14cm}
+
+        任何个人、账号、社群、店铺或平台，均不得以收费下载、付费入群、捆绑课程、二次销售、印刷售卖、众筹、设置付费门槛或其他商业方式提供本文件。\par
+
+        \SageSourceLanguage 原著、图表、书名、作者署名及相关知识产权归原作者和合法权利人所有。本译本为非官方学习资料，不主张取得原作的出版或商业授权；本声明不改变、转让或替代原作者及出版物权利人的任何权利。\par
+
+        引用或转载本译本内容时，请注明原著信息及“中文翻译与制作：\SageChineseEditor（使用 \SageProductionTool）”。若中文译文与\SageSourceLanguage 原版存在歧义，以\SageSourceLanguage 原版为准。\par
+      }
+    \end{minipage}
+    \clearpage
+  \endgroup
+  \color{black}
+}
+
+\makeatletter
+\newcommand{\MakeSageContents}{%
+  \clearpage
+  \setcounter{tocdepth}{2}%
+  \renewcommand*{\@pnumwidth}{2.2em}%
+  \tableofcontents
+  \clearpage
+}
+\makeatother
+
+\SageApplyTypography

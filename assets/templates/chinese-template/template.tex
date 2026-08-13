@@ -1,0 +1,464 @@
+\documentclass[UTF8,12pt,fontset=fandol]{ctexart}
+
+\usepackage[paper=a4paper,left=2.5cm,right=2.5cm,top=3cm,bottom=3cm]{geometry}
+\usepackage{amsmath,amsthm,amssymb,mathrsfs}
+\usepackage{graphicx,tikz-cd,titlesec}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[
+    colorlinks=true,
+    linkcolor=MidnightBlue,
+    citecolor=BrickRed,
+    urlcolor=MidnightBlue,
+    linktoc=all
+]{hyperref}
+
+\pagestyle{plain}
+
+% 设置环境
+\theoremstyle{plain}
+\newtheorem{definition}{Definition}[subsection]
+\newtheorem{lemma}{Lemma}[subsection]
+\newtheorem{theorem}{Theorem}[subsection]
+\newtheorem{corollary}{Corollary}[subsection]
+\newtheorem{remark}{Remark}[subsection]
+\newtheorem{example}{Example}[subsection]
+\newtheorem{proposition}{Proposition}[subsection]
+\newtheorem{problem}{Problem}[subsection]
+
+% autoref names
+\providecommand{\sectionautorefname}{Section}
+\renewcommand{\sectionautorefname}{Section}
+
+\providecommand{\subsectionautorefname}{Section}
+\renewcommand{\subsectionautorefname}{Section}
+
+\providecommand{\definitionautorefname}{Definition}
+\renewcommand{\definitionautorefname}{Definition}
+
+\providecommand{\theoremautorefname}{Theorem}
+\renewcommand{\theoremautorefname}{Theorem}
+
+\providecommand{\lemmaautorefname}{Lemma}
+\renewcommand{\lemmaautorefname}{Lemma}
+
+\providecommand{\propositionautorefname}{Proposition}
+\renewcommand{\propositionautorefname}{Proposition}
+
+\providecommand{\corollaryautorefname}{Corollary}
+\renewcommand{\corollaryautorefname}{Corollary}
+
+\providecommand{\exampleautorefname}{Example}
+\renewcommand{\exampleautorefname}{Example}
+
+\providecommand{\remarkautorefname}{Remark}
+\renewcommand{\remarkautorefname}{Remark}
+
+\providecommand{\problemautorefname}{Problem}
+\renewcommand{\problemautorefname}{Problem}
+
+\providecommand{\figureautorefname}{Figure}
+\renewcommand{\figureautorefname}{Figure}
+
+\providecommand{\tableautorefname}{Table}
+\renewcommand{\tableautorefname}{Table}
+
+% 设置 proof 样式
+\makeatletter
+\renewcommand{\proofname}{\textbf{Proof}}
+\renewenvironment{proof}[1][\proofname]{\par
+  \pushQED{\qed}%
+  \normalfont
+  \topsep6\p@\@plus6\p@\relax
+  \trivlist
+  \item[\hskip\labelsep
+        \normalfont\bfseries
+    #1\@addpunct{.}]\ignorespaces
+}{%
+  \popQED\endtrivlist\@endpefalse
+}
+\makeatother
+\renewcommand{\qedsymbol}{\ensuremath{\square}}
+
+% 设置 section 样式
+\newlength{\chapterNumSpace}
+\setlength{\chapterNumSpace}{1.4cm}
+
+% 附录判断：正文显示 Chapter，\appendix 后显示 Appendix
+\newif\ifInAppendix
+\InAppendixfalse
+
+% 目录中的附录判断
+\newif\ifInAppendixToc
+\InAppendixTocfalse
+
+% 目录可调参数
+\newlength{\tocSectionLabelWidth}
+\setlength{\tocSectionLabelWidth}{4.2em}
+
+\newlength{\tocAppendixGap}
+\setlength{\tocAppendixGap}{0.2em}
+
+\newlength{\tocSubIndent}
+\setlength{\tocSubIndent}{1.2em}
+
+\newlength{\tocSubNumWidth}
+\setlength{\tocSubNumWidth}{3.0em}
+
+% 目录 section 编号文字
+\newcommand{\TocSectionNumber}[1]{%
+  \ifInAppendixToc
+    附录\hspace{\tocAppendixGap}#1%
+  \else
+    第~#1~章%
+  \fi
+}
+
+\makeatletter
+
+% section 目录格式：
+% 正文：第 1 章 群的定义与性质
+% 附录：附录A 集合论补遗
+\renewcommand*\l@section[2]{%
+  \ifnum\c@tocdepth>\z@
+    \addvspace{0.55em}%
+    \begingroup
+      \parindent\z@
+      \rightskip\@pnumwidth
+      \parfillskip-\@pnumwidth
+      \leavevmode
+      \bfseries
+      \setlength{\@tempdima}{\tocSectionLabelWidth}%
+      \advance\leftskip\@tempdima
+      \hskip-\leftskip
+      \def\numberline##1{%
+        \makebox[\@tempdima][l]{\TocSectionNumber{##1}}%
+      }%
+      #1\nobreak\hfill\nobreak\makebox[\@pnumwidth][r]{#2}\par
+    \endgroup
+  \fi
+}
+
+% subsection 目录格式：
+% 1.1 循环群 / A.1 集合基础
+\renewcommand*\l@subsection{%
+  \@dottedtocline{2}{\tocSubIndent}{\tocSubNumWidth}%
+}
+
+\makeatother
+
+\let\OriginalAppendix\appendix
+\renewcommand{\appendix}{%
+  \OriginalAppendix
+  \InAppendixtrue
+  \addtocontents{toc}{\protect\InAppendixToctrue}%
+}
+
+\newcommand{\ChapterSectionLabel}{%
+  \thispagestyle{plain}%
+  \vspace*{-0.5cm}%
+  \makebox[\textwidth][r]{%
+    {\fontsize{18pt}{18pt}\selectfont\scshape
+      \ifInAppendix Appendix\else Chapter\fi
+    }\enspace
+    {\fontsize{62pt}{62pt}\selectfont\bfseries\thesection}%
+  }%
+  \par\vspace{-0.25cm}%
+  \noindent\rule{\dimexpr\textwidth-\chapterNumSpace\relax}{0.45pt}%
+}
+
+\titleformat{\section}[display]
+  {\normalfont}
+  {\ChapterSectionLabel}
+  {0cm}
+  {\raggedleft\rightskip=\chapterNumSpace\fontsize{30pt}{35pt}\selectfont\bfseries}
+  [\vspace{0.3cm}]
+
+\newcommand{\sectionbreak}{\clearpage}
+
+% 不编号 section，例如前言、目录
+\titleformat{name=\section,numberless}[block]
+  {\normalfont\Large\bfseries\centering}
+  {}
+  {0pt}
+  {}
+
+% section 整体间距
+\titlespacing{\section}
+  {0pt}
+  {0pt}
+  {0pt}
+
+% subsection 样式
+\ctexset{
+  subsection = {
+    format = \large\bfseries
+  }
+}
+
+%抹除自动生成参考文献字样
+\newenvironment{mybibliography}[1]{%
+    \begingroup
+    \renewcommand{\section}[2]{}%
+    \begin{thebibliography}{#1}%
+}{%
+    \end{thebibliography}%
+    \endgroup
+}
+
+
+% Exercise 栏目与题目编号
+\newcounter{exercise}[subsection]
+\renewcommand{\theexercise}{\thesubsection.\arabic{exercise}}
+\providecommand{\theHexercise}{\theexercise}
+\renewcommand{\theHexercise}{\theexercise}
+
+\providecommand{\exerciseautorefname}{Exercise}
+\renewcommand{\exerciseautorefname}{Exercise}
+
+\newlength{\exerciseLabelWidth}
+\newlength{\answerLabelWidth}
+\newcounter{answeritem}
+
+\makeatletter
+
+% 若目标 label 已存在，则生成超链接；若不存在，则只显示文本，避免 undefined reference 警告
+\newcommand{\maybehyperref}[2]{%
+    \@ifundefined{r@#1}{#2}{\hyperref[#1]{#2}}%
+}
+
+% Exercise 的每一题
+% 自动生成 label：exe:<题号>
+% 自动链接到：ans:<题号>
+\newcommand{\exercise@item}{%
+    \par\smallskip
+    \refstepcounter{exercise}%
+    \edef\exercise@number{\theexercise}%
+    \edef\exercise@label{exe:\exercise@number}%
+    \edef\exercise@answerlabel{ans:\exercise@number}%
+    \expandafter\label\expandafter{\exercise@label}%
+    \settowidth{\exerciseLabelWidth}{\textbf{\theexercise.}\quad}%
+    \hangindent=\exerciseLabelWidth
+    \hangafter=1
+    \noindent
+    \maybehyperref{\exercise@answerlabel}{\textbf{\theexercise.}}\quad
+    \ignorespaces
+}
+
+\newenvironment{exercises}{
+    \par\medskip
+    \noindent{\large\bfseries Exercise}
+    \par\smallskip
+    \begingroup
+    \setlength{\parindent}{0pt}
+    \renewcommand{\item}{\exercise@item}%
+}{
+    \par
+    \endgroup
+    \medskip
+}
+
+% 参考答案环境
+% 用法：\begin{answers}{2.1}，其中 2.1 是对应原小节编号
+% 第 k 个 \item 自动对应 Exercise 2.1.k
+\newcommand{\answer@item}{%
+    \par\smallskip
+    \stepcounter{answeritem}%
+    \edef\answer@number{\answer@prefix.\arabic{answeritem}}%
+    \edef\answer@label{ans:\answer@number}%
+    \edef\answer@exerciselabel{exe:\answer@number}%
+    \phantomsection
+    \protected@edef\@currentlabel{\answer@number}%
+    \expandafter\label\expandafter{\answer@label}%
+    \settowidth{\answerLabelWidth}{\textbf{\answer@number.}\quad}%
+    \hangindent=\answerLabelWidth
+    \hangafter=1
+    \noindent
+    \maybehyperref{\answer@exerciselabel}{\textbf{\answer@number.}}\quad
+    \ignorespaces
+}
+
+\newenvironment{answers}[1]{
+    \par\medskip
+    \def\answer@prefix{#1}%
+    \setcounter{answeritem}{0}%
+    \begingroup
+    \setlength{\parindent}{0pt}
+    \renewcommand{\item}{\answer@item}%
+}{
+    \par
+    \endgroup
+    \medskip
+}
+
+\makeatother
+
+
+\begin{document}
+
+\begin{titlepage}
+    \flushleft
+
+    \rule{\textwidth}{1.2pt} \\[0.1cm]
+    \rule{\textwidth}{0.8pt} \\[1.5cm]
+
+    \hspace{2cm} {\fontsize{45pt}{60pt}\selectfont \bfseries 抽象代数} \\[0.8cm]
+    \hspace{2cm} {\fontsize{25pt}{30pt}\selectfont \textit{Abstract Algebra}} \\[1.5cm]
+
+    \rule{\textwidth}{0.6pt} \\[2cm]
+
+    \hspace{2cm} {\large \textit{Based on personal study and}} \\
+    \hspace{2cm} {\large \textit{various lecture notes}} \\[3cm]
+
+    \hspace{2cm} {\Huge \textsc{Yi Wang}} \\[6cm]
+
+    \vfill
+
+    \begin{flushright}
+        {\small \scshape NOTES ON MATHEMATICAL STUDIES} \\
+        {\small \scshape DATE: \today}
+    \end{flushright}
+
+    \vspace*{1cm}
+\end{titlepage}
+
+% 前言使用罗马数字页码
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+\phantomsection
+\section*{前言}
+\addcontentsline{toc}{section}{前言}
+
+\vspace{0.5cm}
+
+你好，我是前言.
+
+\vspace*{0.5cm}
+\hfill Yi Wang
+
+\hfill \today
+
+\newpage
+
+\begingroup
+\pagestyle{empty}
+\thispagestyle{empty}
+\tableofcontents
+\clearpage
+\endgroup
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\section{群的定义与性质}
+
+\subsection{循环群}
+
+\begin{definition}
+    你好，我是定义.
+\end{definition}
+
+\begin{lemma}
+    你好，我是引理.
+\end{lemma}
+
+\begin{theorem}\label{thm:1.1.1}
+    你好，我是定理.
+\end{theorem}
+
+由 \autoref{thm:1.1.1} 可知
+
+\begin{corollary}
+    你好，我是推论.
+\end{corollary}
+
+\begin{proposition}
+    你好，我是命题.
+\end{proposition}
+
+\begin{example}
+    你好，我是例子.
+\end{example}
+
+\begin{remark}
+    你好，我是注解.
+\end{remark}
+
+\begin{problem}
+    你好，我是问题.
+\end{problem}
+
+\begin{proof}
+    你好，我是证明.
+\end{proof}
+
+
+由 \autoref{ex:cyclic-abelian} 可知，循环群一定是阿贝尔群.
+
+
+\begin{exercises}
+    \item \label{ex:cyclic-abelian}
+    证明任意循环群都是阿贝尔群.
+
+    \item \label{ex:subgroup-cyclic}
+    证明循环群的任意子群仍是循环群.
+
+    \item \label{ex:cyclic-generator}
+    设 \(G=\langle g\rangle\)，证明 \(G=\langle g^{-1}\rangle\).
+\end{exercises}
+
+
+
+
+\newpage
+\subsection{对称群}
+
+
+\newpage
+\section{环}
+
+\subsection{子环}
+
+
+\newpage
+\appendix
+
+\section{参考答案}
+
+\subsection*{1.1 循环群}
+
+\begin{answers}{1.1}
+  \item 任意循环群都是阿贝尔群.
+  \item 循环群的任意子群仍是循环群.
+  \item \(G=\langle g\rangle\)，\(G=\langle g^{-1}\rangle\).
+\end{answers}
+
+
+\section{集合论拾遗}
+
+\subsection{集合基础}
+
+你好，我是附录.
+
+\section{参考文献}
+
+\begin{mybibliography}{AM69}
+
+    \bibitem[Mar77]{marcus}
+    Daniel A. Marcus,
+    \textit{Number Fields},
+    Springer, 1977.
+
+    \bibitem[Neu99]{neukirch}
+    Jürgen Neukirch,
+    \textit{Algebraic Number Theory},
+    Springer, 1999.
+
+    \bibitem[AM69]{atiyah-macdonald}
+    M. F. Atiyah and I. G. Macdonald,
+    \textit{Introduction to Commutative Algebra},
+    Addison-Wesley, 1969.
+
+\end{mybibliography}
+
+\end{document}

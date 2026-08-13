@@ -1,0 +1,126 @@
+% !TeX program = xelatex
+% Keep this file together with sage-math.sty and fonts/.
+\documentclass[reqno,11pt]{scrartcl}
+
+\usepackage[
+  paper=a4paper,
+  top=2.80cm,
+  bottom=3.00cm,
+  left=2.80cm,
+  right=2.80cm,
+  headheight=20pt,
+  headsep=0.75cm,
+  footskip=1.15cm
+]{geometry}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setmainfont[
+  Path=fonts/,
+  UprightFont={LibertinusSerif-Regular.otf},
+  ItalicFont={LibertinusSerif-Italic.otf},
+  BoldFont={LibertinusSerif-Bold.otf},
+  BoldItalicFont={LibertinusSerif-BoldItalic.otf}
+]{LibertinusSerif-Regular.otf}
+\setsansfont[
+  Path=fonts/,
+  UprightFont={LibertinusSans-Regular.otf},
+  ItalicFont={LibertinusSans-Italic.otf},
+  BoldFont={LibertinusSans-Bold.otf},
+  BoldItalicFont={LibertinusSans-Bold.otf}
+]{LibertinusSans-Regular.otf}
+\setmonofont[Path=fonts/]{LibertinusMono-Regular.otf}
+\setCJKmainfont[
+  Path=fonts/,
+  UprightFont={FandolSong-Regular.otf},
+  BoldFont={FandolSong-Bold.otf},
+  ItalicFont={FandolKai-Regular.otf}
+]{FandolSong-Regular.otf}
+\setCJKsansfont[
+  Path=fonts/,
+  UprightFont={FandolHei-Regular.otf},
+  BoldFont={FandolHei-Regular.otf},
+  ItalicFont={FandolHei-Regular.otf},
+  BoldItalicFont={FandolHei-Regular.otf}
+]{FandolHei-Regular.otf}
+\setCJKmonofont[Path=fonts/]{FandolFang-Regular.otf}
+
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools,mathrsfs}
+\usepackage[all]{xy}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{caption}
+\captionsetup{justification=centering,singlelinecheck=false,labelsep=colon}
+\usepackage{sage-math}
+
+\newtheorem{theorem}{定理}[section]
+\newtheorem{corollary}[theorem]{推论}
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{conjecture}[theorem]{猜想}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{remark}[theorem]{注}
+\renewcommand{\proofname}{证明}
+
+% Replace all metadata below. Keep long English subtitles short enough for one line.
+\renewcommand{\SageCoverSeries}{中文数学文献}
+\renewcommand{\SageChineseTitle}{中文标题}
+\renewcommand{\SageChineseSubtitle}{}
+\renewcommand{\SageEnglishTitle}{ENGLISH TITLE}
+\renewcommand{\SageAuthor}{作者}
+\renewcommand{\SageAuthorRole}{原著}
+\renewcommand{\SageEditionLine}{中文 \LaTeX{} 重排版}
+\renewcommand{\SageScopeLine}{完整中文译本}
+\renewcommand{\SageDateLine}{来源或日期}
+\renewcommand{\SageCoverImage}{assets/cover/selected-cover}
+\renewcommand{\SageChineseEditor}{中文译制负责人}
+\renewcommand{\SageProductionTool}{OpenAI Codex}
+\renewcommand{\SageChineseEditorRole}{中文翻译、术语核对、校审及 \LaTeX{} 重排制作}
+\renewcommand{\SageCopyrightDate}{完成时间}
+\renewcommand{\SageSourceLanguage}{英文}
+\SageSetHeaders{中文标题}{作者}
+
+\usepackage[
+  bookmarksnumbered,
+  bookmarksopen,
+  colorlinks=true,
+  linkcolor=SageInk,
+  citecolor=SagePlum,
+  urlcolor=SagePlum,
+  linktoc=all
+]{hyperref}
+\hypersetup{pdftitle={中文标题},pdfauthor={作者}}
+
+% Add document-specific mathematical macros below.
+
+\begin{document}
+\hypersetup{pageanchor=false}
+\MakeSageCover
+\MakeSageCopyright
+\hypersetup{pageanchor=true}
+
+\pagenumbering{Roman}
+\MakeSageContents
+\pagenumbering{arabic}
+\pagestyle{scrheadings}
+
+\begin{abstract}
+在这里写摘要；如果源 PDF 没有摘要，则删除本环境。
+\end{abstract}
+
+\section{正文示例}
+
+在这里替换为正文内容。
+
+\begin{theorem}\label{thm:sample}
+若 \(a=b\)，则 \(b=a\)。
+\end{theorem}
+
+\begin{proof}
+由等式的对称性立即得到。
+\end{proof}
+
+\end{document}
