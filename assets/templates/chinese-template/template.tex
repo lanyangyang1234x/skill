@@ -14,6 +14,12 @@
 
 \pagestyle{plain}
 
+% Replace these values after the user chooses the template and confirms the
+% translator/editor display name and model/tool display name.
+\newcommand{\TranslationEditor}{译者姓名}
+\newcommand{\TranslationTool}{使用模型或工具}
+\newcommand{\TranslationCreditLine}{本中文译本由\TranslationEditor 使用\TranslationTool 完成。}
+
 % 设置环境
 \theoremstyle{plain}
 \newtheorem{definition}{Definition}[subsection]
@@ -309,13 +315,14 @@
     \hspace{2cm} {\large \textit{Based on personal study and}} \\
     \hspace{2cm} {\large \textit{various lecture notes}} \\[3cm]
 
-    \hspace{2cm} {\Huge \textsc{Yi Wang}} \\[6cm]
+    \hspace{2cm} {\Huge \normalfont\upshape Yi Wang} \\[6cm]
 
     \vfill
 
     \begin{flushright}
-        {\small \scshape NOTES ON MATHEMATICAL STUDIES} \\
-        {\small \scshape DATE: \today}
+        {\small \TranslationCreditLine} \\
+        {\small Notes on Mathematical Studies} \\
+        {\small Date: \today}
     \end{flushright}
 
     \vspace*{1cm}

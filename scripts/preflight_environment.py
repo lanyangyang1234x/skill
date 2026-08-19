@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Check the core and optional OCR environment for PDF conversion."""
+"""Check only the dependencies needed for the requested PDF/TeX task.
+
+The default check is deliberately non-invasive: it verifies Python and does
+not import PyMuPDF or probe/install an OCR environment. Ask for the capabilities
+that the current stage actually needs with ``--need-pdf``, ``--need-render``,
+``--need-compile`` or ``--require-ocr``.
+"""
 
 from __future__ import annotations
 
@@ -15,7 +21,13 @@ from pathlib import Path
 
 def module_version(module_name: str) -> tuple[bool, str]:
     try:
-        module = __import__(module_name)
+        if module_name == "fitz":
+            try:
+                module = __import__("pymupdf")
+            except Exception:
+                module = __import__("fitz")
+        else:
+            module = __import__(module_name)
     except Exception as exc:
         return False, f"{type(exc).__name__}: {exc}"
     version = getattr(module, "__version__", None)
@@ -55,35 +67,103 @@ def probe_ocr_python(candidate: Path) -> tuple[bool, str]:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Check PDF-to-Chinese-TeX dependencies")
-    parser.add_argument("--require-ocr", action="store_true")
+    parser.add_argument(
+        "--need-pdf",
+        action="store_true",
+        help="Require PyMuPDF for PDF inspection/extraction",
+    )
+    parser.add_argument(
+        "--need-render",
+        action="store_true",
+        help="Require pdftoppm for page rendering/crops",
+    )
+    parser.add_argument(
+        "--need-compile",
+        action="store_true",
+        help="Require XeLaTeX for compilation",
+    )
+    parser.add_argument(
+        "--require-ocr",
+        action="store_true",
+        help="Require the explicitly configured/bootstrapped OCR environment (opt-in)",
+    )
     parser.add_argument("--json", action="store_true")
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
-    fitz_ok, fitz_detail = module_version("fitz")
+    need_pdf = args.need_pdf or args.require_ocr
+    need_render = args.need_render or args.require_ocr
+    need_compile = args.need_compile
+
+    if need_pdf:
+        fitz_ok, fitz_detail = module_version("fitz")
+    else:
+        fitz_ok, fitz_detail = None, "not checked (PDF inspection not requested)"
+
     commands = {name: shutil.which(name) for name in ("xelatex", "pdftoppm", "pdftotext")}
-    configured = os.environ.get("PDF_TO_CHINESE_TEX_OCR_PYTHON")
-    ocr_python = Path(configured).expanduser() if configured else Path.home() / ".codex/venvs/pdf-to-chinese-tex-ocr/bin/python"
-    ocr_ok, ocr_detail = probe_ocr_python(ocr_python)
+    if args.require_ocr:
+        configured = os.environ.get("PDF_TO_CHINESE_TEX_OCR_PYTHON")
+        codex_home = Path(os.environ.get("CODEX_HOME", str(Path.home() / ".codex"))).expanduser()
+        ocr_python = (
+            Path(configured).expanduser()
+            if configured
+            else codex_home / "venvs/pdf-to-chinese-tex-ocr/bin/python"
+        )
+        ocr_ok, ocr_detail = probe_ocr_python(ocr_python)
+    else:
+        ocr_python = None
+        ocr_ok, ocr_detail = None, "not checked (OCR is opt-in)"
 
     report = {
         "python": {"ok": sys.version_info >= (3, 9), "version": sys.version.split()[0], "path": sys.executable},
-        "pymupdf": {"ok": fitz_ok, "detail": fitz_detail},
-        "xelatex": {"ok": bool(commands["xelatex"]), "path": commands["xelatex"]},
-        "pdftoppm": {"ok": bool(commands["pdftoppm"]), "path": commands["pdftoppm"]},
-        "pdftotext": {"ok": bool(commands["pdftotext"]), "path": commands["pdftotext"], "required": False},
-        "ocr": {"ok": ocr_ok, "python": str(ocr_python), "detail": ocr_detail, "required": args.require_ocr},
+        "pymupdf": {"ok": fitz_ok, "detail": fitz_detail, "required": need_pdf, "skipped": not need_pdf},
+        "xelatex": {
+            "ok": bool(commands["xelatex"]) if need_compile else None,
+            "path": commands["xelatex"],
+            "required": need_compile,
+            "skipped": not need_compile,
+        },
+        "pdftoppm": {
+            "ok": bool(commands["pdftoppm"]) if need_render else None,
+            "path": commands["pdftoppm"],
+            "required": need_render,
+            "skipped": not need_render,
+        },
+        "pdftotext": {
+            "ok": bool(commands["pdftotext"]),
+            "path": commands["pdftotext"],
+            "required": False,
+            "skipped": True,
+        },
+        "ocr": {
+            "ok": ocr_ok,
+            "python": str(ocr_python) if ocr_python else None,
+            "detail": ocr_detail,
+            "required": args.require_ocr,
+            "skipped": not args.require_ocr,
+        },
     }
-    core_ok = all(report[name]["ok"] for name in ("python", "pymupdf", "xelatex", "pdftoppm"))
-    success = core_ok and (ocr_ok or not args.require_ocr)
+    required_checks = [report["python"]["ok"]]
+    if need_pdf:
+        required_checks.append(bool(fitz_ok))
+    if need_render:
+        required_checks.append(bool(commands["pdftoppm"]))
+    if need_compile:
+        required_checks.append(bool(commands["xelatex"]))
+    if args.require_ocr:
+        required_checks.append(bool(ocr_ok))
+    success = all(required_checks)
 
     if args.json:
         print(json.dumps(report, ensure_ascii=False, indent=2))
     else:
         for name, info in report.items():
-            status = "OK" if info["ok"] else "MISSING"
+            if info.get("skipped"):
+                status = "SKIP"
+            else:
+                status = "OK" if info["ok"] else "MISSING"
             detail = info.get("detail") or info.get("version") or info.get("path") or ""
             print(f"{status:7} {name:10} {detail}")
     return 0 if success else 1

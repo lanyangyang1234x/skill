@@ -19,6 +19,15 @@ if ! grep -Fq '\documentclass[UTF8,12pt,fontset=fandol]{ctexart}' "$main_path"; 
   exit 1
 fi
 
+if grep -Eq '\\newcommand\{\\Translation(Editor|Tool)\}\{(译者姓名|使用模型或工具)\}' "$main_path"; then
+  printf 'Chinese Template translator/tool metadata placeholders remain in: %s\n' "$project_dir/$main_tex" >&2
+  exit 1
+fi
+if ! grep -Fq '\TranslationCreditLine' "$main_path"; then
+  printf 'Chinese Template must keep a visible translation credit line.\n' >&2
+  exit 1
+fi
+
 required_tokens=(
   '\titleformat{\section}[display]'
   '\newenvironment{exercises}'
@@ -32,7 +41,7 @@ for token in "${required_tokens[@]}"; do
   fi
 done
 
-sample_tokens=('你好，我是' 'Based on personal study and' 'NOTES ON MATHEMATICAL STUDIES')
+sample_tokens=('你好，我是' 'Based on personal study and' 'Notes on Mathematical Studies' 'NOTES ON MATHEMATICAL STUDIES' '\\textsc{Yi Wang}')
 for token in "${sample_tokens[@]}"; do
   if grep -Fq "$token" "$main_path"; then
     printf 'Chinese Template sample content remains in %s: %s\n' "$main_tex" "$token" >&2

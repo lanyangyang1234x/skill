@@ -11,17 +11,25 @@ from pathlib import Path
 try:
     from PIL import Image, ImageDraw
 except ModuleNotFoundError:
-    configured = os.environ.get("PDF_TO_CHINESE_TEX_OCR_PYTHON")
-    fallback = (
-        Path(configured).expanduser()
-        if configured
-        else Path.home() / ".codex/venvs/pdf-to-chinese-tex-ocr/bin/python"
+    configured = os.environ.get("PDF_TO_CHINESE_TEX_IMAGE_PYTHON") or os.environ.get(
+        "PDF_TO_CHINESE_TEX_OCR_PYTHON"
     )
-    if fallback.is_file() and Path(sys.executable) != fallback:
-        os.execv(str(fallback), [str(fallback), str(Path(__file__).resolve()), *sys.argv[1:]])
+    codex_home = Path(os.environ.get("CODEX_HOME", str(Path.home() / ".codex"))).expanduser()
+    fallbacks = (
+        [Path(configured).expanduser()]
+        if configured
+        else [
+            codex_home / "venvs/pdf-to-chinese-tex-image/bin/python",
+            codex_home / "venvs/pdf-to-chinese-tex-ocr/bin/python",
+        ]
+    )
+    for fallback in fallbacks:
+        if fallback.is_file() and Path(sys.executable) != fallback:
+            os.execv(str(fallback), [str(fallback), str(Path(__file__).resolve()), *sys.argv[1:]])
     raise SystemExit(
-        "Pillow is unavailable. Run scripts/bootstrap_ocr_environment.sh or set "
-        "PDF_TO_CHINESE_TEX_OCR_PYTHON to a Python interpreter containing Pillow."
+        "Pillow is unavailable. Set PDF_TO_CHINESE_TEX_IMAGE_PYTHON to a Python "
+        "interpreter containing Pillow; an OCR/PaddleOCR installation is not required "
+        "for image-only operations."
     )
 
 

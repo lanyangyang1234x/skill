@@ -110,8 +110,15 @@ if ! (( cover_line < copyright_line && copyright_line < contents_line )); then
   exit 1
 fi
 
-if grep -Eq '\\renewcommand\{\\Sage(ChineseTitle|Author|ChineseEditor|CopyrightDate|SourceLanguage)\}\{(中文标题|作者|中文译制者|中文译制负责人|完成时间|原文语言)\}' "$main_path"; then
+if grep -Eq '\\renewcommand\{\\Sage(ChineseTitle|Author|ChineseEditor|CopyrightDate|SourceLanguage)\}\{(中文标题|作者|中文译制者|中文译制负责人|完成时间|原文语言)\}' "$main_path" \
+    || grep -Eq '\\renewcommand\{\\SageEnglishTitle\}\{(ENGLISH TITLE|English Title)\}' "$main_path"; then
   printf 'Template metadata placeholders remain in: %s\n' "$project_dir/$main_tex" >&2
+  exit 1
+fi
+
+if grep -Eiq '\\(MakeUppercase|uppercase|MakeLowercase|lowercase|textsc|scshape)[^[:cntrl:]]*Sage(EnglishTitle|ChineseTitle|Author|EditionLine|ScopeLine)' "$main_path" \
+    || grep -Eiq 'Sage(EnglishTitle|ChineseTitle|Author|EditionLine|ScopeLine)[^[:cntrl:]]*\\(MakeUppercase|uppercase|MakeLowercase|lowercase|textsc|scshape)' "$main_path"; then
+  printf 'Source-derived Sage metadata must not be placed inside a case-transforming or small-caps command. Restore the source case explicitly: %s\n' "$project_dir/$main_tex" >&2
   exit 1
 fi
 

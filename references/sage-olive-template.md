@@ -26,14 +26,19 @@ Initialize `terminology.tsv` before validation. If the project contains any rast
 ## Required Adaptation
 
 - Replace every `\Sage...` value, including `\SageChineseEditor`, `\SageProductionTool`, `\SageCopyrightDate`, and `\SageSourceLanguage`.
+- Keep any source-derived Latin-script title or subtitle in its original capitalization. The sample placeholder `\SageEnglishTitle` should be replaced with the actual English title case from the source, not an all-caps template string.
+- `\addfontfeatures{LetterSpace=5}` on the Sage-Olive cover changes tracking only; it must not be treated as permission to change letter case. Do not put `\SageEnglishTitle` or other source-derived metadata inside `\textsc`/`\scshape`.
+- Set `\SageChineseEditor` to the translator/editor display name and `\SageProductionTool` to the model/tool display name collected at task initialization. Keep the resulting copyright credit line visible; do not silently retain the sample values.
 - Put the human contributor in `\SageChineseEditor` and the tool in `\SageProductionTool`; never use Codex or a vendor name as the human contributor.
 - Run `python3 fetch_random_cover.py` once after copying the template for every new task. Keep the downloaded cover stable unless the user asks to reroll it.
 - Do not omit `\MakeSageCover`, replace it with a local fallback, or claim completion without `assets/cover/selected-cover.*` and `assets/cover/cover-source.json`.
 - Use `\MakeSageCover`, then `\MakeSageCopyright`, then usually `\MakeSageContents`.
 - Keep the copyright page immediately after the cover and before contents.
+- Keep the copyright block in the upper-middle zone: the bundled default uses `\\vspace*{0.23\\paperheight}` before the block. Adjust only when the project's metadata length requires it, preserving comfortable bottom whitespace.
 - Keep all fonts by relative path; do not swap in system font names or override the six font-family setup commands.
 - Use the fixed mapping: Chinese body `FandolSong-Regular`, bold `FandolSong-Bold`, italic `FandolKai-Regular`, headings/sans `FandolHei-Regular`, and monospace `FandolFang-Regular`; use `Libertinus Serif` for Western body text and `Libertinus Sans` for Western sans/title text.
 - Keep Chinese and Western headings explicitly in the sans families. A project with altered font declarations or serif headings fails validation.
+- Use dynamic running heads: the inner/left side shows the current `section` number and title, while the outer/right side shows the current `subsection` number and title (for example, `1 全正性` and `1.2 m 维空间中 2-平面的 Grassmannian`). Keep them in the bundled body fonts, light gray, with the template's thin rule below the header. Do not replace them with static book-title or author text.
 - Do not add packages or change styling unless the source requires it.
 
 ## Build
