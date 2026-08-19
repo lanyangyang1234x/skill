@@ -12,8 +12,9 @@ Before delivery:
 2. Compare logical-item counts by chapter or section.
 3. Check that every section fragment appears exactly once and in order.
 4. Search for untranslated source prose and placeholder text.
-5. Compile the formal main file twice.
-6. Inspect the first page, last page, representative formula pages, and every figure-bearing page.
+5. Compare the exact capitalization of prominent Latin-script text on the source cover, title page, contents, running heads, captions, and figure labels; do not accept OCR-normalized or template-induced all caps.
+6. Compile the formal main file twice.
+7. Inspect the first page, last page, representative formula pages, and every figure-bearing page.
 
 ## Ledgers
 
@@ -69,6 +70,7 @@ Translated labels must belong to exactly one layer: raster or TeX, never both.
 
 - Inventory all ordinary English inside the figure, including legends, axis labels, annotations, callouts, and in-figure captions.
 - Replace ordinary English with Chinese. Preserve mathematical symbols, formulas, and personal names when they are not translatable prose.
+- For any Latin text intentionally retained in a figure or cover, preserve the source's exact capitalization. Do not use small caps or all-caps styling as a substitute for a source transcription.
 - For raster-owned labels, erase the complete original glyph and antialiasing region from a fresh opaque crop, then place the Chinese label at the same anchor.
 - For TeX-owned labels, use a clean raster without that label and place the Chinese label exactly once in TeX/TikZ.
 - A figure with unexplained ordinary English remnants fails QA. If translation would damage geometry, use source-pixel-locked replacement or a verified redraw; do not silently leave it untranslated.

@@ -1,4 +1,4 @@
 interface:
   display_name: "PDF to Chinese TeX"
-  short_description: "Translate math PDFs/Markdown with selectable templates"
-  default_prompt: "Use $pdf-to-chinese-tex to ask which bundled template to use, edit any associated Markdown in place, and produce a source-verified Chinese LaTeX/PDF edition."
+  short_description: "Translate math PDFs with source-faithful case and selectable templates"
+  default_prompt: "Use $pdf-to-chinese-tex to ask which bundled template to use, use reliable associated Markdown as the primary drafting input for direct TeX editing, verify uncertain parts against the source PDF, run only non-mutating capability checks, defer PDF/OCR dependencies until needed, keep Markdown read-only unless authorized, preserve source capitalization, and produce a source-verified Chinese LaTeX/PDF edition."
