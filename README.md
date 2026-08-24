@@ -30,7 +30,21 @@ git clone https://github.com/lanyangyang1234x/skill.git \
 使用 $pdf-to-chinese-tex 将这本数学 PDF 翻译成中文 LaTeX 和 PDF。
 ```
 
-技能会先让你选择模板，再按“源文件识别 → 术语/覆盖记录 → TeX 重建 → 编译 → 视觉验收”的顺序工作。若设置了 `CODEX_HOME`，把安装路径替换为 `$CODEX_HOME/skills/pdf-to-chinese-tex` 即可。
+技能会先让你选择模板，再按以下顺序工作：
+
+`源文件识别` → `术语/覆盖记录` → `TeX 重建` → `编译` → `视觉验收`
+
+默认安装路径为：
+
+```text
+~/.codex/skills/pdf-to-chinese-tex
+```
+
+如果你已经设置了 `CODEX_HOME`，则使用：
+
+```text
+$CODEX_HOME/skills/pdf-to-chinese-tex
+```
 
 ### 核心能力
 
