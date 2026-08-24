@@ -1,152 +1,153 @@
-# PDF to Chinese TeX
+<div align="center">
 
-[中文](#中文) · [English](#english)
+<h1>PDF 转中文 TeX</h1>
+
+<p><strong>数学 PDF → 忠实中文 LaTeX → 可验证 PDF</strong></p>
+
+<p>保留章节顺序、编号、公式、定理、证明、练习、图形、交叉引用与参考文献。</p>
+
+<p><a href="#中文">中文</a> · <a href="#english">English</a> · <a href="#模板">模板</a> · <a href="#质量门">质量门</a></p>
+
+</div>
+
+> [!IMPORTANT]
+> 原始渲染 PDF 是数学内容与结构的最终依据。编译成功只是语法信号；源文档对照、公式核验、图形 QA 和覆盖台账全部通过后，才算完成。
 
 ## 中文
 
-`pdf-to-chinese-tex` 是一个面向数学 PDF、教材、讲义、论文和 Markdown 转录稿的 Codex 技能。它将原始材料忠实转换为中文 LaTeX 与 PDF，同时保留章节顺序、编号、数学符号、公式、定理、证明、练习、图片、交叉引用和参考文献。
+`pdf-to-chinese-tex` 是面向数学 PDF、教材、讲义、论文和 Markdown 转录稿的 Codex 技能。它把可靠内容转换为真实 TeX，而不是把中文覆盖在原 PDF 上。
 
-### 主要特性
-
-- 每个新翻译任务开始时，先询问使用 `Sage-Olive`、`Chinese Template` 还是 `Chinese Template Project v2`。
-- 如果任务包含对应的 Markdown 文件，先把它作为主内容底稿转换到 TeX 中直接翻译和排版；Markdown 默认只读，只有用户明确授权时才回写原文件，不另建重复译稿。
-- 以原始 PDF 为最终依据；Markdown 中可靠的内容不重复提取，只对缺失、乱码、公式/图片疑点或冲突部分回原书核对、提取或 OCR。
-- 使用 `terminology.tsv` 统一数学术语，并审计英文残留和禁用旧译名。
-- 使用 `source-coverage.tsv` 检查长书的漏页、重叠页、乱序范围和未完成条目。
-- 使用 `figure-manifest.tsv` 跟踪图片来源、裁切、尺寸、背景、标签翻译和最终验收状态。
-- 交换图采用确定性的 TikZ/截图判定；在“一模一样”模式下源像素锁定裁图是默认最终表示，困难几何禁止手调 TikZ。
-- 图资产分层保存并拒绝静默覆盖；用 `scripts/figure_asset_lock.py` 记录/核对源与发布资产的 SHA-256，防止二次 Python 运行替换正确截图。
-- 保留源 PDF 中英文标题、作者、图注、标签和封面文字的原始大小写；模板的小型大写样式不应泄漏到源文本。
-- 将“能否编译”与“是否忠于原文”作为两项独立的质量检查。
-- 长书可按源页分批并行：每批只有一个写者，公共台账由主代理合并；用 `batch-checkpoints.tsv` 防止重复派发和无证据重试。并行只减少重复工作，不降低数学、术语和版面验收门槛。
-
-### 模板
-
-| 模板 | 特点 |
-| --- | --- |
-| `Sage-Olive` | 随机风景封面、版权页、彩色数学环境、打包的 Fandol 与 Libertinus 字体 |
-| `Chinese Template` | `ctexart`、章节式大标题、定理环境、练习与答案互链、附录和参考文献版式 |
-| `Chinese Template Project v2` | 本项目采用的 A4 酒红/金色章节层、中文定理环境、可点击目录、元数据署名和源图插入接口；模板目录见 `assets/templates/chinese-template-project-v2/` |
-
-三个模板均使用 XeLaTeX。Sage-Olive 所需字体已随仓库打包，不依赖系统字体。
-
-### 安装
-
-克隆到 Codex 技能目录：
+### 30 秒开始
 
 ```bash
 git clone https://github.com/lanyangyang1234x/skill.git \
   ~/.codex/skills/pdf-to-chinese-tex
 ```
 
-如果设置了 `CODEX_HOME`，可改用：
-
-```bash
-git clone https://github.com/lanyangyang1234x/skill.git \
-  "$CODEX_HOME/skills/pdf-to-chinese-tex"
-```
-
-重新启动 Codex 或打开一个新任务，使技能被重新发现。
-
-### 环境检查
-
-环境检查默认是只读、按需的，不会安装包、创建虚拟环境或加载 OCR。首次使用可先运行：
-
-```bash
-python3 scripts/preflight_environment.py
-```
-
-有 Markdown 时，临近编译再检查 XeLaTeX：
-
-```bash
-python3 scripts/preflight_environment.py --need-compile
-```
-
-没有可用 Markdown、需要检查 PDF 时，才检查 PyMuPDF；需要渲染页面时再加 `--need-render`：
-
-```bash
-python3 scripts/preflight_environment.py --need-pdf
-python3 scripts/preflight_environment.py --need-pdf --need-render
-```
-
-只有确认存在扫描页或乱码页后，才考虑 OCR。OCR 是可选安装，技能不会自动建立环境；安装前应先征得用户同意：
-
-```bash
-scripts/bootstrap_ocr_environment.sh
-python3 scripts/preflight_environment.py --require-ocr
-```
-
-图片裁切和透明度检查只需要 Pillow，不需要安装 PaddleOCR；如已有其他 Python 环境包含 Pillow，可设置 `PDF_TO_CHINESE_TEX_IMAGE_PYTHON` 复用它。
-
-### 使用方式
-
-在 Codex 中调用技能，例如：
+然后在 Codex 中调用：
 
 ```text
 使用 $pdf-to-chinese-tex 将这本数学 PDF 翻译成中文 LaTeX 和 PDF。
 ```
 
-技能首先要求选择模板，然后执行环境检查、源文件分析、术语与覆盖记录、翻译重建、编译以及视觉验收。
+技能会先让你选择模板，再按“源文件识别 → 术语/覆盖记录 → TeX 重建 → 编译 → 视觉验收”的顺序工作。若设置了 `CODEX_HOME`，把安装路径替换为 `$CODEX_HOME/skills/pdf-to-chinese-tex` 即可。
 
-如果同时提供 PDF 和 Markdown，先将 Markdown 的可靠内容分批转换到 TeX 并直接翻译/排版；这里的“直接”是编辑 TeX 表示，不是把 `#`、`**` 等 Markdown 标记原样留在 `.tex` 中。PDF 只对公式、图片、编号、大小写、版式和冲突处做定向核对。Markdown 默认只读，只有用户明确授权时才在原文件上写回。
+### 核心能力
 
-### 术语台账
+| 内容保真 | 图形保真 |
+| --- | --- |
+| 原始 PDF 优先；Markdown 只作可靠底稿 | 一模一样模式默认使用源像素锁定裁图 |
+| 保留编号、公式、交叉引用和大小写 | 困难交换图不手调 TikZ |
+
+| 过程可追溯 | 运行可控 |
+| --- | --- |
+| `terminology.tsv`、`source-coverage.tsv`、`figure-manifest.tsv` | 分批台账、非变异预检和模板验证 |
+| 源文件、裁图、翻译资产、发布资产分层 | SHA-256 锁定；二次 Python 运行不得覆盖已验证图 |
+
+### 模板
+
+| 模板 | 视觉与使用场景 |
+| --- | --- |
+| `Sage-Olive` | 随机风景封面、版权页、彩色数学环境、打包 Fandol/Libertinus 字体 |
+| `Chinese Template` | 传统 `ctexart` 章节版式、定理环境、练习与答案互链、附录和参考文献 |
+| `Chinese Template Project v2` | 本项目采用的 A4 酒红/金色章节层、中文定理环境、可点击目录、元数据署名和源图插入接口 |
+
+三个模板均使用 XeLaTeX；Project v2 的可复用文件位于 [`assets/templates/chinese-template-project-v2/`](assets/templates/chinese-template-project-v2/)。
+
+### 交换图：先保真，再谈重绘
+
+| 判定 | 规则 |
+| --- | --- |
+| 拓扑简单 | 直线、规则网格、无回环/曲线/遮挡；最多 4 个节点、6 条箭头。TikZ 仍需通过同尺寸视觉差异检查。 |
+| 几何困难 | 曲线、回环、平行重叠、对角线遮挡、长链、多层组合、超过阈值、立体/八面体/立方体语义；最终使用截图。 |
+| 用户要求“一模一样” | 源像素锁定裁图是默认最终表示；TikZ 只是候选，不是自动替代。 |
+
+详细判定、标签归属、混合策略和 Riehl 原书验证案例见 [`references/book-completion-and-figure-qa.md`](references/book-completion-and-figure-qa.md)。
+
+### 质量门
+
+- [ ] 源 PDF 已快照并校验 SHA-256、字节数和页数。
+- [ ] 源页覆盖、术语、公式/数学和图形台账已关闭。
+- [ ] 真实 TeX 交叉引用、编号和引用键通过检查。
+- [ ] 代表性正文、公式、图形页、末页和目录已与源 PDF 对照。
+- [ ] 透明图在非白背景和最终 PDF 中均无白底、光晕、裁切或缩放错误。
+- [ ] 发布资产哈希与 `figure_asset_lock.py` 记录一致。
+
+## 模板
+
+### Chinese Template Project v2
+
+这是本项目实际使用的可复用版式：A4、酒红/金色章节标题、中文定理层、可点击目录、练习—答案互链、元数据署名和源图物理宽度插入接口。模板本身不包含本书正文、图片、符号宏或参考文献。
+
+入口文件、编译脚本和说明位于 [`assets/templates/chinese-template-project-v2/`](assets/templates/chinese-template-project-v2/)，选择规则位于 [`references/chinese-template-project-v2.md`](references/chinese-template-project-v2.md)。
+
+## 常用命令
+
+<details>
+<summary>环境检查与编译</summary>
+
+```bash
+python3 scripts/preflight_environment.py
+python3 scripts/preflight_environment.py --need-compile
+python3 scripts/preflight_environment.py --need-pdf --need-render
+```
+
+只在确认扫描页或乱码页后考虑 OCR；图片裁切和透明度检查只需要 Pillow，不需要安装 PaddleOCR。
+
+</details>
+
+<details>
+<summary>术语、覆盖与图形台账</summary>
 
 ```bash
 python3 scripts/terminology_ledger.py terminology.tsv --init
 python3 scripts/terminology_ledger.py terminology.tsv --check
-python3 scripts/terminology_ledger.py terminology.tsv --audit SOURCE.md PROJECT_DIR
-```
 
-术语状态包括：
-
-- `verified`：已有可靠依据；
-- `provisional`：暂定译名，等待进一步核对；
-- `user-supplied`：由用户指定。
-
-正文第一次重要出现通常写作“中文（English）”，后续统一使用中文。人名保持原文拼写，例如 `Nakayama 引理`。
-
-### 长书与图片记录
-
-```bash
 python3 scripts/source_coverage_ledger.py source-coverage.tsv --init
 python3 scripts/source_coverage_ledger.py source-coverage.tsv \
   --check --first-page 1 --last-page 500
 
 python3 scripts/figure_manifest_ledger.py figure-manifest.tsv --init
-python3 scripts/figure_manifest_ledger.py figure-manifest.tsv \
-  --check --require-complete
+python3 scripts/figure_manifest_ledger.py figure-manifest.tsv --check --require-complete
+```
 
-# 记录并核对已晋级的图资产（每个发布资产使用唯一的 run-id/路径）
+</details>
+
+<details>
+<summary>不可覆盖的图资产流程</summary>
+
+```bash
 python3 scripts/figure_asset_lock.py record work/figure-lock.json \
   assets/exact/FIGURE.png work/source-renders/SOURCE_PAGE.png \
   --page 1 --dpi 600 --crop '[x0,y0,x1,y1]' \
   --method source-pixel-locked --run-id RUN_ID
+
 python3 scripts/figure_asset_lock.py check work/figure-lock.json
 ```
 
-### 项目验证
+源渲染、原始裁图、翻译/透明资产和 `assets/exact/` 发布资产必须分目录保存。裁图脚本遇到同名文件默认失败；重跑请使用新的 run 目录，不能从透明或已翻译衍生图再次裁剪。
+
+</details>
+
+<details>
+<summary>项目验证与长书批次</summary>
 
 ```bash
 # Sage-Olive
 scripts/validate_sage_project.sh PROJECT_DIR MAIN.tex
 
-# Chinese Template
+# Chinese Template / Project v2
 scripts/validate_chinese_template_project.sh PROJECT_DIR MAIN.tex
-```
 
-验证器会检查模板结构、术语台账、图片清单、引用和编译日志；存在图片时还会生成图片页联系表，供最终视觉检查。
-
-长书开始并行工作前先建立批次台账：
-
-```bash
 python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --init
 python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir PROJECT_DIR
 ```
 
-批次声明、重试和合并顺序见 `references/parallel-batch-workflow.md`。
+长书按 4–6 页或一个连贯小节分批；每批一个写者、目标文件互斥，公共台账由协调者合并。
 
-### 目录结构
+</details>
+
+### 仓库结构
 
 ```text
 .
@@ -154,7 +155,8 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 ├── agents/openai.yaml
 ├── assets/templates/
 │   ├── sage-olive-template/
-│   └── chinese-template/
+│   ├── chinese-template/
+│   └── chinese-template-project-v2/
 ├── references/
 └── scripts/
 ```
@@ -165,8 +167,11 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 - 不擅自总结、删节、改写或重排原文。
 - 不因模板限制而省略公式、证明、练习或图片。
 - 图片中的普通英文标签需要翻译；数学符号和不应翻译的人名保持原样。
-- OCR 结果只用于定位和初步转录；标题、作者、图注、标签和封面文字的大小写必须回看渲染后的源 PDF。
-- 编译成功不等于内容验收通过，最终仍需与原始 PDF 对照检查。
+- OCR 只用于定位和初步转录；标题、作者、图注、标签和封面大小写必须回看源 PDF。
+- 编译成功不等于内容验收通过。
+
+<details>
+<summary>English documentation</summary>
 
 ## English
 
@@ -174,142 +179,30 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 
 ### Highlights
 
-- Ask the user to choose `Sage-Olive`, `Chinese Template`, or `Chinese Template Project v2` at the start of every new translation task.
-- Use an associated Markdown transcription as the primary drafting input: convert its reliable content into TeX in coherent batches and translate/edit the TeX directly. Keep Markdown read-only by default, edit it in place only with explicit user authorization, and never create a duplicate translation file.
-- Treat the source PDF as authoritative and inspect or OCR only content that is missing, garbled, structurally ambiguous, or conflicting in Markdown.
-- Maintain `terminology.tsv` to enforce mathematical terminology and audit untranslated source terms or forbidden legacy translations.
-- Maintain `source-coverage.tsv` to detect missing, overlapping, out-of-order, or incomplete book coverage.
-- Maintain `figure-manifest.tsv` to track source bounds, display size, background handling, label translation, and final figure QA.
-- Use a deterministic TikZ-versus-crop rule for exchange diagrams; in exact-appearance mode, a source-pixel-locked crop is the default final representation and difficult geometry must not be hand-redrawn in TikZ.
-- Keep figure assets in separate immutable stages and reject silent overwrites; use `scripts/figure_asset_lock.py` to record and verify SHA-256 provenance before compilation and release.
-- Preserve the source capitalization of English titles, author names, captions, labels, and cover text; template small-caps styling must not leak into source-derived text.
+- Choose `Sage-Olive`, `Chinese Template`, or `Chinese Template Project v2` at the start of every new translation task.
+- Treat the rendered source PDF as authoritative; use Markdown as a read-only drafting scaffold when reliable.
+- Keep terminology, source-page coverage, figure provenance, and batch checkpoints in durable ledgers.
+- In exact-appearance mode, use source-pixel-locked crops by default; difficult exchange diagrams must not be hand-redrawn in TikZ.
+- Reject silent figure overwrites and verify promoted assets with SHA-256 before compilation and release.
 - Treat compilation success and source fidelity as separate acceptance gates.
 
 ### Templates
 
 | Template | Description |
 | --- | --- |
-| `Sage-Olive` | Random landscape cover, copyright page, colored mathematical environments, and bundled Fandol/Libertinus fonts |
-| `Chinese Template` | `ctexart`, chapter-style headings, theorem environments, linked exercises and answers, appendices, and bibliography layout |
-| `Chinese Template Project v2` | The A4 burgundy/gold chapter layer used by this project, Chinese theorem layer, clickable contents, metadata credit line, and source-relative figure insertion interface |
-
-All three templates compile with XeLaTeX. Sage-Olive bundles its required fonts and does not depend on system font installation.
-
-### Installation
-
-Clone the repository into the Codex skills directory:
-
-```bash
-git clone https://github.com/lanyangyang1234x/skill.git \
-  ~/.codex/skills/pdf-to-chinese-tex
-```
-
-If `CODEX_HOME` is configured, use:
-
-```bash
-git clone https://github.com/lanyangyang1234x/skill.git \
-  "$CODEX_HOME/skills/pdf-to-chinese-tex"
-```
-
-Restart Codex or open a new task so the skill can be rediscovered.
-
-### Environment check
-
-Environment checks are read-only and capability-based. They do not install packages, create a virtual environment, or load OCR by default:
-
-```bash
-python3 scripts/preflight_environment.py
-```
-
-For a Markdown-backed project, check XeLaTeX only when compilation is about to start:
-
-```bash
-python3 scripts/preflight_environment.py --need-compile
-```
-
-Without a usable Markdown scaffold, request PyMuPDF only when PDF inspection is needed, and add `--need-render` only for page rendering:
-
-```bash
-python3 scripts/preflight_environment.py --need-pdf
-python3 scripts/preflight_environment.py --need-pdf --need-render
-```
-
-OCR is optional and should be considered only after scanned or garbled pages are confirmed. The skill never bootstraps it automatically; ask for approval before installing:
-
-```bash
-scripts/bootstrap_ocr_environment.sh
-python3 scripts/preflight_environment.py --require-ocr
-```
-
-Figure cropping and alpha validation need Pillow, not PaddleOCR. Reuse an existing Pillow-capable Python with `PDF_TO_CHINESE_TEX_IMAGE_PYTHON` instead of installing the OCR environment for image-only work.
-
-### Usage
-
-Invoke the skill in Codex, for example:
-
-```text
-Use $pdf-to-chinese-tex to translate this mathematical PDF into Chinese LaTeX and PDF.
-```
-
-The skill first asks for a template choice, then performs environment checks, source analysis, terminology and coverage tracking, faithful reconstruction, compilation, and visual QA.
-
-When both a PDF and Markdown file are supplied, convert the reliable Markdown content into real TeX and edit that TeX directly in coherent batches; do not leave raw Markdown markers in the `.tex`. Use targeted PDF checks for formulas, figures, numbering, capitalization, layout, and conflicts. Keep Markdown read-only by default and edit it in place only with the user's explicit authorization.
-
-### Terminology ledger
-
-```bash
-python3 scripts/terminology_ledger.py terminology.tsv --init
-python3 scripts/terminology_ledger.py terminology.tsv --check
-python3 scripts/terminology_ledger.py terminology.tsv --audit SOURCE.md PROJECT_DIR
-```
-
-Supported statuses are `verified`, `provisional`, and `user-supplied`. At the first important occurrence, use `中文（English）`; use the Chinese term consistently afterward. Keep personal names in the source spelling, for example `Nakayama 引理`.
-
-### Book and figure ledgers
-
-```bash
-python3 scripts/source_coverage_ledger.py source-coverage.tsv --init
-python3 scripts/source_coverage_ledger.py source-coverage.tsv \
-  --check --first-page 1 --last-page 500
-
-python3 scripts/figure_manifest_ledger.py figure-manifest.tsv --init
-python3 scripts/figure_manifest_ledger.py figure-manifest.tsv \
-  --check --require-complete
-```
-
-### Project validation
-
-```bash
-# Sage-Olive
-scripts/validate_sage_project.sh PROJECT_DIR MAIN.tex
-
-# Chinese Template
-scripts/validate_chinese_template_project.sh PROJECT_DIR MAIN.tex
-```
-
-The validators check template structure, terminology, figure manifests, references, and build logs. Figure-bearing projects also receive rendered contact sheets for final visual inspection.
-
-### Repository layout
-
-```text
-.
-├── SKILL.md
-├── agents/openai.yaml
-├── assets/templates/
-│   ├── sage-olive-template/
-│   └── chinese-template/
-├── references/
-└── scripts/
-```
+| `Sage-Olive` | Random landscape cover, copyright page, colored mathematical environments, bundled Fandol/Libertinus fonts |
+| `Chinese Template` | `ctexart`, chapter-style headings, theorem environments, linked exercises and answers, appendices, bibliography |
+| `Chinese Template Project v2` | A4 burgundy/gold chapter layer, Chinese theorem layer, clickable contents, metadata credit line, source-relative figure insertion |
 
 ### Fidelity principles
 
 - Never use translated PDF text overlays as the final output.
 - Do not summarize, omit, modernize, or reorder source content.
-- Do not drop formulas, proofs, exercises, or figures to accommodate a template.
 - Translate ordinary English labels inside figures while preserving mathematical symbols and personal names when appropriate.
-- Treat OCR output as a locator, not a capitalization authority; verify prominent Latin text against the rendered source PDF.
-- A successful build is not sufficient; the final output must still be compared against the source PDF.
+- Treat OCR output as a locator, not a capitalization authority.
+- A successful build is not sufficient; compare the final output with the source PDF.
+
+</details>
 
 ## Third-party assets
 
