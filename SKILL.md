@@ -21,7 +21,7 @@ For `existing-project-audit`, inventory the existing entry TeX, chapter files, t
 
 ### Template Selection — First Action for New Projects
 
-- At the start of every new translation task, before inspecting the source, preprocessing it, or creating output files, ask the user to choose `Sage-Olive` or `Chinese Template`.
+- At the start of every new translation task, before inspecting the source, preprocessing it, or creating output files, ask the user to choose `Sage-Olive`, `Chinese Template`, or `Chinese Template Project v2`.
 - Always ask again for each new translation task; do not reuse an earlier task's choice or assume a standing preference.
 - Do not begin translation work until the user answers the template question.
 - Keep the selected template for the whole project unless the user asks to change it.
@@ -62,6 +62,7 @@ For book-length work, give progress checkpoints after each coherent batch. State
 - For `Sage-Olive`, register every selected random cover in the cross-project cover history. A reroll must exclude prior source URLs and image hashes; use a previously selected image again only when the user explicitly asks for that exact image.
 - For `Sage-Olive`, use dynamic running heads: the inner/left side shows the current `section` number and title, and the outer/right side shows the current `subsection` number and title. Keep the light-gray body-font treatment and thin rule below the header; never use a static book title or author as the running head.
 - For `Chinese Template`, preserve its `ctexart` chapter-title, contents, theorem, exercise/answer, appendix, bibliography, and title-page structure; keep `fontset=fandol` for portable compilation.
+- For `Chinese Template Project v2`, use `assets/templates/chinese-template-project-v2/` and read `references/chinese-template-project-v2.md`; preserve its A4 geometry, burgundy/gold chapter label, Chinese theorem layer, clickable contents, exercise/answer links, metadata credit line, and source-relative figure insertion interface. Do not copy project-specific source prose, figures, notation, or bibliography into the reusable template.
 - For `Chinese Template`, preserve clickable contents and cross-references, `MidnightBlue` internal/URL links, `BrickRed` bibliography links, borderless link text, exercise-to-answer links, proof-ending markers, and long-proof navigation when applicable.
 - Ensure front matter identifies the original title, author, edition/publication information, translator/editor, selected model/tool, and update/completion time; include a visible credit line equivalent to `本中文译本由{译者名}使用{模型名}完成。` and keep a deliberate visual gap before the first numbered chapter.
 - For source-cropped figures, preserve high resolution, transparent background, and source-relative displayed size; a visible white rectangle or undersized crop on the compiled page fails QA.
@@ -138,12 +139,13 @@ For `existing-project-audit` and substantial `targeted-audit` tasks, read [refer
 - `references/translation-and-layout-policy.md` for translation fidelity, authority priorities, cross-references, metadata, typography, hyperlink, terminology-index, and review requirements.
 - `references/sage-olive-template.md` when the user selects `Sage-Olive`.
 - `references/chinese-template.md` when the user selects `Chinese Template`.
+- `references/chinese-template-project-v2.md` when the user selects `Chinese Template Project v2`.
 - `references/book-completion-and-figure-qa.md` for books, long monographs, figure-heavy sources, or exact-appearance figure work.
 - `references/parallel-batch-workflow.md` for book-length work using multiple batches or agents.
 
 ## Workflow
 
-1. Ask the user to choose `Sage-Olive` or `Chinese Template`; do not inspect the source first.
+1. Ask the user to choose `Sage-Olive`, `Chinese Template`, or `Chinese Template Project v2`; do not inspect the source first.
 2. Ask for and confirm the translator/editor display name and model/tool display name; store both in the selected template's metadata fields and credit line.
 3. Check whether the task includes an associated Markdown file. If present, identify the exact file, read it as the primary drafting scaffold, and transfer its reliable content into the TeX project in coherent batches. Do not edit the Markdown unless the user explicitly authorizes that write. If multiple files are plausible, identify the file used for reference and record the ambiguity; ask only when it changes the source text to be edited.
 4. For book-length work, initialize `batch-checkpoints.tsv` and claim disjoint source-page/file batches before dispatching work. Read [references/parallel-batch-workflow.md](references/parallel-batch-workflow.md) before starting parallel work.

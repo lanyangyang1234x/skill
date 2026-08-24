@@ -8,7 +8,7 @@
 
 ### 主要特性
 
-- 每个新翻译任务开始时，先询问使用 `Sage-Olive` 还是 `Chinese Template`。
+- 每个新翻译任务开始时，先询问使用 `Sage-Olive`、`Chinese Template` 还是 `Chinese Template Project v2`。
 - 如果任务包含对应的 Markdown 文件，先把它作为主内容底稿转换到 TeX 中直接翻译和排版；Markdown 默认只读，只有用户明确授权时才回写原文件，不另建重复译稿。
 - 以原始 PDF 为最终依据；Markdown 中可靠的内容不重复提取，只对缺失、乱码、公式/图片疑点或冲突部分回原书核对、提取或 OCR。
 - 使用 `terminology.tsv` 统一数学术语，并审计英文残留和禁用旧译名。
@@ -26,8 +26,9 @@
 | --- | --- |
 | `Sage-Olive` | 随机风景封面、版权页、彩色数学环境、打包的 Fandol 与 Libertinus 字体 |
 | `Chinese Template` | `ctexart`、章节式大标题、定理环境、练习与答案互链、附录和参考文献版式 |
+| `Chinese Template Project v2` | 本项目采用的 A4 酒红/金色章节层、中文定理环境、可点击目录、元数据署名和源图插入接口；模板目录见 `assets/templates/chinese-template-project-v2/` |
 
-两个模板均使用 XeLaTeX。Sage-Olive 所需字体已随仓库打包，不依赖系统字体。
+三个模板均使用 XeLaTeX。Sage-Olive 所需字体已随仓库打包，不依赖系统字体。
 
 ### 安装
 
@@ -173,7 +174,7 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 
 ### Highlights
 
-- Ask the user to choose `Sage-Olive` or `Chinese Template` at the start of every new translation task.
+- Ask the user to choose `Sage-Olive`, `Chinese Template`, or `Chinese Template Project v2` at the start of every new translation task.
 - Use an associated Markdown transcription as the primary drafting input: convert its reliable content into TeX in coherent batches and translate/edit the TeX directly. Keep Markdown read-only by default, edit it in place only with explicit user authorization, and never create a duplicate translation file.
 - Treat the source PDF as authoritative and inspect or OCR only content that is missing, garbled, structurally ambiguous, or conflicting in Markdown.
 - Maintain `terminology.tsv` to enforce mathematical terminology and audit untranslated source terms or forbidden legacy translations.
@@ -190,8 +191,9 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 | --- | --- |
 | `Sage-Olive` | Random landscape cover, copyright page, colored mathematical environments, and bundled Fandol/Libertinus fonts |
 | `Chinese Template` | `ctexart`, chapter-style headings, theorem environments, linked exercises and answers, appendices, and bibliography layout |
+| `Chinese Template Project v2` | The A4 burgundy/gold chapter layer used by this project, Chinese theorem layer, clickable contents, metadata credit line, and source-relative figure insertion interface |
 
-Both templates compile with XeLaTeX. Sage-Olive bundles its required fonts and does not depend on system font installation.
+All three templates compile with XeLaTeX. Sage-Olive bundles its required fonts and does not depend on system font installation.
 
 ### Installation
 

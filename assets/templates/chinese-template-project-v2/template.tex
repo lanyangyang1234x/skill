@@ -1,0 +1,216 @@
+\documentclass[UTF8,12pt,fontset=fandol]{ctexart}
+
+% Project v2: portable A4 Chinese mathematical layout.
+\usepackage[paper=a4paper,left=2.5cm,right=2.5cm,top=2.8cm,bottom=2.8cm]{geometry}
+\usepackage{fontspec,xeCJK}
+\usepackage{amsmath,amsthm,amssymb,mathrsfs,mathtools}
+\usepackage{graphicx,titlesec,array,enumitem,tabularx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[
+  colorlinks=true,
+  linkcolor=MidnightBlue,
+  citecolor=BrickRed,
+  urlcolor=MidnightBlue,
+  linktoc=all,
+  hypertexnames=false
+]{hyperref}
+
+\definecolor{mtburgundy}{HTML}{7A1F3D}
+\definecolor{mtgold}{HTML}{C49A2A}
+\definecolor{mtink}{HTML}{252433}
+\definecolor{mtpaper}{HTML}{FBF8F1}
+
+% These fallbacks keep the template portable.  A project may replace them
+% with bundled CM Unicode files when exact Latin glyph matching is required.
+\IfFontExistsTF{Latin Modern Roman}{\setmainfont{Latin Modern Roman}}{}
+\IfFontExistsTF{FandolSong-Regular}{\setCJKmainfont{FandolSong-Regular}}{}
+\IfFontExistsTF{FandolHei-Regular}{\setCJKsansfont{FandolHei-Regular}}{}
+\pagestyle{plain}
+
+% Replace these values after the user confirms the project metadata.
+\newcommand{\OriginalTitle}{原文标题}
+\newcommand{\OriginalAuthor}{原文作者}
+\newcommand{\TranslationEditor}{译者姓名}
+\newcommand{\TranslationTool}{GPT-5.6 Sol（高）}
+\newcommand{\CompletionDate}{完成日期}
+\newcommand{\TranslationCreditLine}{本中文译本由\TranslationEditor 使用 \TranslationTool 完成。}
+
+% Chinese theorem and proof layer.
+\theoremstyle{plain}
+\newtheorem{definition}{定义}[section]
+\newtheorem{remark}[definition]{注}
+\newtheorem{example}[definition]{例}
+\newtheorem{fact}[definition]{事实}
+\newtheorem{caution}[definition]{注意}
+\newtheorem{lemma}[definition]{引理}
+\newtheorem{proposition}[definition]{命题}
+\newtheorem{corollary}[definition]{推论}
+\newtheorem{claim}[definition]{断言}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{condition}[definition]{条件}
+\newtheorem{problem}[definition]{问题}
+
+\providecommand{\sectionautorefname}{第}
+\providecommand{\subsectionautorefname}{小节}
+\providecommand{\definitionautorefname}{定义}
+\providecommand{\remarkautorefname}{注}
+\providecommand{\exampleautorefname}{例}
+\providecommand{\factautorefname}{事实}
+\providecommand{\cautionautorefname}{注意}
+\providecommand{\lemmaautorefname}{引理}
+\providecommand{\propositionautorefname}{命题}
+\providecommand{\corollaryautorefname}{推论}
+\providecommand{\claimautorefname}{断言}
+\providecommand{\theoremautorefname}{定理}
+\providecommand{\conditionautorefname}{条件}
+\providecommand{\problemautorefname}{问题}
+
+\makeatletter
+\renewcommand{\proofname}{\textbf{证明}}
+\renewenvironment{proof}[1][\proofname]{\par
+  \pushQED{\qed}%
+  \normalfont
+  \topsep6\p@\@plus6\p@\relax
+  \trivlist
+  \item[\hskip\labelsep\normalfont\bfseries#1\@addpunct{.}]\ignorespaces
+}{\popQED\endtrivlist\@endpefalse}
+\makeatother
+\renewcommand{\qedsymbol}{\ensuremath{\square}}
+
+% Chapter-style section headings and clickable contents.
+\newlength{\chapterNumSpace}
+\setlength{\chapterNumSpace}{1.4cm}
+\newif\ifInAppendix
+\InAppendixfalse
+\newif\ifInAppendixToc
+\InAppendixTocfalse
+\newlength{\tocSectionLabelWidth}
+\setlength{\tocSectionLabelWidth}{4.2em}
+\newlength{\tocAppendixGap}
+\setlength{\tocAppendixGap}{0.2em}
+\newlength{\tocSubIndent}
+\setlength{\tocSubIndent}{1.2em}
+\newlength{\tocSubNumWidth}
+\setlength{\tocSubNumWidth}{3.0em}
+\newcommand{\TocSectionNumber}[1]{%
+  \ifInAppendixToc 附录\hspace{\tocAppendixGap}#1%
+  \else 第~#1~章\fi}
+\makeatletter
+\renewcommand*\l@section[2]{%
+  \ifnum\c@tocdepth>\z@
+    \addvspace{0.55em}%
+    \begingroup
+      \parindent\z@\rightskip\@pnumwidth\parfillskip-\@pnumwidth
+      \leavevmode\bfseries
+      \setlength{\@tempdima}{\tocSectionLabelWidth}%
+      \advance\leftskip\@tempdima\hskip-\leftskip
+      \def\numberline##1{\makebox[\@tempdima][l]{\TocSectionNumber{##1}}}%
+      #1\nobreak\hfill\nobreak\makebox[\@pnumwidth][r]{#2}\par
+    \endgroup
+  \fi
+}
+\renewcommand*\l@subsection{\@dottedtocline{2}{\tocSubIndent}{\tocSubNumWidth}}
+\makeatother
+\let\OriginalAppendix\appendix
+\renewcommand{\appendix}{%
+  \OriginalAppendix\InAppendixtrue
+  \addtocontents{toc}{\protect\InAppendixToctrue}%
+}
+\newcommand{\ChapterSectionLabel}{%
+  \thispagestyle{plain}%
+  \vspace*{-0.5cm}%
+  \makebox[\textwidth][r]{%
+    {\fontsize{18pt}{18pt}\selectfont\scshape
+      \ifInAppendix Appendix\else Chapter\fi}\enspace
+    {\fontsize{62pt}{62pt}\selectfont\bfseries\thesection}}%
+  \par\vspace{-0.25cm}%
+  \noindent\rule{\dimexpr\textwidth-\chapterNumSpace\relax}{0.45pt}%
+}
+\titleformat{\section}[display]
+  {\normalfont}{\ChapterSectionLabel}{0cm}
+  {\raggedleft\rightskip=\chapterNumSpace\fontsize{30pt}{35pt}\selectfont\bfseries}
+  [\vspace{0.3cm}]
+\newcommand{\sectionbreak}{\clearpage}
+\titleformat{name=\section,numberless}[block]
+  {\normalfont\Large\bfseries\centering}{}{0pt}{}
+\titlespacing{\section}{0pt}{0pt}{0pt}
+\ctexset{subsection={format=\large\bfseries}}
+
+% Exercise/answer links.
+\newcounter{exercise}[subsection]
+\renewcommand{\theexercise}{\thesubsection.\arabic{exercise}}
+\newcounter{answeritem}
+\makeatletter
+\newcommand{\maybehyperref}[2]{\@ifundefined{r@#1}{#2}{\hyperref[#1]{#2}}}
+\newcommand{\exercise@item}{%
+  \par\smallskip\refstepcounter{exercise}%
+  \edef\exercise@number{\theexercise}%
+  \edef\exercise@label{exe:\exercise@number}%
+  \edef\exercise@answerlabel{ans:\exercise@number}%
+  \expandafter\label\expandafter{\exercise@label}%
+  \noindent\maybehyperref{\exercise@answerlabel}{\textbf{\theexercise.}}\quad\ignorespaces}
+\newenvironment{exercises}{%
+  \par\medskip\noindent{\large\bfseries 习题}\par\smallskip
+  \begingroup\setlength{\parindent}{0pt}\renewcommand{\item}{\exercise@item}%
+}{\par\endgroup\medskip}
+\newcommand{\answer@item}{%
+  \par\smallskip\stepcounter{answeritem}%
+  \edef\answer@number{\answer@prefix.\arabic{answeritem}}%
+  \edef\answer@label{ans:\answer@number}%
+  \edef\answer@exerciselabel{exe:\answer@number}%
+  \phantomsection\protected@edef\@currentlabel{\answer@number}%
+  \expandafter\label\expandafter{\answer@label}%
+  \noindent\maybehyperref{\answer@exerciselabel}{\textbf{\answer@number.}}\quad\ignorespaces}
+\newenvironment{answers}[1]{%
+  \par\medskip\def\answer@prefix{#1}\setcounter{answeritem}{0}%
+  \begingroup\setlength{\parindent}{0pt}\renewcommand{\item}{\answer@item}%
+}{\par\endgroup\medskip}
+\makeatother
+
+% General source-figure insertion interface.  Width must be measured from the
+% source page; the template never silently rescales a figure to \linewidth.
+\newcommand{\SourceFigure}[2]{% #1 = physical width, #2 = asset path
+  \begin{center}\includegraphics[width=#1]{#2}\end{center}}
+
+\setlist[enumerate]{itemsep=0.28em,topsep=0.35em,leftmargin=2.3em}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0pt}
+\setlength{\emergencystretch}{2em}
+\linespread{1.16}
+
+\begin{document}
+\begin{titlepage}
+  \thispagestyle{empty}\pagecolor{mtpaper}
+  \color{mtburgundy}\rule{\textwidth}{1.2pt}\\[0.1cm]
+  \color{mtgold}\rule{\textwidth}{0.8pt}\\[1.5cm]
+  \begin{center}
+    {\color{mtburgundy}\fontsize{27pt}{34pt}\selectfont\bfseries
+      \OriginalTitle\par}
+    \vspace{0.8cm}
+    {\color{mtink}\fontsize{12pt}{16pt}\selectfont\normalfont\upshape
+      \OriginalAuthor\par}
+  \end{center}
+  \vfill
+  \noindent{\color{mtink}\small\TranslationCreditLine\par}
+  {\color{mtink}\small 完成日期：\CompletionDate\par}
+\end{titlepage}
+\pagecolor{white}
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+% Replace this placeholder with the translated sections.
+\section{示例章节}
+这是 Project v2 模板的占位正文。请将翻译内容拆分到章节文件后再用
+\verb|\input| 引入，并按源 PDF 的物理宽度插入经过验证的图资产。
+
+\begin{definition}
+这是一个中文定理环境示例。
+\end{definition}
+
+\begin{proof}
+这是证明环境示例。
+\end{proof}
+
+\end{document}
