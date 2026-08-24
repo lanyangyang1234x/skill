@@ -49,10 +49,9 @@ git clone https://github.com/lanyangyang1234x/skill.git \
 | 模板 | 视觉与使用场景 |
 | --- | --- |
 | `Sage-Olive` | 随机风景封面、版权页、彩色数学环境、打包 Fandol/Libertinus 字体 |
-| `Chinese Template` | 传统 `ctexart` 章节版式、定理环境、练习与答案互链、附录和参考文献 |
 | `Chinese Template Project v2` | 本项目采用的 A4 酒红/金色章节层、中文定理环境、可点击目录、元数据署名和源图插入接口 |
 
-三个模板均使用 XeLaTeX；Project v2 的可复用文件位于 [`assets/templates/chinese-template-project-v2/`](assets/templates/chinese-template-project-v2/)。
+两个模板均使用 XeLaTeX；Project v2 的可复用文件位于 [`assets/templates/chinese-template-project-v2/`](assets/templates/chinese-template-project-v2/)。
 
 ### 交换图：先保真，再谈重绘
 
@@ -136,7 +135,7 @@ python3 scripts/figure_asset_lock.py check work/figure-lock.json
 # Sage-Olive
 scripts/validate_sage_project.sh PROJECT_DIR MAIN.tex
 
-# Chinese Template / Project v2
+# Chinese Template Project v2
 scripts/validate_chinese_template_project.sh PROJECT_DIR MAIN.tex
 
 python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --init
@@ -155,7 +154,6 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 ├── agents/openai.yaml
 ├── assets/templates/
 │   ├── sage-olive-template/
-│   ├── chinese-template/
 │   └── chinese-template-project-v2/
 ├── references/
 └── scripts/
@@ -179,7 +177,7 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 
 ### Highlights
 
-- Choose `Sage-Olive`, `Chinese Template`, or `Chinese Template Project v2` at the start of every new translation task.
+- Choose `Sage-Olive` or `Chinese Template Project v2` at the start of every new translation task.
 - Treat the rendered source PDF as authoritative; use Markdown as a read-only drafting scaffold when reliable.
 - Keep terminology, source-page coverage, figure provenance, and batch checkpoints in durable ledgers.
 - In exact-appearance mode, use source-pixel-locked crops by default; difficult exchange diagrams must not be hand-redrawn in TikZ.
@@ -191,7 +189,6 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 | Template | Description |
 | --- | --- |
 | `Sage-Olive` | Random landscape cover, copyright page, colored mathematical environments, bundled Fandol/Libertinus fonts |
-| `Chinese Template` | `ctexart`, chapter-style headings, theorem environments, linked exercises and answers, appendices, bibliography |
 | `Chinese Template Project v2` | A4 burgundy/gold chapter layer, Chinese theorem layer, clickable contents, metadata credit line, source-relative figure insertion |
 
 ### Fidelity principles

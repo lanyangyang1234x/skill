@@ -86,7 +86,7 @@ cover's lower-right publisher block, add a translator line such as “译者 翻
 重排”; keep it visibly smaller than the main title but slightly larger than
 the surrounding publisher metadata.
 
-For `Chinese Template`, prefer the bundled template's Chinese body font for
+For `Chinese Template Project v2`, prefer the bundled template's Chinese body font for
 正文, its theorem-style font for definition/theorem labels, and a serif
 computer-modern-compatible font for English mathematical text. Use Kai-style
 emphasis for Chinese specialist terms only when the template already supports
@@ -100,7 +100,7 @@ before the first numbered chapter rather than compressing the transition.
 
 ## Hyperlinks and Template Features
 
-For `Chinese Template`, preserve the template's link behavior:
+For `Chinese Template Project v2`, preserve the template's link behavior:
 
 - internal links and table-of-contents entries use `MidnightBlue`;
 - bibliography links use `BrickRed`;

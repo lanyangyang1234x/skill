@@ -20,7 +20,7 @@ script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 for required in "$main_tex" compile.sh .latexmkrc terminology.tsv; do
   if [[ ! -e "$project_dir/$required" ]]; then
-    printf 'Missing required Chinese Template resource: %s\n' "$required" >&2
+    printf 'Missing required Chinese Template Project v2 resource: %s\n' "$required" >&2
     exit 1
   fi
 done
@@ -28,16 +28,16 @@ done
 main_path="$project_dir/$main_tex"
 
 if ! grep -Fq '\documentclass[UTF8,12pt,fontset=fandol]{ctexart}' "$main_path"; then
-  printf 'Chinese Template must keep the portable ctexart Fandol font setting.\n' >&2
+  printf 'Chinese Template Project v2 must keep the portable ctexart Fandol font setting.\n' >&2
   exit 1
 fi
 
 if grep -Eq '\\newcommand\{\\Translation(Editor|Tool)\}\{(译者姓名|使用模型或工具)\}' "$main_path"; then
-  printf 'Chinese Template translator/tool metadata placeholders remain in: %s\n' "$project_dir/$main_tex" >&2
+  printf 'Chinese Template Project v2 translator/tool metadata placeholders remain in: %s\n' "$project_dir/$main_tex" >&2
   exit 1
 fi
 if ! grep -Fq '\TranslationCreditLine' "$main_path"; then
-  printf 'Chinese Template must keep a visible translation credit line.\n' >&2
+  printf 'Chinese Template Project v2 must keep a visible translation credit line.\n' >&2
   exit 1
 fi
 
@@ -49,7 +49,7 @@ required_tokens=(
 )
 for token in "${required_tokens[@]}"; do
   if ! grep -Fq "$token" "$main_path"; then
-    printf 'Required Chinese Template structure is missing: %s\n' "$token" >&2
+    printf 'Required Chinese Template Project v2 structure is missing: %s\n' "$token" >&2
     exit 1
   fi
 done
@@ -57,7 +57,7 @@ done
 sample_tokens=('你好，我是' 'Based on personal study and' 'Notes on Mathematical Studies' 'NOTES ON MATHEMATICAL STUDIES' '\\textsc{Yi Wang}')
 for token in "${sample_tokens[@]}"; do
   if grep -Fq "$token" "$main_path"; then
-    printf 'Chinese Template sample content remains in %s: %s\n' "$main_tex" "$token" >&2
+    printf 'Chinese Template Project v2 sample content remains in %s: %s\n' "$main_tex" "$token" >&2
     exit 1
   fi
 done
