@@ -30,7 +30,8 @@ Initialize `terminology.tsv` before validation. If the project contains any rast
 - `\addfontfeatures{LetterSpace=5}` on the Sage-Olive cover changes tracking only; it must not be treated as permission to change letter case. Do not put `\SageEnglishTitle` or other source-derived metadata inside `\textsc`/`\scshape`.
 - Set `\SageChineseEditor` to the translator/editor display name and `\SageProductionTool` to the model/tool display name collected at task initialization. Keep the resulting copyright credit line visible; do not silently retain the sample values.
 - Put the human contributor in `\SageChineseEditor` and the tool in `\SageProductionTool`; never use Codex or a vendor name as the human contributor.
-- Run `python3 fetch_random_cover.py` once after copying the template for every new task. Keep the downloaded cover stable unless the user asks to reroll it.
+- Run `python3 fetch_random_cover.py` once after copying the template for every new task. It records the source URL and image hash in the cross-project history at `~/.codex/pdf-to-chinese-tex-cover-history.json` (override with `PDF_TO_CHINESE_TEX_COVER_HISTORY`). Keep the downloaded cover stable unless the user asks to reroll it; rerolls exclude prior sources and hashes.
+- If the execution sandbox blocks that history path, request write access only for the history file (and its parent when the file does not yet exist), then rerun the command. Do not switch to an unshared project-local history merely to bypass approval, because that would permit cross-project cover reuse.
 - Do not omit `\MakeSageCover`, replace it with a local fallback, or claim completion without `assets/cover/selected-cover.*` and `assets/cover/cover-source.json`.
 - Use `\MakeSageCover`, then `\MakeSageCopyright`, then usually `\MakeSageContents`.
 - Keep the copyright page immediately after the cover and before contents.
@@ -43,6 +44,6 @@ Initialize `terminology.tsv` before validation. If the project contains any rast
 
 ## Build
 
-Use the bundled `compile.sh`. It runs XeLaTeX once, runs `makeindex` if `.idx` is nonempty, then runs XeLaTeX twice more. The project validator also checks and audits terminology, validates the figure manifest when figures exist, and renders figure-page contact sheets.
+Use the bundled `compile.sh` for ordinary drafts. For final validation, run `scripts/validate_sage_project.sh PROJECT MAIN.tex [--keep-aux]`; it audits terminology and bibliography mechanics, verifies the source manifest when present, compiles three times, preserves a JSON validation report, validates the figure manifest when figures exist, and renders figure-page contact sheets.
 
 Inspect the cover, copyright page, contents when present, representative text/formula pages, any figure pages, and the final page.

@@ -96,6 +96,14 @@ def main() -> None:
     parser.add_argument("right", type=int)
     parser.add_argument("bottom", type=int)
     parser.add_argument(
+        "--force",
+        action="store_true",
+        help=(
+            "Allow replacing an existing output. Use only for an explicitly "
+            "versioned, unverified run; never use this on a promoted release asset."
+        ),
+    )
+    parser.add_argument(
         "--dpi",
         type=int,
         default=540,
@@ -191,6 +199,12 @@ def main() -> None:
     if args.trim_visible:
         crop = trim_to_visible(crop, args.padding, output_background)
 
+    if args.output.exists() and not args.force:
+        raise SystemExit(
+            f"Refusing to overwrite existing crop: {args.output}. "
+            "Write to a new run directory or pass --force only for an explicit "
+            "versioned regeneration."
+        )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     crop.save(args.output, format="PNG", dpi=(args.dpi, args.dpi), optimize=True)
 

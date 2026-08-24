@@ -15,6 +15,12 @@ Run independent passes for:
 3. mathematics: compare formulas structurally (domains, signs, limits, indices, hypotheses, constants, norms, vectors/matrices, and numbering) and record key checks in `formula-ledger.tsv` or `math-audit.md`;
 4. layout: record title page, copyright page, contents, chapter openings, later-chapter running heads, odd/even pages, long formulas, figures, missing glyphs, blank pages, final page, and backmatter in `visual-qa.md`.
 
+For books, split coverage at least by chapter or comparable coherent source block. A single verified row spanning the entire body is insufficient evidence even when every page number is technically covered. Use `--max-verified-span` with a limit justified by the source structure.
+
+For bibliography work, read [audit-evidence-and-release.md](audit-evidence-and-release.md). Compare entry count, order, and content per source scope; then separately audit TeX keys, contents entries, rendered numbering, and final PDF link destinations.
+
+When a book is split across workers, also read [parallel-batch-workflow.md](parallel-batch-workflow.md). Keep one writer per target file, merge shared ledgers in source order through the coordinator, and use the batch checkpoint ledger to prevent duplicate retries.
+
 Do not treat compilation success as proof of mathematical fidelity. Fix undefined or wrong references first; label ordinary hard-coded historical or illustrative numbers as lower-risk rather than mass-rewriting every number. Treat visible clipping or collisions as high-risk overflow; a harmless mathematical edge warning may be documented as low risk.
 
 ## PDF visual gate
@@ -30,7 +36,7 @@ Before delivery:
 3. complete the coverage and audit ledgers;
 4. rename or copy user-facing artifacts to one canonical filesystem-safe stem derived from the translated Chinese title;
 5. ensure PDF, optional top-level TeX, ZIP, report, and output directory share that stem; internal `main.tex` is acceptable only as a private build entry;
-6. rebuild and integrity-check the ZIP;
+6. build the UTF-8 release with `scripts/package_release.py` and pass its archive round-trip checks;
 7. report the title stem, template, metadata, actual edits, read-only references, checks performed, skipped checks and reasons, final PDF page count, and artifact paths.
 
 Do not deliver stale `main.pdf`, `main.zip`, or similarly generic files as the release artifacts.

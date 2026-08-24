@@ -14,8 +14,11 @@
 - 使用 `terminology.tsv` 统一数学术语，并审计英文残留和禁用旧译名。
 - 使用 `source-coverage.tsv` 检查长书的漏页、重叠页、乱序范围和未完成条目。
 - 使用 `figure-manifest.tsv` 跟踪图片来源、裁切、尺寸、背景、标签翻译和最终验收状态。
+- 交换图采用确定性的 TikZ/截图判定；在“一模一样”模式下源像素锁定裁图是默认最终表示，困难几何禁止手调 TikZ。
+- 图资产分层保存并拒绝静默覆盖；用 `scripts/figure_asset_lock.py` 记录/核对源与发布资产的 SHA-256，防止二次 Python 运行替换正确截图。
 - 保留源 PDF 中英文标题、作者、图注、标签和封面文字的原始大小写；模板的小型大写样式不应泄漏到源文本。
 - 将“能否编译”与“是否忠于原文”作为两项独立的质量检查。
+- 长书可按源页分批并行：每批只有一个写者，公共台账由主代理合并；用 `batch-checkpoints.tsv` 防止重复派发和无证据重试。并行只减少重复工作，不降低数学、术语和版面验收门槛。
 
 ### 模板
 
@@ -112,6 +115,13 @@ python3 scripts/source_coverage_ledger.py source-coverage.tsv \
 python3 scripts/figure_manifest_ledger.py figure-manifest.tsv --init
 python3 scripts/figure_manifest_ledger.py figure-manifest.tsv \
   --check --require-complete
+
+# 记录并核对已晋级的图资产（每个发布资产使用唯一的 run-id/路径）
+python3 scripts/figure_asset_lock.py record work/figure-lock.json \
+  assets/exact/FIGURE.png work/source-renders/SOURCE_PAGE.png \
+  --page 1 --dpi 600 --crop '[x0,y0,x1,y1]' \
+  --method source-pixel-locked --run-id RUN_ID
+python3 scripts/figure_asset_lock.py check work/figure-lock.json
 ```
 
 ### 项目验证
@@ -125,6 +135,15 @@ scripts/validate_chinese_template_project.sh PROJECT_DIR MAIN.tex
 ```
 
 验证器会检查模板结构、术语台账、图片清单、引用和编译日志；存在图片时还会生成图片页联系表，供最终视觉检查。
+
+长书开始并行工作前先建立批次台账：
+
+```bash
+python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --init
+python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir PROJECT_DIR
+```
+
+批次声明、重试和合并顺序见 `references/parallel-batch-workflow.md`。
 
 ### 目录结构
 
@@ -160,6 +179,8 @@ scripts/validate_chinese_template_project.sh PROJECT_DIR MAIN.tex
 - Maintain `terminology.tsv` to enforce mathematical terminology and audit untranslated source terms or forbidden legacy translations.
 - Maintain `source-coverage.tsv` to detect missing, overlapping, out-of-order, or incomplete book coverage.
 - Maintain `figure-manifest.tsv` to track source bounds, display size, background handling, label translation, and final figure QA.
+- Use a deterministic TikZ-versus-crop rule for exchange diagrams; in exact-appearance mode, a source-pixel-locked crop is the default final representation and difficult geometry must not be hand-redrawn in TikZ.
+- Keep figure assets in separate immutable stages and reject silent overwrites; use `scripts/figure_asset_lock.py` to record and verify SHA-256 provenance before compilation and release.
 - Preserve the source capitalization of English titles, author names, captions, labels, and cover text; template small-caps styling must not leak into source-derived text.
 - Treat compilation success and source fidelity as separate acceptance gates.
 

@@ -4,11 +4,14 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
 import secrets
 import sys
 import urllib.parse
 import urllib.request
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -23,7 +26,8 @@ DEFAULT_CATEGORIES = (
     "Featured pictures of watercourses",
     "Featured pictures of volcanoes",
 )
-USER_AGENT = "pdf-to-chinese-tex/2.0 (random Sage-Olive cover)"
+USER_AGENT = "pdf-to-chinese-tex/2.1 (random Sage-Olive cover)"
+DEFAULT_HISTORY = Path("~/.codex/pdf-to-chinese-tex-cover-history.json")
 
 
 def request_json(parameters: dict[str, str]) -> dict[str, Any]:
@@ -95,14 +99,22 @@ def collect_candidates(category: str) -> list[dict[str, Any]]:
     return candidates
 
 
-def choose_candidate(categories: list[str]) -> dict[str, Any]:
+def source_id(candidate: dict[str, Any]) -> str:
+    return str(candidate.get("description_url") or candidate.get("title") or "").strip()
+
+
+def choose_candidate(categories: list[str], used_sources: set[str]) -> dict[str, Any]:
     shuffled = list(categories)
     secrets.SystemRandom().shuffle(shuffled)
     candidates: list[dict[str, Any]] = []
     scanned: list[str] = []
     for category in shuffled:
         scanned.append(category)
-        candidates.extend(collect_candidates(category))
+        candidates.extend(
+            candidate
+            for candidate in collect_candidates(category)
+            if source_id(candidate) not in used_sources
+        )
         # Avoid a nominally random one-image pool while keeping API traffic low.
         if len(candidates) >= 8:
             break
@@ -115,6 +127,56 @@ def choose_candidate(categories: list[str]) -> dict[str, Any]:
     selected["candidate_pool_size"] = len(candidates)
     selected["categories_scanned"] = scanned
     return selected
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def load_history(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {"schema_version": 1, "entries": []}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if data.get("schema_version") != 1 or not isinstance(data.get("entries"), list):
+        raise RuntimeError(f"Unsupported cover history format: {path}")
+    return data
+
+
+def register_history(
+    history_path: Path,
+    history: dict[str, Any],
+    candidate: dict[str, Any],
+    digest: str,
+    project_dir: Path,
+) -> None:
+    entries = history["entries"]
+    candidate_source = source_id(candidate)
+    if any(
+        entry.get("sha256") == digest
+        or (candidate_source and entry.get("source_id") == candidate_source)
+        for entry in entries
+    ):
+        return
+    entries.append(
+        {
+            "source_id": candidate_source,
+            "title": candidate.get("title"),
+            "description_url": candidate.get("description_url"),
+            "sha256": digest,
+            "selected_at_utc": datetime.now(timezone.utc).isoformat(),
+            "project_name": project_dir.name,
+        }
+    )
+    history_path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = history_path.with_name(f".{history_path.name}.tmp")
+    temporary.write_text(
+        json.dumps(history, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    temporary.replace(history_path)
 
 
 def download(candidate: dict[str, Any], destination: Path) -> tuple[Path, Path]:
@@ -139,27 +201,64 @@ def parse_args() -> argparse.Namespace:
         help="Commons category to use; repeat to combine categories",
     )
     parser.add_argument("--force", action="store_true", help="Replace the current project's cover")
+    parser.add_argument(
+        "--history-file",
+        type=Path,
+        help="Cross-project cover history (default: PDF_TO_CHINESE_TEX_COVER_HISTORY or ~/.codex/pdf-to-chinese-tex-cover-history.json)",
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     project_dir = args.project_dir.expanduser().resolve()
+    configured_history = args.history_file or Path(
+        os.environ.get("PDF_TO_CHINESE_TEX_COVER_HISTORY", str(DEFAULT_HISTORY))
+    )
+    history_path = configured_history.expanduser().resolve()
+    try:
+        history = load_history(history_path)
+    except Exception as exc:
+        print(f"Unable to read cover history {history_path}: {exc}", file=sys.stderr)
+        return 1
+    used_sources = {str(entry.get("source_id") or "") for entry in history["entries"]}
+    used_hashes = {str(entry.get("sha256") or "") for entry in history["entries"]}
     cover_dir = project_dir / "assets/cover"
     source_record = cover_dir / "cover-source.json"
     existing = [path for path in (cover_dir / "selected-cover.jpg", cover_dir / "selected-cover.png") if path.is_file()]
     if existing and not args.force:
+        try:
+            if not source_record.is_file():
+                raise RuntimeError(f"existing cover has no source record: {source_record}")
+            candidate = json.loads(source_record.read_text(encoding="utf-8"))
+            digest = file_sha256(existing[0])
+            register_history(history_path, history, candidate, digest, project_dir)
+        except Exception as exc:
+            print(f"Unable to register the existing cover in {history_path}: {exc}", file=sys.stderr)
+            return 1
         print(f"Online cover already selected: {existing[0]}")
+        print(f"Cover history: {history_path}")
         return 0
 
     cover_dir.mkdir(parents=True, exist_ok=True)
     try:
-        candidate = choose_candidate(args.category or list(DEFAULT_CATEGORIES))
-        temporary, output = download(candidate, cover_dir)
+        for _ in range(6):
+            candidate = choose_candidate(args.category or list(DEFAULT_CATEGORIES), used_sources)
+            temporary, output = download(candidate, cover_dir)
+            digest = file_sha256(temporary)
+            if digest not in used_hashes:
+                break
+            temporary.unlink(missing_ok=True)
+            used_sources.add(source_id(candidate))
+        else:
+            raise RuntimeError("Unable to find a cover not already present in the cover history")
+        register_history(history_path, history, candidate, digest, project_dir)
         for old_cover in existing:
             old_cover.unlink()
         temporary.replace(output)
         candidate["local_file"] = output.name
+        candidate["sha256"] = digest
+        candidate["history_registered"] = True
         source_record.write_text(json.dumps(candidate, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     except Exception as exc:
         for temporary in cover_dir.glob(".selected-cover-download.*"):
@@ -169,6 +268,7 @@ def main() -> int:
 
     print(f"Selected online cover: {candidate['title']} -> {output}")
     print(f"Source record: {source_record}")
+    print(f"Cover history: {history_path}")
     return 0
 
 

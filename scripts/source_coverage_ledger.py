@@ -31,7 +31,12 @@ def initialize(path: Path) -> None:
     print(f"Initialized: {path}")
 
 
-def validate(path: Path, first_page: Optional[int], last_page: Optional[int]) -> None:
+def validate(
+    path: Path,
+    first_page: Optional[int],
+    last_page: Optional[int],
+    max_verified_span: Optional[int],
+) -> None:
     if not path.is_file():
         raise SystemExit(f"Ledger not found: {path}")
     if (first_page is None) != (last_page is None):
@@ -92,6 +97,15 @@ def validate(path: Path, first_page: Optional[int], last_page: Optional[int]) ->
             errors.append(f"{prefix}: incomplete status {status!r}")
         elif status == "excluded" and not row["notes"].strip():
             errors.append(f"{prefix}: excluded rows require an explanation in notes")
+        elif (
+            status == "verified"
+            and max_verified_span is not None
+            and end - start + 1 > max_verified_span
+        ):
+            errors.append(
+                f"{prefix}: verified range {start}-{end} spans {end - start + 1} pages; "
+                f"maximum allowed is {max_verified_span}"
+            )
 
         if status in {"verified", "excluded"} and end >= start:
             for page in range(start, end + 1):
@@ -146,14 +160,30 @@ def main() -> None:
     mode.add_argument("--check", action="store_true")
     parser.add_argument("--first-page", type=int)
     parser.add_argument("--last-page", type=int)
+    parser.add_argument(
+        "--max-verified-span",
+        type=int,
+        help="reject overly coarse verified rows; book audits should normally use a chapter-sized limit",
+    )
     args = parser.parse_args()
 
     if args.init:
-        if args.first_page is not None or args.last_page is not None:
+        if (
+            args.first_page is not None
+            or args.last_page is not None
+            or args.max_verified_span is not None
+        ):
             parser.error("page-range arguments apply only to --check")
         initialize(args.ledger)
     else:
-        validate(args.ledger, args.first_page, args.last_page)
+        if args.max_verified_span is not None and args.max_verified_span < 1:
+            parser.error("--max-verified-span must be positive")
+        validate(
+            args.ledger,
+            args.first_page,
+            args.last_page,
+            args.max_verified_span,
+        )
 
 
 if __name__ == "__main__":

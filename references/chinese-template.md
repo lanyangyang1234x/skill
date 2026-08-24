@@ -33,5 +33,5 @@ Initialize `terminology.tsv` before validation. If the project contains any rast
 
 ## Build and QA
 
-Run `./compile.sh MAIN.tex`, then `scripts/validate_chinese_template_project.sh PROJECT_DIR MAIN.tex`. The validator checks and audits terminology, requires a complete figure manifest when figures exist, compiles the project, and renders figure-page contact sheets when applicable.
+Use `./compile.sh MAIN.tex` for ordinary drafts. For final validation, run `scripts/validate_chinese_template_project.sh PROJECT_DIR MAIN.tex [--keep-aux]`. The validator audits terminology and bibliography mechanics, verifies the source manifest when present, compiles three times without losing the final log, writes durable JSON evidence, requires a complete figure manifest when figures exist, and renders figure-page contact sheets when applicable.
 Inspect the title page, contents, a chapter-opening page, theorem/proof pages, exercise/answer links when present, figure pages, appendices, bibliography, and final page. Verify link colors and behavior: `MidnightBlue` for internal/URL links, `BrickRed` for bibliography links, clickable contents titles and page numbers, and no visible link borders.

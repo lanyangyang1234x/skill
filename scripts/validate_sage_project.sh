@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-project_dir=${1:?Usage: validate_sage_project.sh PROJECT_DIR MAIN.tex}
-main_tex=${2:?Usage: validate_sage_project.sh PROJECT_DIR MAIN.tex}
+if (( $# < 2 )); then
+  printf 'Usage: validate_sage_project.sh PROJECT_DIR MAIN.tex [--keep-aux]\n' >&2
+  exit 2
+fi
+project_dir=$1
+main_tex=$2
+shift 2
+keep_aux=0
+while (( $# )); do
+  case "$1" in
+    --keep-aux) keep_aux=1 ;;
+    *) printf 'Unknown option: %s\n' "$1" >&2; exit 2 ;;
+  esac
+  shift
+done
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 required=(
@@ -46,6 +59,15 @@ main_path="$project_dir/$main_tex"
 
 python3 "$script_dir/terminology_ledger.py" "$project_dir/terminology.tsv" --check
 python3 "$script_dir/terminology_ledger.py" "$project_dir/terminology.tsv" --audit "$project_dir"
+
+validation_dir="$project_dir/work/validation"
+mkdir -p "$validation_dir"
+python3 "$script_dir/audit_bibliography.py" "$project_dir" "$main_tex" \
+  --require-toc-bibliographies \
+  --report "$validation_dir/bibliography-report.json"
+if [[ -s "$project_dir/source-manifest.json" ]]; then
+  python3 "$script_dir/source_manifest.py" check "$project_dir/source-manifest.json"
+fi
 
 font_commands=(
   setmainfont
@@ -188,13 +210,16 @@ if [[ -s "$project_dir/figure-manifest.tsv" ]]; then
     --output-dir "$project_dir/work/figure-page-qa"
 fi
 
-if grep -Eqi '(^!|LaTeX Error|Package .* Error|Undefined control sequence|font .* not found|cannot find.*font|There were undefined references|Rerun to get cross-references right|Overfull)' "$project_dir/$log_name"; then
-  printf 'Build completed, but the log contains warnings requiring review: %s\n' "$project_dir/$log_name" >&2
-  exit 1
-fi
+python3 "$script_dir/inspect_build_log.py" \
+  "$project_dir/$log_name" "$project_dir/$pdf_name" \
+  --report "$validation_dir/validation-report.json"
 
-for ext in aux log out toc synctex.gz fls fdb_latexmk xdv; do
-  rm -f "$project_dir/${main_tex%.tex}.$ext"
-done
+if (( ! keep_aux )); then
+  for ext in aux log out toc synctex.gz fls fdb_latexmk xdv; do
+    rm -f "$project_dir/${main_tex%.tex}.$ext"
+  done
+else
+  printf 'Kept build auxiliaries for review: %s/%s.*\n' "$project_dir" "${main_tex%.tex}"
+fi
 
 printf 'Validated: %s\n' "$project_dir/$pdf_name"

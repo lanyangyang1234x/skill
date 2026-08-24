@@ -1,6 +1,8 @@
 ---
 name: pdf-to-chinese-tex
 description: "Faithfully convert or audit mathematical PDF translations into Chinese LaTeX/PDF with source-verified terminology, capitalization, formulas, coverage, layout, and stable Chinese-title deliverable names."
+metadata:
+  version: "2.3"
 ---
 
 # PDF to Chinese TeX
@@ -24,9 +26,23 @@ For `existing-project-audit`, inventory the existing entry TeX, chapter files, t
 - Do not begin translation work until the user answers the template question.
 - Keep the selected template for the whole project unless the user asks to change it.
 - Immediately after the template is chosen, ask for two project metadata values: the translator/editor display name and the model/tool display name (for example, `译者：张三` and `模型：Google Antigravity`). Do not silently reuse values from another task.
+- If the user specifies a runtime/model, record it literally in metadata and the audit report. For this project the requested display value is `GPT-5.6 Sol（高）`; do not replace it with a generic `GPT`, `Sol`, or an unverified model name. This is a provenance label, not permission to claim a runtime that was not actually used.
 - Do not inspect the source, preprocess files, or create the output project until both metadata values are confirmed. If the user intentionally wants anonymity, record the exact neutral label they provide rather than inventing a person's name.
 
 For an existing project, reuse its confirmed template and metadata when they are already recorded; ask only for missing or changed values.
+
+For book-length work, give progress checkpoints after each coherent batch. State the completed source range, current pass, next pass, and any blocker. Give an ETA only after at least one representative batch has been measured; revise it when scope or throughput changes.
+
+### Throughput Without Quality Loss
+
+- For book-length conversion or audit, use source-page batches small enough to finish and verify in one task, normally 4--6 PDF pages or one coherent section. Split unusually dense proofs or figure-heavy pages further; do not make a whole chapter the default unit.
+- Give each batch one writer and a disjoint target-file set. Parallel workers may read the source and shared ledgers, but they must not edit the same `.tex`, `terminology.tsv`, `figure-manifest.tsv`, `source-coverage.tsv`, `PROJECT_STATUS.md`, or output report concurrently.
+- Before dispatching a batch, claim it with `scripts/batch_checkpoint.py`. Do not dispatch a batch whose latest checkpoint is `in_progress`, `drafted`, or `verified`. A failed batch may be retried once with a recorded reason; never create a second worker for an unresolved active claim.
+- Workers write a private batch report and propose ledger rows; the coordinator merges shared ledgers once per completed batch. A retry must reuse the same target files and replace only the failed batch, not retranslate neighboring pages.
+- Separate stages: translation/reconstruction, mathematics and terminology review, then figure/layout QA. During translation use a local section or chapter harness and one or two XeLaTeX passes; reserve the full-book multi-pass compile and visual release gate for chapter merge checkpoints and final delivery.
+- Treat a successful local compile as a syntax/layout signal only. A batch becomes `verified` only after source-page comparison and the relevant review pass; speed comes from reducing duplicated work, not from skipping evidence.
+- If a main file does not yet include a chapter, validate that chapter with an isolated harness rather than using an incomplete full-book PDF as the completion test.
+- Read [references/parallel-batch-workflow.md](references/parallel-batch-workflow.md) for the claim/checkpoint schema, retry rule, coordinator merge order, and stage-specific compile policy.
 
 ## Rules
 
@@ -43,6 +59,7 @@ For an existing project, reuse its confirmed template and metadata when they are
 - If more than one Markdown file could be the source, identify the correct file from explicit task context; if ambiguity remains, ask before editing. Never choose by filename guesswork.
 - Use the PDF as the authority to correct and complete the TeX reconstruction; inspect or OCR only the pages, passages, formulas, labels, figures, or structure that the Markdown omits, garbles, or conflicts with. Do not repeat a full-PDF extraction merely because a Markdown scaffold is present.
 - For `Sage-Olive`, keep its random landscape cover and bundled Fandol/Libertinus typography unchanged.
+- For `Sage-Olive`, register every selected random cover in the cross-project cover history. A reroll must exclude prior source URLs and image hashes; use a previously selected image again only when the user explicitly asks for that exact image.
 - For `Sage-Olive`, use dynamic running heads: the inner/left side shows the current `section` number and title, and the outer/right side shows the current `subsection` number and title. Keep the light-gray body-font treatment and thin rule below the header; never use a static book title or author as the running head.
 - For `Chinese Template`, preserve its `ctexart` chapter-title, contents, theorem, exercise/answer, appendix, bibliography, and title-page structure; keep `fontset=fandol` for portable compilation.
 - For `Chinese Template`, preserve clickable contents and cross-references, `MidnightBlue` internal/URL links, `BrickRed` bibliography links, borderless link text, exercise-to-answer links, proof-ending markers, and long-proof navigation when applicable.
@@ -52,6 +69,8 @@ For an existing project, reuse its confirmed template and metadata when they are
 - A figure crop must contain only the target figure and integral in-figure labels; any unrelated prose, formula, caption, header, footer, page number, or neighboring artwork fails QA.
 - Inventory every ordinary English label inside a figure and replace it with Chinese; do not leave English legends, axis labels, annotations, or in-figure captions untranslated.
 - For exact-appearance figure requests, preserve source pixels and geometry; do not approximate it with hand-tuned TikZ.
+- For exchange/commutative diagrams, apply the deterministic decision protocol in [references/book-completion-and-figure-qa.md](references/book-completion-and-figure-qa.md): classify the geometry before reconstruction, default the final asset to a source-pixel-locked crop in exact-appearance mode, and use native TikZ only when every stated gate passes. “Simple” means only that the topology is easy to redraw; it is not by itself evidence that TikZ will match the source.
+- Never let a second extraction/render/crop run write into a verified figure directory. Keep immutable source renders, fresh crops, translated assets, and release assets in separate directories; reruns must write to a new run directory or fail on an existing output. A verified asset may be replaced only by an explicit versioned promotion after source hash, crop parameters, pixel hash, and compiled-page QA have been rechecked.
 - Do not summarize, modernize, overlay, or replace the source PDF with translated text.
 - For books, preserve hierarchy and order; do not invent chapter boundaries or drop front/back matter.
 - If the source is unreadable, the structure is unclear, or a requested layout would force material simplification, stop and ask before changing strategy.
@@ -97,6 +116,16 @@ When a reliable associated Markdown transcription is supplied, use this lower-co
 - Use the same stem for the project/output directory when practical. If an internal template requires `main.tex`, it may remain inside a private build directory, but the release directory must expose the Chinese-title PDF and archive and must not present `main.pdf` as the final artifact.
 - Keep an ASCII build alias only when a tool cannot handle Chinese paths; document the alias-to-title mapping in the audit report and copy/rename final artifacts to the canonical Chinese-title names after validation.
 - Before delivery, assert that the PDF, TeX (if delivered), ZIP, report, and output directory use the same canonical title stem and that no stale generic `main.pdf` or `main.zip` is being handed off.
+- Build named deliverables with `scripts/package_release.py`; it creates a UTF-8 ZIP and verifies every archived payload byte. Do not use legacy `zip` for Chinese-path releases unless its UTF-8 filename behavior has been independently round-trip tested.
+
+## Source Identity and Audit Evidence
+
+- If the authoritative PDF is supplied from a temporary, chat-download, cache, or external-app path, snapshot it before sustained work with `scripts/source_manifest.py create SOURCE --project-dir PROJECT`. Keep the snapshot under `work/source/`; never include the source PDF or its absolute local path in a public release archive unless the user explicitly requests it.
+- If `source-manifest.json` exists, validation must recheck its hash, byte size, and page count. A missing or changed snapshot is a hard stop for source-fidelity claims.
+- For any project with citations or bibliographies, run `scripts/audit_bibliography.py PROJECT MAIN.tex`. It must reject missing and duplicate keys; book audits should also require each explicit “参考文献” heading to have a contents entry and review possible hard-coded author citations.
+- For parallel book work, validate the batch ledger with `scripts/batch_checkpoint.py PROJECT/batch-checkpoints.tsv --check --project-dir PROJECT` before merging or releasing. No active same-phase overlap may remain, and every drafted/verified batch that has not been superseded by a later review phase must point to existing target files with matching hashes.
+- Validators write durable JSON evidence under `work/validation/`. Use `--keep-aux` when a human will inspect the final `.log`, `.toc`, or `.aux`; otherwise auxiliary files may be cleaned only after the report is written.
+- For exact commands and bibliography/source/release evidence, read [references/audit-evidence-and-release.md](references/audit-evidence-and-release.md) when auditing or packaging an existing project.
 
 ## Existing-Project Audit Gate
 
@@ -110,21 +139,23 @@ For `existing-project-audit` and substantial `targeted-audit` tasks, read [refer
 - `references/sage-olive-template.md` when the user selects `Sage-Olive`.
 - `references/chinese-template.md` when the user selects `Chinese Template`.
 - `references/book-completion-and-figure-qa.md` for books, long monographs, figure-heavy sources, or exact-appearance figure work.
+- `references/parallel-batch-workflow.md` for book-length work using multiple batches or agents.
 
 ## Workflow
 
 1. Ask the user to choose `Sage-Olive` or `Chinese Template`; do not inspect the source first.
 2. Ask for and confirm the translator/editor display name and model/tool display name; store both in the selected template's metadata fields and credit line.
 3. Check whether the task includes an associated Markdown file. If present, identify the exact file, read it as the primary drafting scaffold, and transfer its reliable content into the TeX project in coherent batches. Do not edit the Markdown unless the user explicitly authorizes that write. If multiple files are plausible, identify the file used for reference and record the ambiguity; ask only when it changes the source text to be edited.
-4. Run the non-mutating preflight with only the capability flags needed for the current stage (`--need-pdf`, `--need-render`, `--need-compile`, or `--require-ocr`). Do not install anything at this point unless the user explicitly approves a missing capability.
-5. If no Markdown exists, inspect the PDF with `scripts/inspect_pdf_source.py` and classify pages as electronic, scanned, or mixed. If Markdown exists, skip a redundant full-text extraction and inspect only the source pages needed to resolve gaps, garbling, formulas, figures, numbering, layout, or conflicts.
-6. Create the output project next to the source by default and copy the selected directory from `assets/templates/`.
-7. For `Sage-Olive`, run `python3 fetch_random_cover.py` once and keep that cover stable unless the user asks to reroll.
-8. Initialize `terminology.tsv` before sustained translation. For books, also initialize `source-coverage.tsv` with `scripts/source_coverage_ledger.py`. For figure-bearing sources, initialize `figure-manifest.tsv` with `scripts/figure_manifest_ledger.py`.
-9. With Markdown, convert and translate its content directly in the TeX project, checking the PDF only for targeted uncertainties; without Markdown, extract text/layout as a scaffold and use OCR only for scanned or garbled pages. Check the terminology ledger after each coherent batch and audit the actual edited TeX (and any explicitly authorized Markdown) before final validation.
-10. Reconstruct the source in real TeX and run the selected template's bundled `compile.sh`. Validate `Sage-Olive` with `scripts/validate_sage_project.sh PROJECT_DIR MAIN.tex`; validate `Chinese Template` with `scripts/validate_chinese_template_project.sh PROJECT_DIR MAIN.tex`.
-11. Inspect the title page, credit line, contents when present, representative text/formula pages, figure pages, and final page. Also inspect the copyright page for `Sage-Olive`. For books, close the coverage ledger before delivery.
-12. Clean only auxiliary files created by this build; rename/copy final artifacts to the canonical Chinese-title stem; assert no generic `main.*` release artifact remains; and report the selected template, translator/editor name, model/tool name, title stem, actual edited files, read-only references, and result.
+4. For book-length work, initialize `batch-checkpoints.tsv` and claim disjoint source-page/file batches before dispatching work. Read [references/parallel-batch-workflow.md](references/parallel-batch-workflow.md) before starting parallel work.
+5. Run the non-mutating preflight with only the capability flags needed for the current stage (`--need-pdf`, `--need-render`, `--need-compile`, or `--require-ocr`). Do not install anything at this point unless the user explicitly approves a missing capability.
+6. Snapshot a temporary/external authoritative source with `scripts/source_manifest.py`, then inspect it with `scripts/inspect_pdf_source.py` when extraction is needed. If Markdown exists, skip redundant full-text extraction and inspect only the source pages needed to resolve gaps, garbling, formulas, figures, numbering, layout, or conflicts.
+7. Create the output project next to the source by default and copy the selected directory from `assets/templates/`.
+8. For `Sage-Olive`, run `python3 fetch_random_cover.py` once. Its cross-project history prevents accidental reuse; keep the selected cover stable unless the user asks to reroll.
+9. Initialize `terminology.tsv` before sustained translation. For books, also initialize `source-coverage.tsv` with `scripts/source_coverage_ledger.py`. For figure-bearing sources, initialize `figure-manifest.tsv` with `scripts/figure_manifest_ledger.py`.
+10. With Markdown, convert and translate its content directly in the TeX project, checking the PDF only for targeted uncertainties; without Markdown, extract text/layout as a scaffold and use OCR only for scanned or garbled pages. For diagrams, freeze a source-render run before any crop or label replacement, record its source SHA-256 and render parameters, and never regenerate a verified crop from a translated/transparent derivative. Check the terminology ledger after each coherent batch and audit the actual edited TeX (and any explicitly authorized Markdown) before final validation.
+11. Reconstruct the source in real TeX. Audit citations with `scripts/audit_bibliography.py`, then validate `Sage-Olive` with `scripts/validate_sage_project.sh PROJECT_DIR MAIN.tex` or `Chinese Template` with `scripts/validate_chinese_template_project.sh PROJECT_DIR MAIN.tex`. Use `--keep-aux` for final human log review.
+12. Inspect the title page, credit line, contents when present, representative text/formula pages, figure pages, and final page. Also inspect the copyright page for `Sage-Olive`. For books, close the coverage ledger and batch checkpoint ledger before delivery.
+13. Package with `scripts/package_release.py PROJECT_DIR MAIN.tex --title-stem 中文书名`; confirm the UTF-8 archive round-trip, then report the selected template, translator/editor name, model/tool name, title stem, actual edited files, read-only references, validation evidence, and result.
 
 Only skip PDF compilation when the user explicitly requests TeX only.
 
