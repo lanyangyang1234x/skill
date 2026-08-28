@@ -1,4 +1,4 @@
 interface:
   display_name: "PDF to Chinese TeX"
   short_description: "Translate and audit math PDFs with source-backed QA"
-  default_prompt: "Use $pdf-to-chinese-tex to convert or audit this mathematical PDF project, use disjoint checkpointed batches for long books, preserve source identity and citations, validate the final build, and package UTF-8 Chinese-title deliverables."
+  default_prompt: "Use $pdf-to-chinese-tex to choose Sage-Olive, Chinese Template Project v2, or MathTranslations, convert or audit this mathematical PDF project with source-backed QA, and package UTF-8 Chinese-title deliverables."

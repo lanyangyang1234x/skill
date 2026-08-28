@@ -64,8 +64,9 @@ $CODEX_HOME/skills/pdf-to-chinese-tex
 | --- | --- |
 | `Sage-Olive` | 随机风景封面、版权页、彩色数学环境、打包 Fandol/Libertinus 字体 |
 | `Chinese Template Project v2` | 本项目采用的 A4 酒红/金色章节层、中文定理环境、可点击目录、元数据署名和源图插入接口 |
+| `MathTranslations` | 彩色暖纸封面、动漫人物徽记、中文定理环境、术语索引、长证明和习题/答案双向链接 |
 
-两个模板均使用 XeLaTeX；Project v2 的可复用文件位于 [`assets/templates/chinese-template-project-v2/`](assets/templates/chinese-template-project-v2/)。
+三个模板均使用 XeLaTeX；Project v2 的可复用文件位于 [`assets/templates/chinese-template-project-v2/`](assets/templates/chinese-template-project-v2/)，MathTranslations 位于 [`assets/templates/mathtranslations-template/`](assets/templates/mathtranslations-template/)。
 
 ### 交换图：先保真，再谈重绘
 
@@ -93,6 +94,10 @@ $CODEX_HOME/skills/pdf-to-chinese-tex
 这是本项目实际使用的可复用版式：A4、酒红/金色章节标题、中文定理层、可点击目录、练习—答案互链、元数据署名和源图物理宽度插入接口。模板本身不包含本书正文、图片、符号宏或参考文献。
 
 入口文件、编译脚本和说明位于 [`assets/templates/chinese-template-project-v2/`](assets/templates/chinese-template-project-v2/)，选择规则位于 [`references/chinese-template-project-v2.md`](references/chinese-template-project-v2.md)。
+
+### MathTranslations
+
+这是一个独立的彩色数学中文译本变体：暖纸色封面、动漫人物徽记、中文定理环境、术语索引、长证明双向跳转以及习题—答案互链。入口文件和编译说明位于 [`assets/templates/mathtranslations-template/`](assets/templates/mathtranslations-template/)，使用前请确认人物素材的再分发许可。
 
 ## 常用命令
 
@@ -152,6 +157,9 @@ scripts/validate_sage_project.sh PROJECT_DIR MAIN.tex
 # Chinese Template Project v2
 scripts/validate_chinese_template_project.sh PROJECT_DIR MAIN.tex
 
+# MathTranslations
+(cd PROJECT_DIR && ./compile.sh MAIN.tex)
+
 python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --init
 python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir PROJECT_DIR
 ```
@@ -168,7 +176,8 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 ├── agents/openai.yaml
 ├── assets/templates/
 │   ├── sage-olive-template/
-│   └── chinese-template-project-v2/
+│   ├── chinese-template-project-v2/
+│   └── mathtranslations-template/
 ├── references/
 └── scripts/
 ```
@@ -181,6 +190,7 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 - 图片中的普通英文标签需要翻译；数学符号和不应翻译的人名保持原样。
 - OCR 只用于定位和初步转录；标题、作者、图注、标签和封面大小写必须回看源 PDF。
 - 编译成功不等于内容验收通过。
+- `MathTranslations` 中的人物徽记来源和再分发许可需要在公开发布前单独确认。
 
 <details>
 <summary>English documentation</summary>
@@ -191,7 +201,7 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 
 ### Highlights
 
-- Choose `Sage-Olive` or `Chinese Template Project v2` at the start of every new translation task.
+- Choose `Sage-Olive`, `Chinese Template Project v2`, or `MathTranslations` at the start of every new translation task.
 - Treat the rendered source PDF as authoritative; use Markdown as a read-only drafting scaffold when reliable.
 - Keep terminology, source-page coverage, figure provenance, and batch checkpoints in durable ledgers.
 - In exact-appearance mode, use source-pixel-locked crops by default; difficult exchange diagrams must not be hand-redrawn in TikZ.
@@ -204,6 +214,7 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 | --- | --- |
 | `Sage-Olive` | Random landscape cover, copyright page, colored mathematical environments, bundled Fandol/Libertinus fonts |
 | `Chinese Template Project v2` | A4 burgundy/gold chapter layer, Chinese theorem layer, clickable contents, metadata credit line, source-relative figure insertion |
+| `MathTranslations` | Warm-paper color cover, anime character badge, Chinese theorem environments, terminology index, long-proof links, and linked exercises/answers |
 
 ### Fidelity principles
 
@@ -218,3 +229,4 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 ## Third-party assets
 
 Bundled fonts and other third-party assets retain their upstream copyrights and licenses. Review the applicable upstream terms before redistributing this repository or derived packages.
+The `MathTranslations` anime badge is user-supplied artwork with unverified provenance; replace it or confirm permission before redistribution.

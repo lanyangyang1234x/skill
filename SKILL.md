@@ -1,6 +1,6 @@
 ---
 name: pdf-to-chinese-tex
-description: "Faithfully convert or audit mathematical PDF translations into Chinese LaTeX/PDF with source-verified terminology, capitalization, formulas, coverage, layout, and stable Chinese-title deliverable names."
+description: "Faithfully convert or audit mathematical PDF translations into Chinese LaTeX/PDF with selectable Sage-Olive, Chinese Template Project v2, and MathTranslations layouts plus source-verified terminology, capitalization, formulas, coverage, layout, and stable Chinese-title deliverable names."
 metadata:
   version: "2.3"
 ---
@@ -21,7 +21,7 @@ For `existing-project-audit`, inventory the existing entry TeX, chapter files, t
 
 ### Template Selection — First Action for New Projects
 
-- At the start of every new translation task, before inspecting the source, preprocessing it, or creating output files, ask the user to choose `Sage-Olive` or `Chinese Template Project v2`.
+- At the start of every new translation task, before inspecting the source, preprocessing it, or creating output files, ask the user to choose `Sage-Olive`, `Chinese Template Project v2`, or `MathTranslations`.
 - Always ask again for each new translation task; do not reuse an earlier task's choice or assume a standing preference.
 - Do not begin translation work until the user answers the template question.
 - Keep the selected template for the whole project unless the user asks to change it.
@@ -62,6 +62,7 @@ For book-length work, give progress checkpoints after each coherent batch. State
 - For `Sage-Olive`, register every selected random cover in the cross-project cover history. A reroll must exclude prior source URLs and image hashes; use a previously selected image again only when the user explicitly asks for that exact image.
 - For `Sage-Olive`, use dynamic running heads: the inner/left side shows the current `section` number and title, and the outer/right side shows the current `subsection` number and title. Keep the light-gray body-font treatment and thin rule below the header; never use a static book title or author as the running head.
 - For `Chinese Template Project v2`, use `assets/templates/chinese-template-project-v2/` and read `references/chinese-template-project-v2.md`; preserve its A4 geometry, burgundy/gold chapter label, Chinese theorem layer, clickable contents, exercise/answer links, metadata credit line, and source-relative figure insertion interface. Do not copy project-specific source prose, figures, notation, or bibliography into the reusable template.
+- For `MathTranslations`, copy the complete `assets/templates/mathtranslations-template/` directory, keep its `fontset=fandol` XeLaTeX setup, and preserve its warm-paper color cover, anime badge, Chinese theorem styles, terminology index, long-proof links, and exercise/answer links unless the user asks for a different design. Read `references/mathtranslations-template.md` before adapting it.
 - Ensure front matter identifies the original title, author, edition/publication information, translator/editor, selected model/tool, and update/completion time; include a visible credit line equivalent to `本中文译本由{译者名}使用{模型名}完成。` and keep a deliberate visual gap before the first numbered chapter.
 - For source-cropped figures, preserve high resolution, transparent background, and source-relative displayed size; a visible white rectangle or undersized crop on the compiled page fails QA.
 - Transparency must be real alpha transparency with no opaque white canvas, halo, or white-pixel substitute; verify it on a non-white background and in the compiled PDF.
@@ -137,12 +138,13 @@ For `existing-project-audit` and substantial `targeted-audit` tasks, read [refer
 - `references/translation-and-layout-policy.md` for translation fidelity, authority priorities, cross-references, metadata, typography, hyperlink, terminology-index, and review requirements.
 - `references/sage-olive-template.md` when the user selects `Sage-Olive`.
 - `references/chinese-template-project-v2.md` when the user selects `Chinese Template Project v2`.
+- `references/mathtranslations-template.md` when the user selects `MathTranslations`.
 - `references/book-completion-and-figure-qa.md` for books, long monographs, figure-heavy sources, or exact-appearance figure work.
 - `references/parallel-batch-workflow.md` for book-length work using multiple batches or agents.
 
 ## Workflow
 
-1. Ask the user to choose `Sage-Olive` or `Chinese Template Project v2`; do not inspect the source first.
+1. Ask the user to choose `Sage-Olive`, `Chinese Template Project v2`, or `MathTranslations`; do not inspect the source first.
 2. Ask for and confirm the translator/editor display name and model/tool display name; store both in the selected template's metadata fields and credit line.
 3. Check whether the task includes an associated Markdown file. If present, identify the exact file, read it as the primary drafting scaffold, and transfer its reliable content into the TeX project in coherent batches. Do not edit the Markdown unless the user explicitly authorizes that write. If multiple files are plausible, identify the file used for reference and record the ambiguity; ask only when it changes the source text to be edited.
 4. For book-length work, initialize `batch-checkpoints.tsv` and claim disjoint source-page/file batches before dispatching work. Read [references/parallel-batch-workflow.md](references/parallel-batch-workflow.md) before starting parallel work.
@@ -152,7 +154,7 @@ For `existing-project-audit` and substantial `targeted-audit` tasks, read [refer
 8. For `Sage-Olive`, run `python3 fetch_random_cover.py` once. Its cross-project history prevents accidental reuse; keep the selected cover stable unless the user asks to reroll.
 9. Initialize `terminology.tsv` before sustained translation. For books, also initialize `source-coverage.tsv` with `scripts/source_coverage_ledger.py`. For figure-bearing sources, initialize `figure-manifest.tsv` with `scripts/figure_manifest_ledger.py`.
 10. With Markdown, convert and translate its content directly in the TeX project, checking the PDF only for targeted uncertainties; without Markdown, extract text/layout as a scaffold and use OCR only for scanned or garbled pages. For diagrams, freeze a source-render run before any crop or label replacement, record its source SHA-256 and render parameters, and never regenerate a verified crop from a translated/transparent derivative. Check the terminology ledger after each coherent batch and audit the actual edited TeX (and any explicitly authorized Markdown) before final validation.
-11. Reconstruct the source in real TeX. Audit citations with `scripts/audit_bibliography.py`, then validate `Sage-Olive` with `scripts/validate_sage_project.sh PROJECT_DIR MAIN.tex` or `Chinese Template Project v2` with `scripts/validate_chinese_template_project.sh PROJECT_DIR MAIN.tex`. Use `--keep-aux` for final human log review.
+11. Reconstruct the source in real TeX. Audit citations with `scripts/audit_bibliography.py`, then validate `Sage-Olive` with `scripts/validate_sage_project.sh PROJECT_DIR MAIN.tex` or `Chinese Template Project v2` with `scripts/validate_chinese_template_project.sh PROJECT_DIR MAIN.tex`; for `MathTranslations`, run its bundled `compile.sh` and perform the checks in `references/mathtranslations-template.md`. Use `--keep-aux` for final human log review.
 12. Inspect the title page, credit line, contents when present, representative text/formula pages, figure pages, and final page. Also inspect the copyright page for `Sage-Olive`. For books, close the coverage ledger and batch checkpoint ledger before delivery.
 13. Package with `scripts/package_release.py PROJECT_DIR MAIN.tex --title-stem 中文书名`; confirm the UTF-8 archive round-trip, then report the selected template, translator/editor name, model/tool name, title stem, actual edited files, read-only references, validation evidence, and result.
 
