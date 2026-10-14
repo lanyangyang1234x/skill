@@ -1,26 +1,44 @@
-# Audit Evidence and Release
+# 审计证据与独立发布重建
 
-Read this reference for existing-project audits, bibliography audits, temporary source files, and named release packaging.
+用于源身份冻结、覆盖/引用证据、既有项目验收及中文题名交付包。原书对照、数学/中文/术语、视觉、导航、构建和归档完整性是不同结论；本参考说明如何把这些证据绑定到实际交付版本。
 
-## Freeze the authority
+下列 `scripts/` 路径相对 skill 根目录；`PROJECT`、`MAIN.tex`、源路径、输出路径及页范围均须替换为本任务的已核实值。读者注记、原书勘误和过程审计报告分工见 [读者注记与原书勘误](reader-notes-and-source-errata.md)。
 
-When a source comes from a chat application, browser cache, temporary download, or removable location, snapshot it before sustained work:
+## 冻结原书与当前输入
+
+源文件来自聊天临时附件、浏览器缓存、临时下载或可移动路径时，在持续工作前保存私有快照：
 
 ```bash
 python3 scripts/source_manifest.py create SOURCE.pdf --project-dir PROJECT
-```
-
-This writes `PROJECT/source-manifest.json` and a private audit copy under `PROJECT/work/source/`. The manifest records the source hash, byte size, and PDF page count. Validate it later with:
-
-```bash
 python3 scripts/source_manifest.py check PROJECT/source-manifest.json
 ```
 
-The snapshot and absolute local source path are local QA evidence, not release content. `package_release.py` excludes both by default.
+manifest 记录源哈希、字节数、PDF 页数及快照身份。已有 manifest 必须核实，不能把改变后的源与旧验收混用。源快照和本机绝对源路径属于私有 QA 证据，通常不入公开包；`package_release.py` 默认排除 `work/` 和 `source-manifest.json`，不是许可泄露其他位置的私人资料。
 
-## Audit citations and bibliographies
+修改前保存**当前** TeX 依赖树、相关图/字体/样式/构建脚本及哈希，保留用户最近的修改；不以旧 ZIP 覆盖当前版本。若当前 PDF 未同步源码或缺完整派生材料，隔离稳定编译当前工程作为可比基线，见 [既有项目审计](existing-project-audit.md)。
 
-Run the audit from the main TeX dependency graph, not every `.tex` file in the directory; named release copies may otherwise create false duplicate keys.
+最终验收另列“构建输入清单”：相对路径、哈希、主文件、构建命令、字体/图片/样式/章节依赖及工具版本。此清单绑定独立重建结果；报告中的历史页数或旧哈希不能充当当前输入身份。
+
+## 覆盖与各维度状态
+
+源码覆盖台账按小页段或相应逻辑单元组织，指向实质检查报告；记录物理页、印刷编号、TeX 位置、缺失材料和范围排除。脚本检查可以发现断页/重叠/未完成状态，不能证明已阅读或已核数学。
+
+```bash
+python3 scripts/source_coverage_ledger.py PROJECT/source-coverage.tsv \
+  --check --first-page FIRST --last-page LAST --max-verified-span BATCH_LIMIT
+```
+
+`BATCH_LIMIT` 取任务中已核实的批次粒度。全文逐页任务必须覆盖每个原页及其逻辑单元，不能以一行全书 `verified` 或抽样代替；`excluded` 只是有说明的排除，不是核验通过。仅修已授权范围可交付，但报告必须保留其他源页或维度的未审计/缺译状态。
+
+数学、中文表达、术语、覆盖、图表、视觉、导航和发布各自列状态、输入版本、范围、方法、证据文件及遗留项。可用统一表，不重复制造材料。中文审校保护假设、量词、逻辑强度、完整证明与公式；显示层修订保护正文/内部键/计数器；保护矩阵与允许差异见 [既有项目审计](existing-project-audit.md)。
+
+书级翻译和既有全文译稿审计的每个批次都经过译写/源文核对、数学与术语核对、中文句群审校、数学语义保护复核，再编译合入。中文可读性属于日常翻译质量，不另设一次授权门槛；定点任务仍遵从既定 scope。记录各步已做与未做，不能用后一次编译自动填满前面的状态。
+
+过程报告包含检查范围、修订类别、检查状态和交付路径。原书解释、读者需要的释义和有依据的勘误另入读者注记；统计、工具运行与批次状态不能伪装成数学注释。
+
+## 引用、文献与导航
+
+从实际主 TeX 的依赖图检查引用，不扫描目录中所有同名发布副本制造假重复：
 
 ```bash
 python3 scripts/audit_bibliography.py PROJECT MAIN.tex \
@@ -28,38 +46,63 @@ python3 scripts/audit_bibliography.py PROJECT MAIN.tex \
   --report PROJECT/work/validation/bibliography-report.json
 ```
 
-The checker rejects missing citation targets, duplicate `\bibitem` keys, and bibliography-heading/contents mismatches. It reports unused or numeric-only keys and likely author-name hard-coded citations for review. Use `--fail-hardcoded` only after reviewing the heuristic against the project; mathematical intervals can resemble `[n]` citations.
+`--require-toc-bibliographies` 用于要求各文献范围有目录入口的任务；存在合理无编号/不入目录约定时先按项目确定适用性。检查器拒绝缺失目标和重复 `bibitem` 键，并报告未使用、纯数字键和可能的手打作者引用。`--fail-hardcoded` 只在逐项判断启发式适用后用；数学区间、复形移位等可能误报。
 
-For a source comparison, record per chapter or bibliography scope: source page range, expected entry count, source order, TeX file, and review status. Static key checks do not prove that the source bibliography itself was transcribed correctly.
+每个文献范围另对照原书数量、顺序、题名/作者等文本数据；静态键通过不证明转录完整。多组文献分别核可见编号、目录入口和目标范围。检查全部文献页的换行、缩进、裁切及分节；有歧义的手打引用逐项确认落点，各范围检查实际点击。
 
-After compilation, inspect at least one rendered citation per bibliography scope and confirm that the PDF link lands on the intended scope. Also inspect every bibliography page for independent numbering, hanging indentation, clipping, and chapter transitions.
+导航要同时核 TeX 声明、印刷编号与最终 PDF 目标：目录、定理/公式、文献、图表、习题/答案、长证明和索引等按项目存在的功能检查。内部目标“在有效页内”只是基本结构检查，不足以证明落在对应条目。未能解析的目标、外部链接与不存在的功能分别登记，不能合并成“全部链接有效”。
 
-## Preserve validation evidence
+## 稳定构建与保留诊断
 
-Both template validators compile three times, inspect the final log, and write:
+使用实际主文件、现有构建脚本和声明工具链；先稳定正文、引用及分页，再运行索引/文献工具，继续编译至目录、索引和交叉引用稳定。观察派生文件与日志，而非套用某项目的编译遍数。
 
-```text
-PROJECT/work/validation/bibliography-report.json
-PROJECT/work/validation/validation-report.json
-```
+匹配 bundled 模板的项目可运行其验证器并用 `--keep-aux` 保留最终诊断。验证器写入 `PROJECT/work/validation/` 的持久报告应和最后构建版本绑定；若后续又修改构建材料，旧报告不能冒充新版通过。旧项目缺新模板专有资源时保留原工程；如实标注验证器不适用或实际失败的原因，改用既有构建、最终日志、源文/保护、导航和视觉检查。不为消除验证器预期错误迁移模板或删除正文。
 
-Use `--keep-aux` for the final audit when `.log`, `.toc`, or `.aux` must remain available. Without it, validators remove only build auxiliaries after the durable report has been written.
+最终日志检查未定义引用、重复标签、缺字和高风险溢出。实际渲染判断裁切、碰撞、异常字距与分页；通过日志不能替代视觉检查。全面审计/重排逐页查看终稿，定点修改查看变页/相邻页/结构敏感页；未变页验收继承须有同参数完整像素一致等证据。
 
-For book coverage, do not use one verified row for an entire book. Split `source-coverage.tsv` at least by chapter or similarly coherent source block and enforce a project-appropriate maximum span:
+## 打包工具的边界
 
-```bash
-python3 scripts/source_coverage_ledger.py PROJECT/source-coverage.tsv \
-  --check --first-page FIRST --last-page LAST --max-verified-span 50
-```
-
-Choose the limit from the source structure; `50` is an example, not a universal chapter length.
-
-## Package named deliverables
-
-Use the packaging helper instead of ad hoc `cp` plus legacy `zip`:
+先稳定最终构建，整理公开发布材料，再生成中文题名包：
 
 ```bash
 python3 scripts/package_release.py PROJECT MAIN.tex --title-stem 中文书名
 ```
 
-It synchronizes the Chinese-title PDF and TeX, copies standard audit/visual-QA reports when present, excludes private `work/` evidence and generic build PDFs, writes UTF-8 archive names, performs a CRC test, and byte-compares every archived member with its source. Use `--include-source-manifest` only for a private archive where exposing the local source record is intended.
+输出 PDF 不在默认主文件旁时，用 `--pdf` 明确已验收 PDF；报告或输出目录不同则使用相应参数。保持已有工程内部入口和依赖结构，中文题名副本应有清楚映射，不能因重命名使编译脚本仍指向不存在入口。
+
+此脚本同步现有 PDF/TeX 和提供的报告，写 UTF-8 ZIP，检查成员集合、CRC、文件名字节及归档成员与当前来源逐字节一致。**它不编译、不检查数学或覆盖，也不执行干净解压重建。** 只运行此脚本不能报告“发布可重建”。
+
+审查包内成员：主入口、章节、图片、字体/样式、构建脚本和必要配置完整，公开报告与 PDF 当前；排除私人原书副本、个人中间审阅、旧发布、缓存和无关文件。脚本只排除其声明的目录/后缀，不自动识别所有“归档”目录或私密内容；先整理发布树或将私有材料留在明确私有目录，再打包。除用户指定外，`--include-source-manifest` 仅供确需源身份记录的私人归档。
+
+## 最终 ZIP 的干净解压与比较
+
+带 PDF 的正式发布 ZIP 必须在新的空目录解压，验证 UTF-8 文件名和 CRC 后，以包内声明入口启动独立构建。仅 TeX 源包见本文件末尾特例；不交付发布包的定点修改不增加打包工作。允许使用明确声明的通用 TeX 引擎/系统工具链；所有工程章节、图片、字体、样式和自定义脚本必须来自包内，不能暗中读取原项目、旧缓存、外部绝对路径或私人资料。记录实际入口、命令、工具链、解压位置、构建输入清单、日志与结果。
+
+确认独立构建产生的是含完整索引/目录的最终版本，再与随包已验收 PDF 比较：
+
+| 比较项 | 应有证据 |
+|---|---|
+| 页数及逐页正文 | 页数相同；逐页提取文本比较，并说明空白等规范化方法；差异逐页判定 |
+| 逐页渲染 | 同工具/版本、尺寸/分辨率和颜色设置下逐页像素或渲染哈希比较；差异页实际查看，不能只比几个关键页 |
+| 目录、书签与 named destinations | 项目已有结构/命名目标的集合、编号、层级和实际落点一致；导航差异须解释 |
+| 内部/外部 links | 链接标签、类型、目标或 URI 比较；内部有效页与语义对象落点分别核验 |
+| 索引、文献和其他派生材料 | 最终页码、可见编号、排序及回链与正文一致，没有用旧缓存冒充 |
+| 包内工程与已验输入 | 构建材料、公开报告及 PDF 与最终归档成员一致，包内依赖完整 |
+
+PDF 二进制哈希可因生成时间、文档 ID 等 metadata 不同。记录两份哈希及差异解释；确认逐页文本/像素与导航一致后可报告对应内容一致，不能声称二进制一致。若哈希差异并非仅能说明为非内容因素，要继续核查，不能以“metadata”笼统豁免。
+
+若项目根本没有某类导航，写该项不适用并说明；若工具不能比较 named destinations 或某些链接，写检查未完成及实际替代证据，不写全导航通过。视觉或结构差异有意保留时说明具体范围与授权，重新验收受影响内容。
+
+## 证据绑定、报告更新与避免自引用哈希
+
+验收绑定明确的构建输入哈希及最终归档成员，不能只绑定“最新版”文件名。验收后改主 TeX、章节、图/字体/样式、构建脚本或其他影响产物的材料，必须重新构建、按影响范围复核，再生成新 ZIP，干净解压并独立重建比较。
+
+推荐把独立重建结果与**最终 ZIP 哈希**写入包外验收记录，引用已冻结的构建输入清单和归档成员。不要在 ZIP 内报告写入该 ZIP 自己的最终哈希，再循环改报告、重打包求同一哈希；这种自引用不能稳定。
+
+若只补写包内过程报告、未改任何构建材料或 PDF，可保留已验构建结果并绑定到完全一致的输入清单，不必重复无变化的编译。仍需重新生成最终 ZIP、在新空目录解压，校验最终成员/CRC/UTF-8/字节，并证明所有构建输入及随包 PDF 与先前独立重建的已验版本完全相同；明确注明“重建结果按未变输入继承”。不得把未重新执行的构建描述为刚刚重新运行。任何构建输入差异或无法证明一致时，重新独立构建。
+
+最终交付状态须自足：中文题名与路径、当前 PDF 页数和哈希、源范围、实际修改、各维度结果、发布包验证/独立重建或输入绑定证据、未完成/不适用项。局部修订完成可以交付；缺译、未审原页、未验导航或不能独立构建的状态不能被“打包通过”遮掉。
+
+## 仅交付 TeX 时
+
+用户明确不要 PDF 时，源文、数学、术语、中文和 TeX 引用目标检查照常；编译、最终 PDF 点击/渲染与 PDF 重建比较记为不适用，不填写通过。`package_release.py` 面向带 PDF 的译稿发布，要求现成 PDF，因此不用于这种源包。使用常规 ZIP 工具生成源包，再在空目录解压核 UTF-8 文件名、CRC、逐成员字节及章节/样式/字体/图片/自定义脚本依赖闭合；列明主文件和未执行编译。不能为使用发布脚本而打入旧 PDF 或生成未请求的 PDF。

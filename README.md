@@ -2,7 +2,7 @@
 
 <h1>PDF 转中文 TeX</h1>
 
-<p><strong>数学 PDF → 忠实中文 LaTeX → 可验证 PDF</strong></p>
+<p><strong>3.1 · 数学 PDF → 忠实中文 LaTeX → 可验证 PDF</strong></p>
 
 <p>保留章节顺序、编号、公式、定理、证明、练习、图形、交叉引用与参考文献。</p>
 
@@ -11,7 +11,7 @@
 </div>
 
 > [!IMPORTANT]
-> 原始渲染 PDF 是数学内容与结构的最终依据。编译成功只是语法信号；源文档对照、公式核验、图形 QA 和覆盖台账全部通过后，才算完成。
+> 原始渲染 PDF 及用户已确认的勘误/补充决定数学内容与结构。编译成功只是构建信号；按当前任务范围分别记录原书对照、数学、术语、中文表达、图表、链接和发布重建结果，不能将定点修订标成全书审计通过。
 
 ## 中文
 
@@ -24,15 +24,17 @@ git clone https://github.com/lanyangyang1234x/skill.git \
   ~/.codex/skills/pdf-to-chinese-tex
 ```
 
-然后在 Codex 中调用：
+上述是来源仓库安装方式；本地交付的 3.1 源包以实际版本为准，安装本地源包时保留旧技能后复制完整目录。然后在 Codex 中调用：
 
 ```text
 使用 $pdf-to-chinese-tex 将这本数学 PDF 翻译成中文 LaTeX 和 PDF。
 ```
 
-技能会先让你选择模板，再按以下顺序工作：
+新项目沿用已选模板，未指定时默认 Sage-Olive 并说明；未知署名留空或匿名，不阻塞译写。既有项目沿用现有工程和约定。工作顺序是：
 
-`源文件识别` → `术语/覆盖记录` → `TeX 重建` → `编译` → `视觉验收`
+`识别任务与保护范围` → `源文件/台账核验` → `按批译写与审校` → `编译与成书检查` → `交付包独立重建`
+
+书籍每一批默认经过：`译写` → `数学与术语核对` → `中文句群审校` → `数学保护复核` → `编译合入`。中文表达审校是翻译流程的一部分，无需另行要求；中文改句后仍须核条件、量词、对象、证明和公式保护，才能合入。
 
 默认安装路径为：
 
@@ -48,15 +50,31 @@ $CODEX_HOME/skills/pdf-to-chinese-tex
 
 ### 核心能力
 
+3.1 在既有项目经验与中文方法接入的基础上，精简主入口、按任务加载专题，并修复工具与工作流的契约问题。新建翻译、既有项目审计和定点修订使用各自的改动范围；书籍翻译默认每批完成中文句群审校，再做数学保护复核。保护个人批注、正确图形和已确认的版式；改善中文语序与衔接时保持假设、量词、证明步骤、公式和源文单元。
+
 | 内容保真 | 图形保真 |
 | --- | --- |
 | 原始 PDF 优先；Markdown 只作可靠底稿 | 一模一样模式默认使用源像素锁定裁图 |
-| 保留编号、公式、交叉引用和大小写 | 困难交换图不手调 TikZ |
+| 保留编号、公式、交叉引用和大小写 | 按外观、结构或阅读目标选择可核验的方法 |
+| 中文表达与数学含义分别审校；原书疑误单列 | 源书与 TeX 双向图清单，包含 XY-pic 和行内图式 |
 
 | 过程可追溯 | 运行可控 |
 | --- | --- |
 | `terminology.tsv`、`source-coverage.tsv`、`figure-manifest.tsv` | 分批台账、非变异预检和模板验证 |
 | 源文件、裁图、翻译资产、发布资产分层 | SHA-256 锁定；二次 Python 运行不得覆盖已验证图 |
+| 记录实际审查范围和沿用证据 | 最终 ZIP 全新解压并独立构建；归档完整性不替代重建 |
+
+### chinese-writing：固定快照与数学适配
+
+内置 [Ou-Liu-Red-Sugar/chinese-writing](https://github.com/Ou-Liu-Red-Sugar/chinese-writing) **2.13.3**，固定提交 `9818d89aee474ef813f9c5d8a6164e0cb265fe1b`。完整 46 文件上游源码保留在 [`vendor/chinese-writing-upstream.zip`](vendor/chinese-writing-upstream.zip)，日常只读 [`vendor/chinese-writing/`](vendor/chinese-writing/) 中的 38 文件方法库，数学翻译入口是 [`references/chinese-writing-integration.md`](references/chinese-writing-integration.md)。按当前问题读取句子、衔接、标点和限定语方法，日常使用不联网更新，也不需要另装上游技能。
+
+中文句群审校默认嵌入书籍每批翻译，不作为需要另行开启的选项。忠实翻译使用原书结构审校中文，不为顺句新增数学理由、删除原书重复或启动整篇原创文章的审批流程。用户另行授权的导读、注释和报告可以使用相应写作流程，并与译文分开。快照完整性检查只证明文件一致，不能证明中文审校或数学验证已经完成。
+
+```bash
+python3 scripts/verify_chinese_writing_vendor.py
+```
+
+来源、更新规则及 MIT/教学示例 CC BY-NC-SA 4.0 的区别见适配入口与上游 [`THIRD_PARTY_NOTICES.md`](vendor/chinese-writing/THIRD_PARTY_NOTICES.md)。
 
 ### 模板
 
@@ -68,24 +86,29 @@ $CODEX_HOME/skills/pdf-to-chinese-tex
 
 三个模板均使用 XeLaTeX；Project v2 的可复用文件位于 [`assets/templates/chinese-template-project-v2/`](assets/templates/chinese-template-project-v2/)，MathTranslations 位于 [`assets/templates/mathtranslations-template/`](assets/templates/mathtranslations-template/)。
 
-### 交换图：先保真，再谈重绘
+### 图形：按当前目标选择方法
 
 | 判定 | 规则 |
 | --- | --- |
-| 拓扑简单 | 直线、规则网格、无回环/曲线/遮挡；最多 4 个节点、6 条箭头。TikZ 仍需通过同尺寸视觉差异检查。 |
-| 几何困难 | 曲线、回环、平行重叠、对角线遮挡、长链、多层组合、超过阈值、立体/八面体/立方体语义；最终使用截图。 |
-| 用户要求“一模一样” | 源像素锁定裁图是默认最终表示；TikZ 只是候选，不是自动替代。 |
+| 源图外观精确一致 | 源像素锁定裁图或仅替换文字的可验证混合层；非语言像素、几何、填充、箭头和比例保持。 |
+| 数学结构保真 | TikZ、tikz-cd、既有 XY-pic、源裁图或混合方法均可；逐项核节点、方向、箭型、路径、标签和关系。 |
+| 阅读清晰 | 在保留数学结构的前提下选择可核验且易读的方法，可适度调整尺寸与间距，并记录呈现变化。 |
 
-详细判定、标签归属、混合策略和 Riehl 原书验证案例见 [`references/book-completion-and-figure-qa.md`](references/book-completion-and-figure-qa.md)。
+节点数、箭头数或弯箭的存在不是固定门槛。需要猜测曲线、遮挡或标签关联时保留源图；正确既有图形不因技术偏好替换。图内普通英文需要翻译，数学符号和人名按其身份保留。裁图资产检查之外，还须核最终 PDF 的实际图像、透明蒙版、使用次序、尺寸与页位置，并查看改动影响的邻页。
+
+双向图清单、标签归属、透明化边界与精确模式见 [`references/book-completion-and-figure-qa.md`](references/book-completion-and-figure-qa.md)。这些是工作要求，台账脚本不会自动发现所有源图或证明成品中的图形正确。
 
 ### 质量门
 
 - [ ] 源 PDF 已快照并校验 SHA-256、字节数和页数。
-- [ ] 源页覆盖、术语、公式/数学和图形台账已关闭。
+- [ ] 授权范围内的源页覆盖、术语、中文表达、公式/数学和图形结果分别记录；排除项与剩余项明确。
 - [ ] 真实 TeX 交叉引用、编号和引用键通过检查。
-- [ ] 代表性正文、公式、图形页、末页和目录已与源 PDF 对照。
+- [ ] 原书与 TeX 双向图清单完成，编号图、XY-pic、行内小图、图式与全部最终使用位置对应。
+- [ ] 当前任务所需的正文、公式、图形页、末页、目录及受影响邻页已核对；逐页任务有实际逐页覆盖证据。
 - [ ] 透明图在非白背景和最终 PDF 中均无白底、光晕、裁切或缩放错误。
 - [ ] 发布资产哈希与 `figure_asset_lock.py` 记录一致。
+- [ ] 最终 PDF 的实际嵌入图像/透明蒙版/次序核验已记录；工具不可用时明确检查限制。
+- [ ] 最终 ZIP 在新的空目录解压，仅用包内工程独立构建，并比较页数、正文、关键渲染和链接。
 
 ## 模板
 
@@ -99,7 +122,21 @@ $CODEX_HOME/skills/pdf-to-chinese-tex
 
 这是一个独立的彩色数学中文译本变体：暖纸色封面、动漫人物徽记、中文定理环境、术语索引、长证明双向跳转以及习题—答案互链。入口文件和编译说明位于 [`assets/templates/mathtranslations-template/`](assets/templates/mathtranslations-template/)，使用前请确认人物素材的再分发许可。
 
-## 常用命令
+## 工具与适用范围
+
+以下命令以 skill 根目录为参考；在任务目录执行时，把脚本换成实际的绝对路径，并显式传项目/主文件。只运行当前任务适用的工具，不把所有检查套在定点修改上。
+
+| 工具 | 适用范围与限制 |
+|---|---|
+| `preflight_environment.py` | 只查当前步骤需要的能力；不修改环境 |
+| `source_manifest.py` | 临时/易丢来源的私有快照及身份核验 |
+| 术语、覆盖、图形台账工具 | 长译稿/全文审计复用项目台账；工具验证格式、范围或状态，不证明实质审读 |
+| `project_figure_usage.py` | 从主 TeX 输入图检测常见实际图式调用，忽略注释/宏定义；用于验证器路由，不能代替完整图清单 |
+| `audit_bibliography.py` | 静态核引用键与实际书目范围/目录登记；不证明最终标题或点击目标，也不展开任意宏 |
+| `batch_checkpoint.py` | 并行/多阶段协调；`--check --require-complete --require-verified` 检查已结束的最新输出责任；不是全书覆盖验证 |
+| 模板验证器 | 仅匹配模板；`--allow-anonymous` 支持已选匿名信用，Sage 另有 `--without-contents`；不自动修改呈现 |
+| `package_release.py` | 含 PDF 发布包，验证归档后仍须独立解压重建；仅 TeX 的源包另见发布专题 |
+| `verify_chinese_writing_vendor.py` | 校验方法库、完整上游归档与同源哈希，不代表语言或数学审校 |
 
 <details>
 <summary>环境检查与编译</summary>
@@ -164,7 +201,7 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --init
 python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir PROJECT_DIR
 ```
 
-长书按 4–6 页或一个连贯小节分批；每批一个写者、目标文件互斥，公共台账由协调者合并。
+长书按可核验的源页/完整单元分批；并行写入才要求目标文件互斥，公共台账由协调者合并。详见批次协调文档中的 claim、promote、后续 review 和发布检查。
 
 </details>
 
@@ -179,17 +216,22 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 │   ├── chinese-template-project-v2/
 │   └── mathtranslations-template/
 ├── references/
+├── vendor/chinese-writing/
+├── vendor/chinese-writing-upstream.zip
+├── vendor/chinese-writing.lock.json
 └── scripts/
 ```
 
 ### 重要原则
 
-- 不使用 PDF 文字覆盖作为最终翻译方式。
+- 不以在原 PDF 整页覆盖中文作为最终译本；图内标签的局部 TeX 替换须有明确归属和保真检查。
 - 不擅自总结、删节、改写或重排原文。
 - 不因模板限制而省略公式、证明、练习或图片。
 - 图片中的普通英文标签需要翻译；数学符号和不应翻译的人名保持原样。
 - OCR 只用于定位和初步转录；标题、作者、图注、标签和封面大小写必须回看源 PDF。
 - 编译成功不等于内容验收通过。
+- 仅改变字体或环境显示名时，保持未授权的框线、底色、正文、内部环境名、编号和链接。
+- 发布报告分别说明本轮实际审查和沿用的历史证据；固定快照、脚本检查和旧台账不代表行为测试已完成。
 - `MathTranslations` 中的人物徽记来源和再分发许可需要在公开发布前单独确认。
 
 <details>
@@ -201,12 +243,16 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 
 ### Highlights
 
-- Choose `Sage-Olive`, `Chinese Template Project v2`, or `MathTranslations` at the start of every new translation task.
+- Version 3.1 supports new translation, existing-project audit, and targeted repair with separate scopes and evidence. Chinese expression review is integrated into every book-translation batch by default.
+- Use the confirmed template for new projects, defaulting to Sage-Olive when unspecified; unknown translator/tool credit may stay blank or anonymous. Existing projects retain their established structure.
 - Treat the rendered source PDF as authoritative; use Markdown as a read-only drafting scaffold when reliable.
 - Keep terminology, source-page coverage, figure provenance, and batch checkpoints in durable ledgers.
-- In exact-appearance mode, use source-pixel-locked crops by default; difficult exchange diagrams must not be hand-redrawn in TikZ.
+- Use the pinned `chinese-writing` 2.13.3 snapshot through [the mathematics adaptation](references/chinese-writing-integration.md); improve Chinese without adding source-absent arguments or applying an original-article approval workflow to ordinary translation.
+- Each book batch proceeds through translation, mathematics/terminology checks, Chinese sentence-group review, mathematical protection checks, and compilation/merge; the user does not need to request Chinese review separately.
+- Select figure methods for exact appearance, mathematical structure, or readability. Exact mode preserves non-language pixels and geometry; structural/readability modes permit verifiable native diagrams or crops without fixed node/arrow thresholds.
+- Reconcile source figures with TeX in both directions, including XY-pic and inline diagrams, and check actual PDF occurrences, alpha masks, order, and affected neighboring pages.
 - Reject silent figure overwrites and verify promoted assets with SHA-256 before compilation and release.
-- Treat compilation success and source fidelity as separate acceptance gates.
+- Treat compilation, source fidelity, Chinese review, visual QA, and independent archive rebuild as separate acceptance gates. Snapshot/ledger checks do not establish completed behavioral tests.
 
 ### Templates
 
@@ -218,11 +264,12 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 
 ### Fidelity principles
 
-- Never use translated PDF text overlays as the final output.
+- Do not use full-page translated PDF overlays as the final edition; a verified figure-label layer is a distinct, local representation choice.
 - Do not summarize, omit, modernize, or reorder source content.
 - Translate ordinary English labels inside figures while preserving mathematical symbols and personal names when appropriate.
 - Treat OCR output as a locator, not a capitalization authority.
 - A successful build is not sufficient; compare the final output with the source PDF.
+- Preserve personal annotations and unauthorized style dimensions; report the actual review scope and any inherited evidence.
 
 </details>
 
@@ -230,3 +277,18 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 
 Bundled fonts and other third-party assets retain their upstream copyrights and licenses. Review the applicable upstream terms before redistributing this repository or derived packages.
 The `MathTranslations` anime badge is user-supplied artwork with unverified provenance; replace it or confirm permission before redistribution.
+
+The pinned `chinese-writing` snapshot retains its upstream MIT license; the `examples/independence-correlation/` teaching example has a separate CC BY-NC-SA 4.0 license. See [`vendor/chinese-writing/THIRD_PARTY_NOTICES.md`](vendor/chinese-writing/THIRD_PARTY_NOTICES.md) and the [adaptation policy](references/chinese-writing-integration.md).
+
+
+## 技能维护检查
+
+修改协调工具或内置写作材料后，可运行以下离线回归；临时工程写入系统临时目录，不修改已安装模板或译稿。
+
+```bash
+python3 tests/test_batch_checkpoint.py
+python3 tests/test_chinese_writing_vendor.py
+python3 scripts/verify_chinese_writing_vendor.py
+```
+
+这些检查覆盖批次状态/哈希责任与固定快照完整性，不代表真实译稿的数学或中文审校完成。模板验证器的无图检测仅为静态工具路由，完整图形清单仍需源书与 TeX 双向核对。

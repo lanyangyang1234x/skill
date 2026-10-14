@@ -1,136 +1,42 @@
-# Translation and Layout Policy
+# 新工程与版式
 
-Use this policy for every mathematical translation, including projects that
-start from a MinerU or other Markdown transcription.
+用于新建数学译稿的工程组织，以及引用、字体或版式专项修改。内容保护与每批工作顺序以 [主入口](../SKILL.md) 为准；术语、中文改句、图形、勘误和发布分别由对应专题维护，不在这里重复整套审校要求。
 
-## Authority and Priorities
+## 初始化
 
-Keep two kinds of authority separate:
+- 沿用用户已选的模板；未指定时默认 Sage-Olive，并说明选择。完整复制对应模板的字体、样式与必要资产，不将示例正文当成译稿内容。既有工程直接使用其主文件与构建方式。
+- 源题名、作者与版本信息依当前原书。译者、审校者、工具/模型等署名只用已确认信息，未知可留空/匿名；不因缺署名停下译写。若用户要求署名但具体姓名无法推定，再询问该项。
+- 可靠 Markdown 的标题、正文、公式、图路径、脚注、锚点和页标记按源文单元转换为真实 TeX。只对缺失、冲突、乱码或可疑部分补提取/OCR；保留原转录稿。
+- 长项目复用已有台账与构建入口。按内容组织章节，不为每个审阅批次强拆单文件；并行写入冲突时由协调者应用局部修订或拆出合理的独立章节。
+- 封面、版权页、目录等默认跟随所选模板；省略目录或匿名署名属于用户可指定的呈现选择。不要为验证器的默认检查额外生成原书没有的正文结构。
 
-- **Content authority:** the rendered original PDF/book is authoritative for
-  mathematical meaning, formulas, numbering, structure, figures, and source
-  order. When present, the Markdown file is the primary drafting scaffold for
-  transferring content into TeX, but it yields to the source whenever they
-  conflict; do not repeat full extraction for reliable Markdown content.
-- **Presentation authority:** the selected bundled template is authoritative
-  for page geometry, typography, title-page construction, theorem styling,
-  hyperlinks, and running heads. Do not force a facsimile layout unless the
-  user explicitly requests one.
+## 引用与编号
 
-When a conflict cannot be resolved without changing source content or
-materially simplifying the layout, stop and identify the conflict before
-choosing a workaround.
+先建立“源书可见编号 → 数学对象 → 实际 TeX 标签”映射，再转换手打引用。罗马章号、带撇编号、附录号、重号和手设计数器须按上下文解析；普通年份、举例数字、区间和复形移位不能按引用替换。
 
-When Markdown is supplied, convert its reliable headings, prose, math, image
-references, anchors, footnotes, and page markers into real TeX in coherent
-batches. Keep the Markdown read-only by default and use targeted PDF checks for
-uncertain, missing, garbled, or conflicting material.
+- 在真实目标建立 `\label`，用 `\ref`/`\autoref`、`\eqref` 或保留源显示文字的 `\hyperref` 引用。
+- 显示编号依源版本或用户已确认的编号规则。`根据定理~\ref{thm:xxx}` 与 `由式~\eqref{eq:xxx}` 的目标须对应原对象；不能链接到附近条目来消除未定义警告。
+- 未译、缺失或歧义目标单独登记。不能虚构目标、隐藏未解决引用或把现有内部标签批量改名。
+- 最终同时核可见编号和 PDF 实际点击目标；目录、术语索引、习题/答案及文献导航按源材料和模板支持范围检查。
 
-## Translation Requirements
+多组参考文献或手打文献引用另读 [审计证据与发布](audit-evidence-and-release.md)。模板已有 `thebibliography`/`mybibliography` 或 BibTeX/Biber 流程就沿用，不因模板缺少示例文献而补造书目。
 
-- Translate faithfully; do not add explanations, examples, proofs, or
-  motivational prose that is absent from the source. Natural Chinese is useful,
-  but mathematical meaning, hypotheses, logical relations, and formula
-  semantics take priority over fluency.
-- Preserve chapters, sections, theorem-like items, definitions, propositions,
-  corollaries, lemmas, examples, exercises, footnotes, references, appendices,
-  and their source order. Do not remove source material merely to make TeX
-  compile.
-- Use one Chinese rendering for the same mathematical term throughout the
-  book. Keep personal names and eponyms in source spelling, and retain the
-  English term at the first important occurrence when the Chinese rendering is
-  not firmly established.
-- At first use of a genuinely new concept, use `\\emph{中文术语}` followed by
-  the source term in parentheses, for example `\\emph{概型} (scheme)`. Do not
-  italicize every later occurrence.
-- Use Chinese punctuation throughout, except that an English sentence ending
-  inside an English quotation or source-language passage may retain its period.
-- Preserve the source's capitalization for any Latin-script text copied from the
-  PDF, including titles, section headings, labels, figure captions, metadata,
-  and cover or title-page credits. Do not silently normalize source-derived
-  English into all caps, title case, or sentence case unless the source itself
-  does so.
-- Keep source-derived text separate from template interface labels. A template
-  may style labels such as `Chapter`, `Appendix`, or `Proof` with small caps,
-  but that presentation rule must not leak into copied titles, author names,
-  captions, or credits. If a source string is placed inside an inherited
-  `\textsc`/`\scshape` context, locally restore `\normalfont\upshape`.
+## 字体、标题与分页
 
-## Cross-References and Numbering
+沿用模板的便携字体及接口；既有工程遵从已确认字体和版式。字体修改只作用于授权部分，并在最终 PDF 检查标题、定理标签、证明、公式与正文的实际继承。字体参考不授权替换定理框、封面或全局字号。
 
-Every theorem, formula, section, figure, table, exercise, and answer that is
-referenced must use real TeX anchors and links:
+保留源派生 Latin 文字的拼写与大小写。模板的 `Chapter`/`Proof` 等界面标签样式不能把源标题、人名、图注或署名变成全大写或 small caps；必要时在相应源字符串局部解除继承样式。中文标点按句法使用，原语言引文和公式/代码语法保留其需要的符号。
 
-- use `\\label{...}` at the target;
-- use `\\ref`, `\\autoref`, or `\\eqref` at the reference site;
-- never hard-code a translated number in prose when a source reference exists.
+前言与首章的转场、长证明结束、公式/图/脚注附近的分页须实际看页。遇到排版冲突时调整允许的布局，不删数学内容或强制把整个长段落塞入不可分页盒子。
 
-For example, translate “By Theorem 3.4” as `根据定理~\\ref{thm:xxx}` and an
-equation reference as `由式~\\eqref{eq:xxx}`. Preserve the numbering visible in
-the source edition by adjusting counters, theorem environments, or numbering
-formats when necessary; do not change the mathematical text to accommodate a
-sample counter.
+## 导航与术语索引
 
-## Front Matter and Typography
+新建 Project v2 默认保留其 `MidnightBlue` 内部/目录/URL 链接与 `BrickRed` 文献链接、无边框显示及习题/答案导航。其他模板按各自接口；既有项目保留既定链接颜色，不把文献颜色改动扩展到个人蓝字批注。
 
-At task initialization, collect and confirm the translator/editor display name
-and the model/tool display name after the user chooses a template. Treat these
-as per-project metadata, not global preferences. Render a visible credit line
-equivalent to `本中文译本由{译者名}使用{模型名}完成。`; if the user supplies a
-neutral or anonymous label, reproduce that label exactly.
+书籍或篇幅较大的讲义维护适当的术语账及索引/词汇表，记录源词、确定的译名和定位；短论文按实际需要，不为凑结构新增索引。更新现有索引时同步改动术语和页链接，不重建其版式。
 
-The title page or cover metadata must identify, when the source provides it:
-original title, author, edition/publication information, translator or editor,
-translation/retypesetting tool or model, and update/completion time. For the
-cover's lower-right publisher block, add a translator line such as “译者 翻译及
-重排”; keep it visibly smaller than the main title but slightly larger than
-the surrounding publisher metadata.
+先让正文分页与引用稳定，再生成索引等派生材料并继续构建至目录/索引稳定。模板验证器的固定预编译轮次只用于完成默认构建，不证明任意工程已经收敛；最终以连续构建的产物/警告与 PDF 实际结果判定。
 
-For `Chinese Template Project v2`, prefer the bundled template's Chinese body font for
-正文, its theorem-style font for definition/theorem labels, and a serif
-computer-modern-compatible font for English mathematical text. Use Kai-style
-emphasis for Chinese specialist terms only when the template already supports
-it; do not override the template's portable `fontset=fandol` requirement or
-the Sage-Olive font map. The selected template remains the final layout
-authority.
+## 验收转接
 
-Keep front matter visually distinct from the first chapter: after a preface,
-foreword, or introduction, leave an intentional amount of vertical space
-before the first numbered chapter rather than compressing the transition.
-
-## Hyperlinks and Template Features
-
-For `Chinese Template Project v2`, preserve the template's link behavior:
-
-- internal links and table-of-contents entries use `MidnightBlue`;
-- bibliography links use `BrickRed`;
-- URL links use `MidnightBlue`;
-- linked text has no visible border; titles and page numbers in the contents
-  remain clickable.
-
-Retain the template's exercise-to-answer links, proof-ending marker, and
-long-proof navigation behavior when the source contains those structures.
-
-## Final Terminology Index
-
-For a book or substantial set of notes, create a final terminology index or
-ledger containing every specialized term that appears in the document: chosen
-Chinese term, source-language term, and the first page on which it appears.
-Use the terminology ledger scripts for machine checks, then inspect the final
-PDF because page numbers can change after the last compilation.
-
-## Three-Round Review Gate
-
-Before delivery, perform three separate passes and record unresolved items:
-
-1. **Mathematics:** formulas, variables, superscripts/subscripts, hypotheses,
-   conclusions, theorem numbering, assumptions, and equation references.
-2. **Terminology:** consistent Chinese renderings, first-use English notes,
-   untranslated ordinary English, and forbidden legacy variants.
-3. **Layout:** theorem/definition numbering, cross-links, table of contents,
-   page numbers, running heads and footers, footnotes, figures, bibliography,
-   cover metadata, front-matter spacing, and final-page completeness.
-
-Compilation success is necessary but not sufficient: a document that compiles
-while dropping content, breaking links, or changing mathematical meaning fails
-the review gate.
+新译稿按主入口分别记录实质检查；现有全文审计读 [既有项目审计](existing-project-audit.md)。图形含本地图式与图片，读 [图形与成书](book-completion-and-figure-qa.md)。交付最终包读 [独立重建](audit-evidence-and-release.md)。只改几个引用或字体时验收相应影响，不宣称其他维度的全书审计完成。

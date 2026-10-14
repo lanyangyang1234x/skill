@@ -2,16 +2,18 @@
 set -euo pipefail
 
 if (( $# < 2 )); then
-  printf 'Usage: validate_chinese_template_project.sh PROJECT_DIR MAIN.tex [--keep-aux]\n' >&2
+  printf 'Usage: validate_chinese_template_project.sh PROJECT_DIR MAIN.tex [--keep-aux] [--allow-anonymous]\n' >&2
   exit 2
 fi
 project_dir=$1
 main_tex=$2
 shift 2
 keep_aux=0
+allow_anonymous=0
 while (( $# )); do
   case "$1" in
     --keep-aux) keep_aux=1 ;;
+    --allow-anonymous) allow_anonymous=1 ;;
     *) printf 'Unknown option: %s\n' "$1" >&2; exit 2 ;;
   esac
   shift
@@ -32,20 +34,27 @@ if ! grep -Fq '\documentclass[UTF8,12pt,fontset=fandol]{ctexart}' "$main_path"; 
   exit 1
 fi
 
-if grep -Eq '\\newcommand\{\\Translation(Editor|Tool)\}\{(译者姓名|使用模型或工具)\}' "$main_path"; then
+if grep -Eq '\\(newcommand|renewcommand|providecommand)\{\\Translation(Editor|Tool)\}\{[[:space:]]*(译者姓名|使用模型或工具|工具/模型显示名)[[:space:]]*\}' "$main_path"; then
   printf 'Chinese Template Project v2 translator/tool metadata placeholders remain in: %s\n' "$project_dir/$main_tex" >&2
   exit 1
 fi
-if ! grep -Fq '\TranslationCreditLine' "$main_path"; then
-  printf 'Chinese Template Project v2 must keep a visible translation credit line.\n' >&2
-  exit 1
+if (( ! allow_anonymous )); then
+  for field in TranslationEditor TranslationTool; do
+    if ! grep -Eq "\\\\(newcommand|renewcommand|providecommand)\\{\\\\${field}\\}\\{[[:space:]]*[^}[:space:]]" "$main_path"; then
+      printf 'Missing or empty translator/tool metadata: \\%s. Use --allow-anonymous only for the user\047s chosen anonymous credit.\n' "$field" >&2
+      exit 1
+    fi
+  done
+  if ! grep -Fq '\TranslationCreditLine' "$main_path"; then
+    printf 'Chinese Template Project v2 must keep a translation credit line unless the user chose anonymous credit and --allow-anonymous was supplied.\n' >&2
+    exit 1
+  fi
 fi
 
 required_tokens=(
   '\titleformat{\section}[display]'
   '\newenvironment{exercises}'
   '\newenvironment{answers}'
-  '\newenvironment{mybibliography}'
 )
 for token in "${required_tokens[@]}"; do
   if ! grep -Fq "$token" "$main_path"; then
@@ -53,6 +62,10 @@ for token in "${required_tokens[@]}"; do
     exit 1
   fi
 done
+
+# Project v2 does not define a custom bibliography environment. The existing
+# bibliography audit checks actual thebibliography/mybibliography ranges;
+# sources without a bibliography do not need an invented environment.
 
 sample_tokens=('你好，我是' 'Based on personal study and' 'Notes on Mathematical Studies' 'NOTES ON MATHEMATICAL STUDIES' '\\textsc{Yi Wang}')
 for token in "${sample_tokens[@]}"; do
@@ -74,19 +87,35 @@ if [[ -s "$project_dir/source-manifest.json" ]]; then
   python3 "$script_dir/source_manifest.py" check "$project_dir/source-manifest.json"
 fi
 
-if grep -REq --include='*.tex' '\\includegraphics|\\begin\{(tikzpicture|tikzcd)\}' "$project_dir"; then
-  if [[ ! -s "$project_dir/figure-manifest.tsv" ]]; then
-    printf 'Figure-bearing project is missing figure-manifest.tsv\n' >&2
-    exit 1
+has_figures=0
+if python3 "$script_dir/project_figure_usage.py" "$project_dir" "$main_tex"; then
+  has_figures=1
+else
+  figure_usage_status=$?
+  if (( figure_usage_status != 1 )); then
+    exit "$figure_usage_status"
   fi
 fi
-if [[ -s "$project_dir/figure-manifest.tsv" ]]; then
+manifest_has_rows=0
+if [[ -s "$project_dir/figure-manifest.tsv" ]] \
+    && awk 'NR > 1 && NF { found = 1; exit } END { exit !found }' "$project_dir/figure-manifest.tsv"; then
+  manifest_has_rows=1
+fi
+if (( has_figures && ! manifest_has_rows )); then
+  printf 'Detected figure/diagram usage requires figure-manifest.tsv with recorded rows; a missing or header-only manifest is insufficient.\n' >&2
+  exit 1
+fi
+validate_figures=$((has_figures || manifest_has_rows))
+if (( validate_figures )); then
   python3 "$script_dir/figure_manifest_ledger.py" \
     "$project_dir/figure-manifest.tsv" --check --require-complete
 fi
 
 (
   cd "$project_dir"
+  # Precompile the body before indexing. These fixed passes do not establish
+  # pagination convergence; inspect the derived files and continue if needed.
+  xelatex -interaction=nonstopmode -halt-on-error "$main_tex"
   xelatex -interaction=nonstopmode -halt-on-error "$main_tex"
   if [[ -s "${main_tex%.tex}.idx" ]]; then
     makeindex -q "${main_tex%.tex}.idx"
@@ -102,7 +131,7 @@ if [[ ! -s "$project_dir/$pdf_name" ]]; then
   exit 1
 fi
 
-if [[ -s "$project_dir/figure-manifest.tsv" ]]; then
+if (( validate_figures )); then
   python3 "$script_dir/render_figure_page_contacts.py" \
     "$project_dir/$pdf_name" "$project_dir/figure-manifest.tsv" \
     --output-dir "$project_dir/work/figure-page-qa"
@@ -120,4 +149,4 @@ else
   printf 'Kept build auxiliaries for review: %s/%s.*\n' "$project_dir" "${main_tex%.tex}"
 fi
 
-printf 'Validated: %s\n' "$project_dir/$pdf_name"
+printf 'Template/build checks passed: %s. Fixed passes do not prove pagination or index stability.\n' "$project_dir/$pdf_name"

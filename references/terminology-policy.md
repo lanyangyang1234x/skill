@@ -1,27 +1,34 @@
 # Chinese Mathematical Terminology Policy
 
-Every professional term needs a Chinese rendering.
+以源词、定义及所在数学语境确定译名，再核中文学科用法。普通专业词采用准确中文；人名、数学记号、原文题名及有理由保留的源词按各自身份处理。中文表达习惯不能改变概念。
 
-## Priority
+## 依据与选择
 
-1. User glossary or existing series translation.
-2. Banana Space entries.
-3. Same-field Chinese papers, reports, theses, or lecture notes.
-4. Authoritative Chinese textbooks, monographs, encyclopedia entries, or official terminology resources.
-5. Broad web usage only as weak support.
+1. 先读原书定义、前后命题和相关公式，确认是同一概念、近义概念还是不同对象。
+2. 核当前用户指定词表、同系列译名及既有工程中已正确使用的词。已有一致且准确的译名优先保留；若指定译名与源定义实质冲突，说明位置和证据，继续其他工作，不盲改数学。
+3. 对未定译名查同领域中文教材、论文、课程讲义或权威术语资源。Banana Space 等术语条目可作参考，需与原书语境对应；不同学科用法不能仅凭词典排名决定。
+4. 一般网页或宽泛字典只作弱支持。记录实际读取的原文和中文用法；仅见搜索片段或访问失败时说明限制，不能称已阅读全文。
 
-## Rules
+证据有分歧时，在 `terminology.tsv` 记录候选、定义、源位置、依据和 `provisional` 状态。可接受同义词的书内统一称“一致性统一”，不全称“纠正错译”。近词分别建项，不因中文形近而合并。
 
-- Keep personal names in the source spelling, including eponyms; translate only the surrounding common noun, e.g. `Nakayama 引理`.
-- Use `中文（English）` at first important appearance, then stay consistent.
-- For a new concept in running text, prefer an emphasized first-use form such as `\\emph{概型} (scheme)`; do not repeat the parenthetical English or emphasis at every later occurrence.
-- Use Chinese punctuation in translated prose, with English full stops retained only inside genuine source-language sentences or quotations.
-- If evidence is split, choose a defensible provisional translation, mark it `provisional`, and record alternatives in `terminology.tsv`.
-- Do not claim support from a source unless the exact entry or document has been opened and cited.
+## 源词、括注与强调
 
-## Ledger
+- 首次出现**不强制**英文括注或 `\emph`。中文译名明确、定义已充分表达概念时可直接中文；有歧义、译名未定、需读者确认源词或用户要求时，在首个关键位置保留 `中文（source term）`。强调遵从所选模板和项目约定，不自动给每个新概念加楷体或斜体。
+- 正文省去英文释名后，源词对照仍保留在术语账；已有双语索引同步维护。新建长书按任务建立术语索引或词表，既有项目不为补英文而擅增正文括注或重建索引版式。
+- 清理括注逐项核语义。含英文和“不一定”“非零”等中文条件的括号，只删确认冗余的释名；保留条件、否定、人名、数学符号、原文引文、文献题名及交叉引用。不以“有拉丁字母”判断括号可删。
+- 人名通常保留源拼写，如 `Nakayama 引理`；同一个人的不同派生词形须按源词和定义区分，不能把源派生形容词还原成人名。用户要求保留某个派生词时，保留准确词形及大小写并记入词表；这不要求所有派生词或所有专业词都用原文。
+- 保留源派生 Latin 文字的实际拼写和大小写，不擅改为全大写、标题式大小写或 small caps。正文、标题、图内标签、目录、页眉、索引和元数据均检查；必要时局部解除模板的 `\textsc` / `\scshape` 继承。
+- 普通英文、证明环境显示名和图内说明按任务译为中文；文献原题名、作者名和作为核查依据的源词保留。源码里的宏名、文件名、标签和引用键是技术标识，不当正文术语处理。
 
-Initialize, check, and audit the ledger with:
+## 同步与保护
+
+译名获确认后，同步正文、章节标题、由标题生成的目录和页眉、图表说明、索引及术语账，检查固定搭配与相关派生词。保持内部环境名、宏、标签、引用键、URL、路径和数学公式；不要为显示名一致而改动这些键。若本次确需迁移键，建立明确映射并验证全部引用，不能随词语替换顺便处理。
+
+新概念、定义和命题中的译名必须连同限定条件核对。“全忠实/忠实”“几乎可裂/分裂”等不能凭相似词形统一。机器候选需人工看局部源文，中文润色候选仍接受独立数学核验。
+
+## 术语账与机器核查
+
+复用已有账本；新建时可用：
 
 ```bash
 scripts/terminology_ledger.py terminology.tsv --init
@@ -29,10 +36,8 @@ scripts/terminology_ledger.py terminology.tsv --check
 scripts/terminology_ledger.py terminology.tsv --audit SOURCE.md PROJECT_DIR
 ```
 
-Run `--check` after every coherent translation batch. Run `--audit` against the source Markdown (when present) and the final TeX project before delivery; the TeX project is the edited deliverable unless Markdown write-back was explicitly authorized. The audit permits one important bilingual first-use occurrence such as `拟同构（quasi-isomorphism）` and reports later source-term remnants.
+每个完整批次后运行 `--check`；交付前审计实际最终 TeX，必要时对照只读源 Markdown。传入的源 Markdown 中保留英文原文可能产生预期命中，需明确其身份，不为通过扫描修改底稿。账本记录中文译名、准确源词、原书定位、证据、派生搭配、允许保留场景及当前状态；最终 PDF 页码随分页稳定后刷新。
 
-When a source term must remain in a bibliography title, quotation, or other justified context, add `audit-allow-source=N` to that ledger row's `notes`, where `N` is the permitted count. Use `audit-allow-all` when all source-language occurrences are intentionally preserved, and `audit-ignore` only when the entire entry is exempt from document auditing. Record the reason next to any directive.
+现有扫描器容许一次双语释名并报告其余未登记的源词；这个容许值**不是**必须保留一次的排版规则。零次正文括注可以合格。为文献题名、引文等有意保留的源词，在 `notes` 使用 `audit-allow-source=N`；所有出现均有理由保留时用 `audit-allow-all`；整项不纳入扫描时才用 `audit-ignore`，并写明原因。
 
-To catch previously used Chinese variants, add `audit-forbid=旧译名一|旧译名二` to `notes`. The audit then rejects those variants and points back to `chosen_zh`.
-
-Treat audit findings as review targets, not permission for blind replacement. Inspect context before changing Markdown or TeX, especially around formulas, code, citation keys, URLs, and personal names.
+已确认禁用的旧译名可写 `audit-forbid=旧译名一|旧译名二`，不能将所有可接受同义表达预先列禁词。扫描结果是待核位置，不是批量替换许可。扫描中的不区分大小写匹配不能证明源词拼写/大小写正确，须另核实际文本和最终 PDF。术语机器检查通过也不等于定义或数学审计通过。

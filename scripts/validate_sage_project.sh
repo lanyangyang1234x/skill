@@ -2,16 +2,20 @@
 set -euo pipefail
 
 if (( $# < 2 )); then
-  printf 'Usage: validate_sage_project.sh PROJECT_DIR MAIN.tex [--keep-aux]\n' >&2
+  printf 'Usage: validate_sage_project.sh PROJECT_DIR MAIN.tex [--keep-aux] [--allow-anonymous] [--without-contents]\n' >&2
   exit 2
 fi
 project_dir=$1
 main_tex=$2
 shift 2
 keep_aux=0
+allow_anonymous=0
+without_contents=0
 while (( $# )); do
   case "$1" in
     --keep-aux) keep_aux=1 ;;
+    --allow-anonymous) allow_anonymous=1 ;;
+    --without-contents) without_contents=1 ;;
     *) printf 'Unknown option: %s\n' "$1" >&2; exit 2 ;;
   esac
   shift
@@ -48,7 +52,8 @@ for required in "${required[@]}"; do
 done
 
 if [[ ! -s "$project_dir/assets/cover/selected-cover.jpg" && ! -s "$project_dir/assets/cover/selected-cover.png" ]]; then
-  python3 "$project_dir/fetch_random_cover.py" --project-dir "$project_dir"
+  printf 'Missing frozen Sage-Olive cover asset: %s/assets/cover/selected-cover.jpg or .png. Initialize the selected cover before validation; this validator does not download assets or update cover history.\n' "$project_dir" >&2
+  exit 1
 fi
 if [[ ! -s "$project_dir/assets/cover/cover-source.json" ]]; then
   printf 'Missing online cover source record: %s\n' "$project_dir/assets/cover/cover-source.json" >&2
@@ -123,16 +128,24 @@ cover_line=$(grep -nF '\MakeSageCover' "$main_path" | head -n 1 | cut -d: -f1 ||
 copyright_line=$(grep -nF '\MakeSageCopyright' "$main_path" | head -n 1 | cut -d: -f1 || true)
 contents_line=$(grep -nF '\MakeSageContents' "$main_path" | head -n 1 | cut -d: -f1 || true)
 
-if [[ -z "$cover_line" || -z "$copyright_line" || -z "$contents_line" ]]; then
-  printf 'Main TeX must call \\MakeSageCover, \\MakeSageCopyright, and \\MakeSageContents.\n' >&2
+if [[ -z "$cover_line" || -z "$copyright_line" ]]; then
+  printf 'Main TeX must call \\MakeSageCover and \\MakeSageCopyright.\n' >&2
   exit 1
 fi
-if ! (( cover_line < copyright_line && copyright_line < contents_line )); then
-  printf 'Front matter order must be cover, copyright (physical PDF page 2), then contents.\n' >&2
+if ! (( cover_line < copyright_line )); then
+  printf 'Front matter order must be cover, then copyright.\n' >&2
+  exit 1
+fi
+if [[ -z "$contents_line" ]] && (( ! without_contents )); then
+  printf 'Main TeX must call \\MakeSageContents unless the user chose no contents and --without-contents was supplied.\n' >&2
+  exit 1
+fi
+if [[ -n "$contents_line" ]] && ! (( copyright_line < contents_line )); then
+  printf 'Contents, when present, must follow the cover and copyright page.\n' >&2
   exit 1
 fi
 
-if grep -Eq '\\renewcommand\{\\Sage(ChineseTitle|Author|ChineseEditor|CopyrightDate|SourceLanguage)\}\{(中文标题|作者|中文译制者|中文译制负责人|完成时间|原文语言)\}' "$main_path" \
+if grep -Eq '\\renewcommand\{\\Sage(ChineseTitle|Author|ChineseEditor|ProductionTool|CopyrightDate|SourceLanguage)\}\{[[:space:]]*(中文标题|作者|中文译制者|中文译制负责人|译者姓名|使用模型或工具|工具/模型显示名|完成时间|原文语言)[[:space:]]*\}' "$main_path" \
     || grep -Eq '\\renewcommand\{\\SageEnglishTitle\}\{(ENGLISH TITLE|English Title)\}' "$main_path"; then
   printf 'Template metadata placeholders remain in: %s\n' "$project_dir/$main_tex" >&2
   exit 1
@@ -144,8 +157,19 @@ if grep -Eiq '\\(MakeUppercase|uppercase|MakeLowercase|lowercase|textsc|scshape)
   exit 1
 fi
 
-for field in SageAuthor SageChineseEditor SageProductionTool SageCopyrightDate SageSourceLanguage; do
-  if ! grep -Eq "\\\\renewcommand\\{\\\\${field}\\}\\{[^}]" "$main_path"; then
+metadata_fields=(SageAuthor SageCopyrightDate SageSourceLanguage)
+if (( allow_anonymous )); then
+  for field in SageChineseEditor SageProductionTool; do
+    if ! grep -Eq "^[[:space:]]*\\\\renewcommand\\{\\\\${field}\\}\\{[^}]*\\}" "$main_path"; then
+      printf 'Anonymous credit requires an explicit \\%s override ({} is allowed); omitted declarations can inherit sample credit from sage-math.sty.\n' "$field" >&2
+      exit 1
+    fi
+  done
+else
+  metadata_fields+=(SageChineseEditor SageProductionTool)
+fi
+for field in "${metadata_fields[@]}"; do
+  if ! grep -Eq "\\\\renewcommand\\{\\\\${field}\\}\\{[[:space:]]*[^}[:space:]]" "$main_path"; then
     printf 'Missing or empty copyright metadata: \\%s\n' "$field" >&2
     exit 1
   fi
@@ -174,20 +198,35 @@ if grep -REq --include='*.tex' '\\begin\{figure\*?\}' "$project_dir"; then
   fi
 fi
 
-if grep -REq --include='*.tex' '\\includegraphics|\\begin\{(tikzpicture|tikzcd)\}' "$project_dir"; then
-  if [[ ! -s "$project_dir/figure-manifest.tsv" ]]; then
-    printf 'Figure-bearing project is missing figure-manifest.tsv\n' >&2
-    exit 1
+has_figures=0
+if python3 "$script_dir/project_figure_usage.py" "$project_dir" "$main_tex"; then
+  has_figures=1
+else
+  figure_usage_status=$?
+  if (( figure_usage_status != 1 )); then
+    exit "$figure_usage_status"
   fi
 fi
-
-if [[ -s "$project_dir/figure-manifest.tsv" ]]; then
+manifest_has_rows=0
+if [[ -s "$project_dir/figure-manifest.tsv" ]] \
+    && awk 'NR > 1 && NF { found = 1; exit } END { exit !found }' "$project_dir/figure-manifest.tsv"; then
+  manifest_has_rows=1
+fi
+if (( has_figures && ! manifest_has_rows )); then
+  printf 'Detected figure/diagram usage requires figure-manifest.tsv with recorded rows; a missing or header-only manifest is insufficient.\n' >&2
+  exit 1
+fi
+validate_figures=$((has_figures || manifest_has_rows))
+if (( validate_figures )); then
   python3 "$script_dir/figure_manifest_ledger.py" \
     "$project_dir/figure-manifest.tsv" --check --require-complete
 fi
 
 (
   cd "$project_dir"
+  # Precompile the body before indexing. These fixed passes do not establish
+  # pagination convergence; inspect the derived files and continue if needed.
+  xelatex -interaction=nonstopmode -halt-on-error "$main_tex"
   xelatex -interaction=nonstopmode -halt-on-error "$main_tex"
   if [[ -s "${main_tex%.tex}.idx" ]]; then
     makeindex -q "${main_tex%.tex}.idx"
@@ -204,7 +243,7 @@ if [[ ! -s "$project_dir/$pdf_name" ]]; then
   exit 1
 fi
 
-if [[ -s "$project_dir/figure-manifest.tsv" ]]; then
+if (( validate_figures )); then
   python3 "$script_dir/render_figure_page_contacts.py" \
     "$project_dir/$pdf_name" "$project_dir/figure-manifest.tsv" \
     --output-dir "$project_dir/work/figure-page-qa"
@@ -222,4 +261,4 @@ else
   printf 'Kept build auxiliaries for review: %s/%s.*\n' "$project_dir" "${main_tex%.tex}"
 fi
 
-printf 'Validated: %s\n' "$project_dir/$pdf_name"
+printf 'Template/build checks passed: %s. Fixed passes do not prove pagination or index stability.\n' "$project_dir/$pdf_name"

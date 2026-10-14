@@ -1,42 +1,77 @@
-# Existing-project audit
+# 既有中文 TeX/PDF 项目审计
 
-Use this reference when a Chinese TeX/PDF project already exists or when the user asks for a full audit rather than a fresh conversion.
+用于既有译稿的全文审计、指定维度审计和定点修订。先按用户请求确定源文范围与审计维度，再在当前工程上工作；审计不默认重建模板、补译所有缺失内容或改封面署名。
 
-## Authority and write boundary
+既有全文译稿审计在授权范围内包含中文表达审读，不要求用户另外点选“中文润色”。每个批次按“源文核对/译修 → 数学与术语核对 → 中文句群审校 → 数学语义保护复核 → 编译与合入”推进，发现问题可回到前一步；各维度证据分别记，不表示这些步骤互不相接。定点任务仍按用户指定范围，不由一个字体或术语问题扩展为全书重写。
 
-Use the original rendered PDF as the authority for mathematical content and source structure. User-confirmed errata or supplements come next, followed by the existing TeX project. MinerU Markdown and OCR are read-only scaffolds; when a missing or damaged TeX passage can be recovered reliably from Markdown, transfer that content directly into TeX and verify only the uncertain portions against the PDF. Edit Markdown itself only when the user explicitly authorizes it. Record actual edited files and read-only reference files in the report.
+## 当前源码、原书与改动基线
 
-## Audit passes and ledgers
+1. 找到实际主 TeX、其依赖图、章节/图片/字体文件、构建脚本、当前 PDF、术语账和已有审计记录。记录用户最近的纠偏和“其他东西不要动”等边界。
+2. 在修改前保存当前源码及相关资产的可恢复快照和哈希。用户在上次交付后自行修改的正文、蓝字、术语与版式都属于当前基线；不能用历史 ZIP、旧分支或旧审计稿覆盖它们。旧包可作历史参照，不作“恢复最新版本”的来源。
+3. 核实用户指定原书的版本、物理页数、哈希和可读性。源 PDF、可靠 Markdown、原始资产默认只读；重要临时源文件按 [审计证据与独立重建](audit-evidence-and-release.md) 保存私有快照。不同版本的定理、图形与参考文献不得混用。
+4. 确认当前 PDF 是否由当前源码、完整索引和同一构建流程生成。若不同步或缓存状态不明，在隔离目录稳定编译当前源码，建立可比基线；不能把旧 PDF 的页数或未生成索引的预览当成此次修改前版本。记录自动日期、构建环境和索引/目录造成的差异。
 
-Run independent passes for:
+渲染原书决定原始内容与结构；经确认的勘误或补充须标明它如何改变原文；既有 TeX、Markdown/OCR 用于定位与起草。可靠 Markdown 可直接恢复已有译稿中的损坏段落，遇到缺失、歧义、冲突或数学风险须回到原书；全文逐页任务仍要完成每一原书页及逻辑单元的核对，不能以转录可靠为由跳过该任务。
 
-1. coverage: account for front matter, main matter, appendices, references, index, publisher catalogue, cover text, and other backmatter in `source-coverage.tsv`;
-2. terminology: record preferred Chinese terms, variants, forbidden forms, derived terms/fixed collocations, first source page, TeX locations, and evidence in `terminology.tsv`;
-3. mathematics: compare formulas structurally (domains, signs, limits, indices, hypotheses, constants, norms, vectors/matrices, and numbering) and record key checks in `formula-ledger.tsv` or `math-audit.md`;
-4. layout: record title page, copyright page, contents, chapter openings, later-chapter running heads, odd/even pages, long formulas, figures, missing glyphs, blank pages, final page, and backmatter in `visual-qa.md`.
+原书缺失时可以继续已授权的语法、字体或版式工作，但原书忠实度保持未验状态。原文疑点、读者注记和过程报告分别处理，见 [读者注记与原书勘误](reader-notes-and-source-errata.md)。
 
-For books, split coverage at least by chapter or comparable coherent source block. A single verified row spanning the entire body is insufficient evidence even when every page number is technically covered. Use `--max-verified-span` with a limit justified by the source structure.
+## 保护矩阵与授权范围
 
-For bibliography work, read [audit-evidence-and-release.md](audit-evidence-and-release.md). Compare entry count, order, and content per source scope; then separately audit TeX keys, contents entries, rendered numbering, and final PDF link destinations.
+在改动前列明哪些对象允许变化、哪些必须保持，以及比较方法。矩阵可放在审计报告中，不要求小修另建大量文件。
 
-When a book is split across workers, also read [parallel-batch-workflow.md](parallel-batch-workflow.md). Keep one writer per target file, merge shared ledgers in source order through the coordinator, and use the batch checkpoint ledger to prevent duplicate retries.
+| 任务 | 允许变化 | 重点保护 | 比较证据 |
+|---|---|---|---|
+| 环境名、引用字体等显示层修订 | 环境/自动引用显示名、局部字体宏 | 正文与公式、内部环境名、共享计数器、编号、标签/引用键、链接目标、用户批注 | 正文差异、键/计数器清单、最终显示及链接 |
+| 指定术语统一 | 经原文确认的词义对应及显示索引 | 同形异义词、未授权术语、公式/宏/内部键、人名和原文文献题名 | 各处源文定位、允许差异、正文/标题/索引/术语账同步 |
+| 中文表达审校 | 语序、句界、指代与有据的衔接 | 完整证明、假设/量词/否定、充分必要关系、修饰对象、对象类型、箭头方向、公式与既有批注 | 原文句群复核、数学单位与键保护、必要独立语义复核 |
+| 图表或注记呈现 | 已确认有问题的图、用户指定的尺寸/脚注/样式 | 正确图形、拓扑与标签、注记内容/顺序/来源/锚点、其余版式 | 源图结构、资产哈希、全部受影响图页或页底检查 |
 
-Do not treat compilation success as proof of mathematical fidelity. Fix undefined or wrong references first; label ordinary hard-coded historical or illustrative numbers as lower-risk rather than mass-rewriting every number. Treat visible clipping or collisions as high-risk overflow; a harmless mathematical edge warning may be documented as low risk.
+自动比较公式或命令序列只能证明其自身没有变化；正文中丢失量词、改错条件或混淆对象仍可能发生。允许变化逐项记录，差异超出范围时先恢复或核实授权，不能为了扫描“零报告”改掉合法英文排序键、URL 或参考文献。
 
-## PDF visual gate
+读者需要的译校注只说明与数学内容相关的定位、释义或有依据的勘误。批次进度、工具检查、修改片段数量和交付状态放过程审计报告；不把这类管理文字塞进正文注记。已有个人批注与正式译校注不能混为一类。
 
-Inspect the final rendered PDF, not only TeX macros. Include at least one later-chapter middle page (for example, chapters 5 or 6 in a long book), a chapter opening, a formula-heavy page, a figure page, and backmatter. Confirm the running head changes with the current chapter/section and does not retain a previous title.
+## 各维度证据分别记录
 
-## Named release gate
+覆盖、数学、中文、术语、图表、视觉、导航和发布状态分别判断。可共用一份报告或台账，但每一结论要能追溯到相应证据；编译成功不能自动把其他维度写成通过。
 
-Before delivery:
+| 维度 | 要核什么 | 建议证据 |
+|---|---|---|
+| 覆盖 | 前置材料、正文、证明、练习、脚注、附录、文献、索引及其他用户指定材料 | `source-coverage.tsv`、源物理页到 TeX 位置与逻辑单元的映射、缺译与排除理由 |
+| 数学 | 陈述/证明完整性、假设、量词、否定、对象及范畴类型、正负号、上下标、正反/左右/对偶方向、公式与编号 | `math-audit.md` 或公式账，源页/单元、问题、修正及复核 |
+| 中文 | 句群的主语、回指、条件范围、主干搭配、承接、公式引入与中文易读性 | 中文审校记录及数学语义保护；按 [中文写作接入](chinese-writing-integration.md) 工作 |
+| 术语 | 源词、上下文词义、派生词/固定搭配、译名、例外和用户约定 | `terminology.tsv` 的源页、TeX 位置、依据和同步范围 |
+| 图表 | 图片及原生/行内图式的对象、顶点、边、方向、标签、普通英文、尺寸和清晰度 | `figure-manifest.tsv`、结构检查、资产版本及编译页检查 |
+| 视觉 | 最终 PDF 的标题/页眉/页码、分页、公式、图表、脚注、缺字、字距、裁切、碰撞和末页 | `visual-qa.md` 的实际物理页、渲染参数、检查结果与未解项 |
+| 导航 | TeX 声明和引用对象、印刷编号、目录/文献/习题/答案/索引的实际点击目标 | 标签映射、键检查、最终 PDF 内部目标与有歧义引用的实际落点 |
+| 发布 | 当前 PDF/源码/报告一致，包内依赖完整，干净解压可重建 | 最终 ZIP 的成员/UTF-8/CRC/字节验证及独立构建比较记录 |
 
-1. compile and run the selected template validator;
-2. scan undefined references, duplicate labels, missing glyphs, and high-risk overflow;
-3. complete the coverage and audit ledgers;
-4. rename or copy user-facing artifacts to one canonical filesystem-safe stem derived from the translated Chinese title;
-5. ensure PDF, optional top-level TeX, ZIP, report, and output directory share that stem; internal `main.tex` is acceptable only as a private build entry;
-6. build the UTF-8 release with `scripts/package_release.py` and pass its archive round-trip checks;
-7. report the title stem, template, metadata, actual edits, read-only references, checks performed, skipped checks and reasons, final PDF page count, and artifact paths.
+表中示例文件名不是要求把同样内容重复写多份。每份证据标明源身份、当前输入版本、范围、维度、状态、检查方式和未解项；历史记录保留日期，不覆盖成“当前已通过”。
 
-Do not deliver stale `main.pdf`, `main.zip`, or similarly generic files as the release artifacts.
+## 全文逐页审计怎么闭合
+
+逐页是逐个原书物理页中的逻辑单元核对，不是每页打开一次或只点数环境。建立源物理页、印刷页码、章节/条目号与 TeX 位置的对应；核各页的段落、跨页证明、公式、图式、练习、脚注和后记材料。定理等编号条目须核类型、序列、实际陈述和顺序；数量相同不等于内容完整。
+
+一般按少量源页或一节分批；密集证明和图页进一步拆分。每批报告列出实际检查的页与单元、各维度问题和处理状态，`source-coverage.tsv` 的 notes 指向这些证据。跨页单元标明起止位置及相邻批次的接续。既有项目并行审阅按 [并行批次工作流](parallel-batch-workflow.md) 保持一文件一写入者，由协调者合并。
+
+- 用户要求全文逐页时，不能用抽样、单行全书 `verified`、编译成功或历史报告关闭任务。批次大小限制只约束台账粒度，不能代替实质核对。
+- 漏译、仅有空标题、缺失证明/练习或未辨清图形必须单独登记。若任务仅授权修现有内容，可交付已经完成的修订，但全文覆盖不得标通过；明确剩余源页与材料，不能静默补写或隐去缺失。
+- `excluded` 只表示有理由的范围排除，不表示该页经过核验。台账脚本可能接受排除行，报告仍须区分核验范围和排除范围。
+- 定点任务可在已授权范围内完成并交付，准确写“术语专项/显示层/指定页”等；没有审过的维度和其余全书保持未审计，不重新宣称全文数学审计完成。
+
+## 图式、引用与视觉终稿
+
+图形清单不能只扫描 `includegraphics` 或浮动 figure：还包括 TikZ、tikz-cd、XY-pic、行内箭图、交换图、正合列和用公式排出的图式。简单图核每个对象、箭头、方向和标签；复杂箭图在必要时列顶点/邻接表或边集。截图清晰、节点数相同、编译无错都不能证明数学拓扑正确。方法与阅读尺寸遵从 [图形与整书验收](book-completion-and-figure-qa.md)。
+
+手打引用先建声明标签与数学对象映射，再按上下文处理罗马编号、带撇编号、重号和多组文献。普通历史/示例数字不批量转成引用。机器文献扫描出现类似区间或复形移位的误报时人工分类；各文献范围的原文数量、顺序、文本数据、TeX 键、目录入口、可见编号与实际链接分别核验，见 [审计证据与独立重建](audit-evidence-and-release.md)。
+
+查看最终渲染 PDF，包括全部受影响页、相邻页和结构敏感页；全书审计或全面重排后逐页检查终稿。特别看后半部页眉是否随章节变化、定理标题是否与首个条件分离、长公式/图/脚注是否碰撞、奇偶页和最后一页是否完整。字号或字距异常可能没有日志警告；日志警告也可能无可见损伤，应记录实际影响。
+
+小范围后续修改可以在同渲染参数、完整逐页像素比较一致的证据下继承未变页的已有视觉验收；变页和邻页重新查看，目录/索引/末页等重建结构另核。不得仅凭页数相同或“应该没变”继承验收。源页内容审计与终稿物理页视觉覆盖各自闭合。
+
+## 构建、适用性与交付
+
+使用明确主文件和已有工程构建方式。新模板验证器只用于实际匹配其要求的项目；旧项目缺模板专有资源时不为通过验证器擅自迁移模板或添加示例结构。记录“不适用”的具体原因和实际替代检查；验证器真正运行失败则如实写失败，不能写“全部验证通过”。替代证据按当前任务覆盖适用的构建、日志、引用/文献与源文/保护/视觉检查；仅交付 TeX 时采用源包特例，只有交付发布包时才增加独立重建，不把定点修订扩成发布任务。
+
+先稳定正文分页和引用，再生成索引/文献等派生材料并继续编译至目录与索引稳定；次数取决于工程，不套固定次数。修复未定义或错误引用、重复标签、缺字和实际高风险溢出；已有非阻断提示需记录其影响，不能删内容来消除警告。
+
+交付文件与报告以对应中文题名命名；既有内部入口和文件组织不为命名而搬动或并成单文件。交付最终发布包时，按 [审计证据与独立重建](audit-evidence-and-release.md) 完成适用的归档校验、干净解压、独立构建和比较。报告实际文件改动、源版本与范围、各维度证据、跳过/不适用项、剩余内容及最终路径；读者注记保持与此过程报告分开。

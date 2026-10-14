@@ -1,0 +1,363 @@
+{
+  "schema_version": 2,
+  "repository": "https://github.com/Ou-Liu-Red-Sugar/chinese-writing",
+  "version": "2.13.3",
+  "commit": "9818d89aee474ef813f9c5d8a6164e0cb265fe1b",
+  "retrieved_date": "2026-10-10",
+  "snapshot_policy": "Complete unmodified tracked upstream tree in archive; runtime method library excludes standalone entry, agent guidance, installation and validation controls.",
+  "files": {
+    "LICENSE": {
+      "bytes": 1090,
+      "sha256": "9d2f16f531f1b67cb888fa2e7fab1a51ba7e715f153fa17e3ee9cf7d96389310"
+    },
+    "THIRD_PARTY_NOTICES.md": {
+      "bytes": 1973,
+      "sha256": "ef5bd5f86fdbca68d65562322a06c5a151aecce15575a67f5712ebc3e41d1933"
+    },
+    "assets/article-sketch.md": {
+      "bytes": 8754,
+      "sha256": "136b637218805a0754da8c3a63d8c9e58839967d866f5d4dc066c529f6eb2672"
+    },
+    "assets/benchmark-cases.json": {
+      "bytes": 60318,
+      "sha256": "e478786a1561d3a0a115e0d607763cd23a07638dd2339fcc5286d799a96c5f30"
+    },
+    "assets/benchmark-report.md": {
+      "bytes": 6510,
+      "sha256": "6e7c139bc6ace459784cc79962b60d3ef47607f3bfdb82c600e0037f5b97d8d3"
+    },
+    "assets/chat-handoff.md": {
+      "bytes": 4740,
+      "sha256": "170421298f5beff962b564c1631b59794c4f36fea425ea4ad6dca24bde5e4c56"
+    },
+    "assets/concise-report.md": {
+      "bytes": 5001,
+      "sha256": "b3561cb2b2fb77766680d96817939abf0d15dede44746bd99b4cdf1ff41a79b5"
+    },
+    "assets/sentence-calibration.md": {
+      "bytes": 21757,
+      "sha256": "695679746be185ba36e38edb0adea4dc54d93295d0bbe702ea0b22d6f27004e2"
+    },
+    "docs/author-preferences-20260922.md": {
+      "bytes": 12409,
+      "sha256": "02912bb0b4719f5c93ce86830f953656b191b7028a5c976d7c357da9841dfe01"
+    },
+    "docs/style-guide.md": {
+      "bytes": 3977,
+      "sha256": "0cfa4982b72122dbebe7cc549db0609093b416d86642bc719de9fcda28e8f10d"
+    },
+    "examples/independence-correlation/LICENSE.md": {
+      "bytes": 1511,
+      "sha256": "b42c39ed0ee5e392e03a48a9efbc901a59e1a9d00eb3195f5f579ed36a130816"
+    },
+    "examples/independence-correlation/README.md": {
+      "bytes": 2066,
+      "sha256": "1d0bbfd6d551e878cabed866541886fb31966c92bc4c95a403c8671ee1cc2bbb"
+    },
+    "examples/independence-correlation/acceptance.json": {
+      "bytes": 988,
+      "sha256": "ed25082c1b0b924617f7c328e911e9e695844e6233c56ad39a8de8f7e37c3fbd"
+    },
+    "examples/independence-correlation/article.md": {
+      "bytes": 3655,
+      "sha256": "d0448514565904d0bf42e0a146ced1f3f020a63d4f71f5cb33f04b9feec12d15"
+    },
+    "examples/independence-correlation/fill-contract.json": {
+      "bytes": 1328,
+      "sha256": "d0169c97cc01b729af38980440d1d694bacc735e85e43a58b822109e4c37ce89"
+    },
+    "examples/independence-correlation/fills.json": {
+      "bytes": 391,
+      "sha256": "c8efcd6d508e080be2b829435b9241778834b70bf344652b2ff671c1db2083b7"
+    },
+    "examples/independence-correlation/final-skeleton.md": {
+      "bytes": 3496,
+      "sha256": "58bc2683631a13e9372cb5f6170b43e33ad00b472bae07f3c2b97ef297225c92"
+    },
+    "examples/independence-correlation/process.md": {
+      "bytes": 1417,
+      "sha256": "1c947c650a3e948cbe371de869a96f14335c853a9d0dd029f5f9da3ad219257d"
+    },
+    "examples/independence-correlation/review-language-v1.md": {
+      "bytes": 10001,
+      "sha256": "ebe69a84f3d2d434497c1de43102341b062fc8a509eeb9e6f6f6c31e6f7f995d"
+    },
+    "examples/independence-correlation/review-language-v2.md": {
+      "bytes": 2981,
+      "sha256": "2331265726ba382a079737a8cb2513786f97f259ed04f7b210322855cbf9051a"
+    },
+    "examples/independence-correlation/review-structure-v1.md": {
+      "bytes": 7993,
+      "sha256": "70f2cd2b565d2bf3b67fa80894ea778fbbc2d5797c3595091aedd436a9428821"
+    },
+    "examples/independence-correlation/revision-v2.md": {
+      "bytes": 1929,
+      "sha256": "791c71cb0002564954f234253da05aeaedbe3364b45a2bdb7b5ea7c893da4505"
+    },
+    "examples/independence-correlation/run.json": {
+      "bytes": 3931,
+      "sha256": "02a19f3d827ba41860f913311f850288f5ad33105da99faa9cb3eed4de439fa0"
+    },
+    "examples/independence-correlation/sketch-v0.md": {
+      "bytes": 2624,
+      "sha256": "2c397500bacd2cc30d2e5349e63757519d7fafbf4b7ffda80ee0012389902202"
+    },
+    "examples/independence-correlation/sketch-v1.md": {
+      "bytes": 5313,
+      "sha256": "54cf64fa5965c37e42882724e22b3298b26898c91841cbec3d7570e4ba15bd0b"
+    },
+    "examples/independence-correlation/sketch-v2.md": {
+      "bytes": 3905,
+      "sha256": "6a031f2cb161819ff68c5324828510095ee84ff6f860c62e24dcc1e648ed47d7"
+    },
+    "references/benchmarks.md": {
+      "bytes": 17659,
+      "sha256": "38938b45cf2daf4f24141fe3c18a567160587f10a1032ee7cfec279120792f14"
+    },
+    "references/chat-collaboration.md": {
+      "bytes": 6770,
+      "sha256": "dda2fa480390f7c01f12648e1b5a450746cadc9d57678df758566b4908172408"
+    },
+    "references/composition.md": {
+      "bytes": 17545,
+      "sha256": "dca41a39e67793d0845a1e026feb660eccaf7d40d14e13df1774b442ea438685"
+    },
+    "references/connective-research.md": {
+      "bytes": 5219,
+      "sha256": "60e6f5a033f47786f8ddf91c9cb1f9f588cba3cb5f98f45d94c16cfbef0de353"
+    },
+    "references/literature.md": {
+      "bytes": 22512,
+      "sha256": "cbef039298851bcbf550d5164619eb78348398ba1d1807354be7628bdf5aef4d"
+    },
+    "references/openings.md": {
+      "bytes": 8674,
+      "sha256": "69b8ef4f0d34601cb613c3d52c8e5a181bb2044c74213128830ec641fffc8f66"
+    },
+    "references/punctuation-profiles.md": {
+      "bytes": 7023,
+      "sha256": "52e695d03cc4ec0b0847abe68ca207a0976f97556ce601ddc6bd337ae581dde4"
+    },
+    "references/qualification.md": {
+      "bytes": 9102,
+      "sha256": "feedcc13b39f27cae8205ccffe7ea63aa03d1260e0848bad021f0a0af364b17a"
+    },
+    "references/sentence-construction.md": {
+      "bytes": 33423,
+      "sha256": "ac6684b8c6753c1d6fa53aa7da75b8e2674cee18790c5d2615d8c6f706886b9b"
+    },
+    "references/specialist-checks.md": {
+      "bytes": 17385,
+      "sha256": "73689583078158fd7308f585806e656c53624990a7bedb8aa0d8e6b12f18f645"
+    },
+    "references/technical-document-style.md": {
+      "bytes": 2617,
+      "sha256": "2f55edb307d033eb9a4ab6439de95b306545cd5f69f2e7837d5fb21c6bb504ed"
+    },
+    "references/workflow.md": {
+      "bytes": 23712,
+      "sha256": "b90fba8c9fad718bfefcb76433205824e9fbb7d41f84b62ee03b5afb59c77fe6"
+    }
+  },
+  "upstream_archive": {
+    "path": "vendor/chinese-writing-upstream.zip",
+    "bytes": 186715,
+    "sha256": "eb937ebcb3c01800a60b8defb0d3fad991024fbb10ec84af7ffff8b901ea4e9d",
+    "files": {
+      ".github/workflows/validate.yml": {
+        "bytes": 864,
+        "sha256": "59820b7fc41f2b95acbb9773cbfb62f191d021e2c8d90738540f7f2b66da51ed"
+      },
+      ".gitignore": {
+        "bytes": 88,
+        "sha256": "619c285929a772567027bf156e05df89140873eb3bf6187a141d0f36997e7346"
+      },
+      "AGENTS.md": {
+        "bytes": 778,
+        "sha256": "33428ea2387b1cf0fe9fe9109ac9b96741a82aa90b39ac9d71b4cb8911a9f307"
+      },
+      "CONTRIBUTING.md": {
+        "bytes": 1782,
+        "sha256": "c3bd1b3b116962da42696b0406d6c6e5791692ae97062846d9cd5b31828fe149"
+      },
+      "LICENSE": {
+        "bytes": 1090,
+        "sha256": "9d2f16f531f1b67cb888fa2e7fab1a51ba7e715f153fa17e3ee9cf7d96389310"
+      },
+      "README.md": {
+        "bytes": 11688,
+        "sha256": "a5f75b877217a5f9c4aabcb3721f0768b54f9181c1643fe2775a693a94dffffa"
+      },
+      "SKILL.md": {
+        "bytes": 10483,
+        "sha256": "93e878b98148d2cceb00e70f3f75ce1ddc32d53446ef2ebaf1b6a600988285ce"
+      },
+      "THIRD_PARTY_NOTICES.md": {
+        "bytes": 1973,
+        "sha256": "ef5bd5f86fdbca68d65562322a06c5a151aecce15575a67f5712ebc3e41d1933"
+      },
+      "agents/openai.yaml": {
+        "bytes": 394,
+        "sha256": "dee00960228b51c282abc2e5b1264457e08081ee75dffdd15956b6e66b9238ca"
+      },
+      "assets/article-sketch.md": {
+        "bytes": 8754,
+        "sha256": "136b637218805a0754da8c3a63d8c9e58839967d866f5d4dc066c529f6eb2672"
+      },
+      "assets/benchmark-cases.json": {
+        "bytes": 60318,
+        "sha256": "e478786a1561d3a0a115e0d607763cd23a07638dd2339fcc5286d799a96c5f30"
+      },
+      "assets/benchmark-report.md": {
+        "bytes": 6510,
+        "sha256": "6e7c139bc6ace459784cc79962b60d3ef47607f3bfdb82c600e0037f5b97d8d3"
+      },
+      "assets/chat-handoff.md": {
+        "bytes": 4740,
+        "sha256": "170421298f5beff962b564c1631b59794c4f36fea425ea4ad6dca24bde5e4c56"
+      },
+      "assets/concise-report.md": {
+        "bytes": 5001,
+        "sha256": "b3561cb2b2fb77766680d96817939abf0d15dede44746bd99b4cdf1ff41a79b5"
+      },
+      "assets/sentence-calibration.md": {
+        "bytes": 21757,
+        "sha256": "695679746be185ba36e38edb0adea4dc54d93295d0bbe702ea0b22d6f27004e2"
+      },
+      "docs/author-preferences-20260922.md": {
+        "bytes": 12409,
+        "sha256": "02912bb0b4719f5c93ce86830f953656b191b7028a5c976d7c357da9841dfe01"
+      },
+      "docs/style-guide.md": {
+        "bytes": 3977,
+        "sha256": "0cfa4982b72122dbebe7cc549db0609093b416d86642bc719de9fcda28e8f10d"
+      },
+      "examples/independence-correlation/LICENSE.md": {
+        "bytes": 1511,
+        "sha256": "b42c39ed0ee5e392e03a48a9efbc901a59e1a9d00eb3195f5f579ed36a130816"
+      },
+      "examples/independence-correlation/README.md": {
+        "bytes": 2066,
+        "sha256": "1d0bbfd6d551e878cabed866541886fb31966c92bc4c95a403c8671ee1cc2bbb"
+      },
+      "examples/independence-correlation/acceptance.json": {
+        "bytes": 988,
+        "sha256": "ed25082c1b0b924617f7c328e911e9e695844e6233c56ad39a8de8f7e37c3fbd"
+      },
+      "examples/independence-correlation/article.md": {
+        "bytes": 3655,
+        "sha256": "d0448514565904d0bf42e0a146ced1f3f020a63d4f71f5cb33f04b9feec12d15"
+      },
+      "examples/independence-correlation/fill-contract.json": {
+        "bytes": 1328,
+        "sha256": "d0169c97cc01b729af38980440d1d694bacc735e85e43a58b822109e4c37ce89"
+      },
+      "examples/independence-correlation/fills.json": {
+        "bytes": 391,
+        "sha256": "c8efcd6d508e080be2b829435b9241778834b70bf344652b2ff671c1db2083b7"
+      },
+      "examples/independence-correlation/final-skeleton.md": {
+        "bytes": 3496,
+        "sha256": "58bc2683631a13e9372cb5f6170b43e33ad00b472bae07f3c2b97ef297225c92"
+      },
+      "examples/independence-correlation/process.md": {
+        "bytes": 1417,
+        "sha256": "1c947c650a3e948cbe371de869a96f14335c853a9d0dd029f5f9da3ad219257d"
+      },
+      "examples/independence-correlation/review-language-v1.md": {
+        "bytes": 10001,
+        "sha256": "ebe69a84f3d2d434497c1de43102341b062fc8a509eeb9e6f6f6c31e6f7f995d"
+      },
+      "examples/independence-correlation/review-language-v2.md": {
+        "bytes": 2981,
+        "sha256": "2331265726ba382a079737a8cb2513786f97f259ed04f7b210322855cbf9051a"
+      },
+      "examples/independence-correlation/review-structure-v1.md": {
+        "bytes": 7993,
+        "sha256": "70f2cd2b565d2bf3b67fa80894ea778fbbc2d5797c3595091aedd436a9428821"
+      },
+      "examples/independence-correlation/revision-v2.md": {
+        "bytes": 1929,
+        "sha256": "791c71cb0002564954f234253da05aeaedbe3364b45a2bdb7b5ea7c893da4505"
+      },
+      "examples/independence-correlation/run.json": {
+        "bytes": 3931,
+        "sha256": "02a19f3d827ba41860f913311f850288f5ad33105da99faa9cb3eed4de439fa0"
+      },
+      "examples/independence-correlation/sketch-v0.md": {
+        "bytes": 2624,
+        "sha256": "2c397500bacd2cc30d2e5349e63757519d7fafbf4b7ffda80ee0012389902202"
+      },
+      "examples/independence-correlation/sketch-v1.md": {
+        "bytes": 5313,
+        "sha256": "54cf64fa5965c37e42882724e22b3298b26898c91841cbec3d7570e4ba15bd0b"
+      },
+      "examples/independence-correlation/sketch-v2.md": {
+        "bytes": 3905,
+        "sha256": "6a031f2cb161819ff68c5324828510095ee84ff6f860c62e24dcc1e648ed47d7"
+      },
+      "references/benchmarks.md": {
+        "bytes": 17659,
+        "sha256": "38938b45cf2daf4f24141fe3c18a567160587f10a1032ee7cfec279120792f14"
+      },
+      "references/chat-collaboration.md": {
+        "bytes": 6770,
+        "sha256": "dda2fa480390f7c01f12648e1b5a450746cadc9d57678df758566b4908172408"
+      },
+      "references/composition.md": {
+        "bytes": 17545,
+        "sha256": "dca41a39e67793d0845a1e026feb660eccaf7d40d14e13df1774b442ea438685"
+      },
+      "references/connective-research.md": {
+        "bytes": 5219,
+        "sha256": "60e6f5a033f47786f8ddf91c9cb1f9f588cba3cb5f98f45d94c16cfbef0de353"
+      },
+      "references/literature.md": {
+        "bytes": 22512,
+        "sha256": "cbef039298851bcbf550d5164619eb78348398ba1d1807354be7628bdf5aef4d"
+      },
+      "references/openings.md": {
+        "bytes": 8674,
+        "sha256": "69b8ef4f0d34601cb613c3d52c8e5a181bb2044c74213128830ec641fffc8f66"
+      },
+      "references/punctuation-profiles.md": {
+        "bytes": 7023,
+        "sha256": "52e695d03cc4ec0b0847abe68ca207a0976f97556ce601ddc6bd337ae581dde4"
+      },
+      "references/qualification.md": {
+        "bytes": 9102,
+        "sha256": "feedcc13b39f27cae8205ccffe7ea63aa03d1260e0848bad021f0a0af364b17a"
+      },
+      "references/sentence-construction.md": {
+        "bytes": 33423,
+        "sha256": "ac6684b8c6753c1d6fa53aa7da75b8e2674cee18790c5d2615d8c6f706886b9b"
+      },
+      "references/specialist-checks.md": {
+        "bytes": 17385,
+        "sha256": "73689583078158fd7308f585806e656c53624990a7bedb8aa0d8e6b12f18f645"
+      },
+      "references/technical-document-style.md": {
+        "bytes": 2617,
+        "sha256": "2f55edb307d033eb9a4ab6439de95b306545cd5f69f2e7837d5fb21c6bb504ed"
+      },
+      "references/workflow.md": {
+        "bytes": 23712,
+        "sha256": "b90fba8c9fad718bfefcb76433205824e9fbb7d41f84b62ee03b5afb59c77fe6"
+      },
+      "tools/validate.py": {
+        "bytes": 11757,
+        "sha256": "5e78c5a8b6954667727330a1a0bec5c74cb919968099b0064f4ec1b5f41543fa"
+      }
+    }
+  },
+  "archive_only_files": [
+    ".github/workflows/validate.yml",
+    ".gitignore",
+    "AGENTS.md",
+    "CONTRIBUTING.md",
+    "README.md",
+    "SKILL.md",
+    "agents/openai.yaml",
+    "tools/validate.py"
+  ]
+}
