@@ -20,19 +20,69 @@ FAIL_PATTERNS = [
         r"LaTeX Error",
         r"Package .* Error",
         r"Undefined control sequence",
-        r"font .* not found",
-        r"cannot find.*font",
         r"There were undefined references",
         r"There were undefined citations",
         r"Citation .* undefined",
         r"Reference .* undefined",
         r"multiply defined",
         r"destination with the same identifier",
-        r"Missing character",
         r"Overfull \\[hv]box",
         r"Rerun to get cross-references right",
     )
 ]
+
+
+# NFSS/fontspec diagnostics often wrap the font name and the actual failure
+# across several lines. Keep those checks shared with validate_project_fonts.
+FONT_PATTERNS = [
+    ("missing_glyph", re.compile(r"Missing character[^\n]*", re.IGNORECASE)),
+    (
+        "font_not_found",
+        re.compile(
+            r"\bfont\b.{0,250}?\b(?:cannot be found|not found|not loadable|could not be loaded)\b"
+            r"|\bcannot find[^\n]{0,160}\bfont\b"
+            r"|\b(?:could not|couldn't|cannot|can't)\s+load\s+(?:requested\s+)?font\b",
+            re.IGNORECASE | re.DOTALL,
+        ),
+    ),
+    (
+        "font_substitution",
+        re.compile(
+            r"\bFont shape\b.{0,300}?\b(?:undefined|not available)\b"
+            r"|\bSome font shapes were not available\b"
+            r"|\b(?:Font|Size) substitutions?\b"
+            r"|\bdefaults substituted\b"
+            r"|\bUnknown CJK family\b",
+            re.IGNORECASE | re.DOTALL,
+        ),
+    ),
+]
+
+
+def font_log_findings(text: str) -> list[dict[str, Any]]:
+    """Return source-located font failures, including wrapped diagnostics."""
+    lines = text.splitlines()
+    findings: dict[tuple[int, str], dict[str, Any]] = {}
+    for category, pattern in FONT_PATTERNS:
+        for match in pattern.finditer(text):
+            line_no = text.count("\n", 0, match.start()) + 1
+            end_line = text.count("\n", 0, match.end()) + 1
+            findings[(line_no, category)] = {
+                "line": line_no,
+                "end_line": end_line,
+                "category": category,
+                "text": " ".join(line.strip() for line in lines[line_no - 1:end_line]),
+            }
+    return sorted(findings.values(), key=lambda finding: (finding["line"], finding["category"]))
+
+
+def inspect_log(text: str) -> list[dict[str, Any]]:
+    findings = font_log_findings(text)
+    font_lines = {finding["line"] for finding in findings}
+    for line_no, line in enumerate(text.splitlines(), start=1):
+        if line_no not in font_lines and any(pattern.search(line) for pattern in FAIL_PATTERNS):
+            findings.append({"line": line_no, "text": line.strip()})
+    return sorted(findings, key=lambda finding: finding["line"])
 
 
 def sha256(path: Path) -> str:
@@ -71,10 +121,7 @@ def main() -> int:
     if not args.pdf.is_file():
         raise SystemExit(f"PDF not found: {args.pdf}")
 
-    findings: list[dict[str, Any]] = []
-    for line_no, line in enumerate(args.log.read_text(encoding="utf-8", errors="replace").splitlines(), start=1):
-        if any(pattern.search(line) for pattern in FAIL_PATTERNS):
-            findings.append({"line": line_no, "text": line.strip()})
+    findings = inspect_log(args.log.read_text(encoding="utf-8", errors="replace"))
 
     report = {
         "status": "failed" if findings else "passed",

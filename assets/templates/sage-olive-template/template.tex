@@ -1,6 +1,6 @@
 % !TeX program = xelatex
 % Keep this file together with sage-math.sty and fonts/.
-\documentclass[reqno,11pt]{scrartcl}
+\documentclass[reqno,12pt]{scrartcl}
 
 \usepackage[
   paper=a4paper,
@@ -12,37 +12,7 @@
   headsep=0.75cm,
   footskip=1.15cm
 ]{geometry}
-\usepackage{fontspec}
-\usepackage{xeCJK}
-\setmainfont[
-  Path=fonts/,
-  UprightFont={LibertinusSerif-Regular.otf},
-  ItalicFont={LibertinusSerif-Italic.otf},
-  BoldFont={LibertinusSerif-Bold.otf},
-  BoldItalicFont={LibertinusSerif-BoldItalic.otf}
-]{LibertinusSerif-Regular.otf}
-\setsansfont[
-  Path=fonts/,
-  UprightFont={LibertinusSans-Regular.otf},
-  ItalicFont={LibertinusSans-Italic.otf},
-  BoldFont={LibertinusSans-Bold.otf},
-  BoldItalicFont={LibertinusSans-Bold.otf}
-]{LibertinusSans-Regular.otf}
-\setmonofont[Path=fonts/]{LibertinusMono-Regular.otf}
-\setCJKmainfont[
-  Path=fonts/,
-  UprightFont={FandolSong-Regular.otf},
-  BoldFont={FandolSong-Bold.otf},
-  ItalicFont={FandolKai-Regular.otf}
-]{FandolSong-Regular.otf}
-\setCJKsansfont[
-  Path=fonts/,
-  UprightFont={FandolHei-Regular.otf},
-  BoldFont={FandolHei-Regular.otf},
-  ItalicFont={FandolHei-Regular.otf},
-  BoldItalicFont={FandolHei-Regular.otf}
-]{FandolHei-Regular.otf}
-\setCJKmonofont[Path=fonts/]{FandolFang-Regular.otf}
+\usepackage{portable-math-fonts}
 
 \usepackage{microtype}
 \usepackage{amsmath,amssymb,amsthm,mathtools,mathrsfs}
@@ -55,13 +25,17 @@
 \captionsetup{justification=centering,singlelinecheck=false,labelsep=colon}
 \usepackage{sage-math}
 
+\theoremstyle{portable-statement}
 \newtheorem{theorem}{定理}[section]
 \newtheorem{corollary}[theorem]{推论}
 \newtheorem{lemma}[theorem]{引理}
 \newtheorem{proposition}[theorem]{命题}
 \newtheorem{conjecture}[theorem]{猜想}
-\theoremstyle{definition}
+\theoremstyle{portable-statement}
 \newtheorem{definition}[theorem]{定义}
+\theoremstyle{portable-example}
+\newtheorem{example}[theorem]{例}
+\theoremstyle{portable-note}
 \newtheorem{remark}[theorem]{注}
 \renewcommand{\proofname}{证明}
 

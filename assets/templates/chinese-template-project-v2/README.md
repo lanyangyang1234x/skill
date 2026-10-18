@@ -12,7 +12,7 @@
 - 译者、模型/工具、完成日期和版权信息元数据；
 - 源图按物理宽度插入的接口，不在模板中强制重绘交换图。
 
-将 `template.tex` 复制为项目入口文件，并把模板中的占位元数据替换为项目值。需要中文字体时优先使用 XeLaTeX 与 Fandol 字体；若要完全复现本项目的英文字体，可在 TeX Live 中启用 CM Unicode 字体。
+每个新任务先确认本次模板。完整复制模板目录，将 `template.tex` 改为项目入口名，并替换占位元数据。保留 `portable-math-fonts.sty` 和全部 `fonts/`（含许可、清单），以工程相对路径使用 Fandol/CMU 和传统 CM/AMS/RSFS 数学字体。正文12pt、1.3倍行距；宋体正文/证明/例题，仿宋陈述，楷体术语，黑体配CMU粗体标题。
 
 ```bash
 ./compile.sh template.tex

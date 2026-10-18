@@ -2,7 +2,7 @@
 name: pdf-to-chinese-tex
 description: "将数学 PDF 或 Markdown 转录稿译为中文 LaTeX/PDF；也用于既有数学译稿的原书对照、术语、中文表达、图表与引用修订。"
 metadata:
-  version: "3.1.0"
+  version: "3.2.0"
 ---
 
 # PDF to Chinese TeX
@@ -10,6 +10,14 @@ metadata:
 交付忠实、可编辑、中文可读且有实际核验依据的数学译稿。原书决定内容与结构；当前用户要求决定改动范围；新项目所选模板或既有工程约定决定呈现。
 
 本文件所在目录是 skill 根目录。引用和工具路径相对该目录；执行工具时使用其实际路径，明确项目目录、主 TeX、源文件和输出位置，不假定当前目录或默认 `template.tex` 是工程入口。
+
+纯图片编辑且不涉及数学译稿工程时，不单独启动本 skill 的模板/TeX 流程；若它是译稿中的局部图形修订，则只应用对应图形规则，不能因只有截图而无端要求整本原书或新建工程。
+
+## 每个新任务先确认模板
+
+每个独立的翻译、审计或修订任务开始时，必须询问本次模板；不能凭上一个任务的选择或“默认 Sage-Olive”跳过。新建项目列出下方可用模板及用户自带模板，既有项目询问“沿用现工程模板，还是改用你指定的模板？”。本次请求已明确模板（包括明确要求保持现有版式）视为已回答；同一任务的“继续”、批次接续和中断恢复沿用已确认选择，不逐轮重问。
+
+未回答前可核原书、主文件、范围、图形和字体清单；先保留当前工程，不初始化模板、不迁移版式，也不把等待超时当成同意。模板确认后保留其封面、色彩、定理框和导航；字体按下方已确认分工配置。用户只要局部修订时，模板询问不扩大改动范围。
 
 ## 任务分流
 
@@ -26,6 +34,7 @@ metadata:
 | 翻译正文或全文语言审校 | [中文写作接入](references/chinese-writing-integration.md)：每批必用；按句群问题选内置方法 |
 | 术语、人名派生词、首次英文、索引同步 | [术语政策](references/terminology-policy.md) |
 | 图形、透明背景、尺寸、最终图页 | [图形与整书验收](references/book-completion-and-figure-qa.md) |
+| 字体分工、便携字体、字号行距与嵌入 | [字体约定](references/font-policy.md) |
 | 个人批注、译校注、源书疑误或勘误 | [注记与勘误](references/reader-notes-and-source-errata.md) |
 | 手打引用、编号与链接 | [引用与版式](references/translation-and-layout-policy.md#引用与编号)；多组文献再读[审计证据](references/audit-evidence-and-release.md) |
 | 并行写入、批次接续或恢复 | [批次协调](references/parallel-batch-workflow.md)；串行小任务不必新建协调台账 |
@@ -56,7 +65,11 @@ metadata:
 
 ## 模板与工具选择
 
-既有工程沿用现有模板、字体、封面及构建方式。新项目采用已选模板；未指定时默认 Sage-Olive，并在开始时说明，用户有设计要求则优先遵从。署名只写已确认的信息，缺少译者/工具署名可暂留空或匿名，不阻塞译写，不沿用别人的姓名或旧模型名。
+按任务开头确认的模板工作，不自动指定模板。新建工程使用便携的 Fandol/CMU 字体分工：正文、证明、例题用宋体，定理类陈述用仿宋，术语强调用楷体，章节和环境标题用黑体配 CMU Serif 粗体；西文正文用 CMU Serif，公式用 Computer Modern、AMS 与 RSFS。脚注和译校注用宋体、注释标题用宋体粗体，封面中文用宋体。正文 12pt、1.3 倍行距；具体接口与验收见[字体约定](references/font-policy.md)。既有工程只在本次授权范围内改字体，不因加载 skill 改造全部版式。
+
+图形默认优先使用可编辑的 TikZ/TikZ-CD，并逐项对照原书的标签内容与位置、节点坐标、箭头起止/头型/虚实/路线和尺寸比例。用户要求“必须 TikZ”或“全部原图用 TikZ”时，其指定范围内必须原生重建，不能用截图、描边字形或套一层 `tikzpicture` 充数；“一模一样”同时要求原书外观，不能退化成拓扑相同。禁止用 `resizebox`、`scalebox`、`adjustbox` 或整体 `scale` 压缩整图/表格以掩盖溢出或错位；在原生坐标和排版层修正后重新看页。保留正确既有图形及用户限定的简单图/局部范围；详细方法与例外处理见[图形验收](references/book-completion-and-figure-qa.md#choose-the-figure-method-for-the-current-goal)。
+
+署名只写已确认的信息，缺少译者/工具署名可暂留空或匿名，不阻塞译写，不沿用别人的姓名或旧模型名。
 
 - [Sage-Olive](references/sage-olive-template.md)：便携字体、风景封面、版权页及彩色数学环境。
 - [Chinese Template Project v2](references/chinese-template-project-v2.md)：A4、酒红/金色章节层、中文环境及导航。

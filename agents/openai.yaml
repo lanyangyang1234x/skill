@@ -1,4 +1,4 @@
 interface:
   display_name: "PDF to Chinese TeX"
-  short_description: "忠实数学译写、中文表达审校、保护批注与独立重建的交付验证"
-  default_prompt: "使用 $pdf-to-chinese-tex 翻译或审计这个数学 PDF/TeX 项目，结合内置 chinese-writing 改善中文，保持数学、编号和已约定版式，保护批注并验证最终交付包。"
+  short_description: "先确认模板，忠实译写数学，核对 TikZ 图形与便携字体，保护批注并验证交付"
+  default_prompt: "使用 $pdf-to-chinese-tex 翻译或审计这个数学 PDF/TeX 项目；先询问本次模板，按已确认字体分工与原书图形要求工作，保持数学、编号和批注并验证最终交付。"

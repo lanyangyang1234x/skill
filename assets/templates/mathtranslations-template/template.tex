@@ -5,7 +5,7 @@
 % 文件依赖：anime-character-cover-badge.png
 %
 % 模板约定：
-% 1. 正文中文使用宋体，专用术语首次定义时使用楷体，定理、定义、命题、推论、引理、注使用仿宋.
+% 1. 正文中文使用宋体，专用术语首次定义时使用楷体，定理、定义、命题、推论、引理使用仿宋，注使用宋体.
 % 2. 英文正文使用有衬线 Computer Modern Unicode（CMU Serif）.
 % 3. 新概念首次出现统一使用 \newterm{键}{中文术语}{English term}，显示为“楷体中文术语（English term）”，并自动加入术语索引.
 % 4. 同一术语后续再次出现时直接正常书写中文，不必重复楷体，也不必重复英文原词.
@@ -14,12 +14,11 @@
 % 7. 排版文字除句末使用英文句点“.”外，其余标点统一使用中文标点.
 % 8. 过长证明建议移至所在小节末、习题之前的 longproof 环境，并用 \longprooflink 建立双向链接.
 
-\documentclass[UTF8,12pt,fontset=fandol]{ctexart}
+\documentclass[UTF8,12pt,fontset=none]{ctexart}
 
 % ---------- 页面、字体与数学 ----------
 \usepackage[paper=a4paper,left=2.5cm,right=2.5cm,top=2.8cm,bottom=2.8cm]{geometry}
-\usepackage{fontspec}
-\usepackage{xeCJK}
+\usepackage{portable-math-fonts}
 \usepackage{amsmath,amsthm,amssymb,mathrsfs,mathtools}
 \usepackage{graphicx,tikz,tikz-cd,titlesec}
 \usepackage{array,booktabs,longtable}
@@ -39,23 +38,12 @@
 \definecolor{mtink}{HTML}{252433}
 \definecolor{mtpaper}{HTML}{FBF8F1}
 
-% 英文：Computer Modern Unicode Serif
-\setmainfont{cmunrm.otf}[
-  BoldFont=cmunbx.otf,
-  ItalicFont=cmunti.otf,
-  BoldItalicFont=cmunbi.otf
-]
-
-% 中文：正文宋体；专用术语楷体；定理类环境仿宋.
-% 使用 fontset=fandol 提供的标准 CJK 字体族，避免依赖专有字体.
-\newcommand{\songfont}{\songti}
-\newcommand{\termfont}{\kaishu}
-\newcommand{\theoremfont}{\fangsong}
+% 字体角色与本地字体路径由 portable-math-fonts.sty 统一定义。
 
 \pagestyle{plain}
 \setlength{\parindent}{2em}
 \setlength{\parskip}{0pt}
-\linespread{1.16}
+\setstretch{1.3}
 
 % ---------- 译本元信息：实际使用时只需修改这里 ----------
 % 封面标题：中文译名 + 原书名
@@ -66,9 +54,9 @@
 \newcommand{\OriginalEdition}{3rd edition}
 \newcommand{\OriginalPublisher}{Springer}
 \newcommand{\OriginalYear}{2002}
-\newcommand{\Translator}{数译}
-\newcommand{\ModelUsed}{GPT-5.6 Sol}
-\newcommand{\TranslationDate}{17 Aug 2026}
+\newcommand{\Translator}{译者姓名}
+\newcommand{\ModelUsed}{模型名称}
+\newcommand{\TranslationDate}{完成日期}
 
 % ================================================================
 %                         术语系统
@@ -82,7 +70,6 @@
 % 后续再出现“概型”时，直接正常输入“概型”即可，不要再次调用 \newterm.
 % \termcn{...} 仅用于少数确有必要的术语强调，不自动进入索引.
 
-\newcommand{\termcn}[1]{{\termfont #1}}
 
 \makeatletter
 \newcommand{\MTTermList}{}
@@ -135,7 +122,7 @@
 % ================================================================
 %                       定理类环境
 % ================================================================
-% 定义、引理、定理、推论、命题、注：仿宋正文
+% 定义、引理、定理、推论、命题：仿宋正文；注：宋体
 % 例、问题：宋体正文
 % 环境标题后使用中文冒号，不使用英文句点.
 
@@ -143,7 +130,7 @@
   {6pt}{6pt}% 上下间距
   {\theoremfont}% 正文字体
   {0pt}% 缩进
-  {\songfont\bfseries}% 标题字体统一为宋体粗体，与“例”“证明”一致
+  {\headingfont}% 中文黑体、西文 CMU Serif 粗体
   {：}% 标题后的中文标点
   {0.5em}% 标题与正文间距
   {}%
@@ -152,7 +139,7 @@
   {6pt}{6pt}%
   {\songfont}%
   {0pt}%
-  {\songfont\bfseries}%
+  {\headingfont}%
   {：}%
   {0.5em}%
   {}%
@@ -163,6 +150,7 @@
 \newtheorem{theorem}{定理}[subsection]
 \newtheorem{corollary}{推论}[subsection]
 \newtheorem{proposition}{命题}[subsection]
+\theoremstyle{portable-note}
 \newtheorem{remark}{注}[subsection]
 
 \theoremstyle{mtsong}
@@ -219,7 +207,7 @@
   \normalfont\songfont
   \topsep6\p@\@plus6\p@\relax
   \trivlist
-  \item[\hskip\labelsep\normalfont\songfont\bfseries #1：]\ignorespaces
+  \item[\hskip\labelsep\headingfont #1：]\ignorespaces
 }{%
   \popQED\endtrivlist\@endpefalse
 }
@@ -318,17 +306,17 @@
   \thispagestyle{plain}%
   \vspace*{-0.5cm}%
   \makebox[\textwidth][r]{%
-    {\fontsize{18pt}{18pt}\selectfont\scshape
+    {\headingfont\fontsize{18pt}{18pt}\selectfont
       \ifInAppendix Appendix\else Chapter\fi
     }\enspace
-    {\fontsize{62pt}{62pt}\selectfont\bfseries\thesection}%
+    {\headingfont\fontsize{62pt}{62pt}\selectfont\thesection}%
   }%
   \par\vspace{-0.25cm}%
   \noindent\rule{\dimexpr\textwidth-\chapterNumSpace\relax}{0.45pt}%
 }
 
 \titleformat{\section}[display]
-  {\normalfont}
+  {\headingfont}
   {\ChapterSectionLabel}
   {0cm}
   {\raggedleft\rightskip=\chapterNumSpace\fontsize{30pt}{35pt}\selectfont\bfseries}
@@ -337,13 +325,13 @@
 \newcommand{\sectionbreak}{\clearpage}
 
 \titleformat{name=\section,numberless}[block]
-  {\normalfont\Large\bfseries\centering}
+  {\headingfont\Large\centering}
   {}
   {0pt}
   {}
 
 \titlespacing{\section}{0pt}{0pt}{0pt}
-\ctexset{subsection={format=\large\bfseries}}
+\ctexset{subsection={format=\headingfont\large}}
 
 % ================================================================
 %                     习题与答案双向链接
@@ -375,7 +363,7 @@
 
 \newenvironment{exercises}{%
   \par\medskip
-  \noindent{\large\bfseries 习题}\par\smallskip
+  \noindent{\headingfont\large 习题}\par\smallskip
   \begingroup
   \setlength{\parindent}{0pt}
   \renewcommand{\item}{\exercise@item}%
@@ -429,12 +417,18 @@
 % 实际翻译时，可以删除示例正文，只保留需要的结构和环境.
 
 
+\ctexset{
+  subsubsection={format=\headingfont\normalsize},
+  paragraph={format=\headingfont\normalsize},
+  subparagraph={format=\headingfont\normalsize}
+}
 \begin{document}
 
 % ================================================================
 %                             封面
 % ================================================================
 \begin{titlepage}
+    \coverfont
     \thispagestyle{empty}
     \pagecolor{mtpaper}
     \flushleft
@@ -447,7 +441,7 @@
 
     {\color{mtgold}\rule{\textwidth}{0.6pt}} \\[2cm]
 
-    \hspace{2cm} {\color{mtink}\Huge \textsc{\OriginalAuthor}} \\[6cm]
+    \hspace{2cm} {\color{mtink}\Huge \OriginalAuthor} \\[6cm]
 
     \vfill
 

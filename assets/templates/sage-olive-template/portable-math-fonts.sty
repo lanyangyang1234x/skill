@@ -1,0 +1,65 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{portable-math-fonts}[2026/10/18 Portable Fandol and CMU typography]
+% All text fonts are project-relative. fontspec must not replace CM math.
+\RequirePackage{fix-cm}
+\RequirePackage[no-math]{fontspec}
+\RequirePackage{xeCJK}
+\RequirePackage{amsmath,amssymb,amsthm,mathrsfs}
+% Allow the traditional RSFS outlines at the template's actual script sizes.
+\DeclareFontFamily{U}{rsfs}{\skewchar\font127}
+\DeclareFontShape{U}{rsfs}{m}{n}{<-6> rsfs5 <6-8> rsfs7 <8-> rsfs10}{}
+\RequirePackage{setspace}
+\RequirePackage{etoolbox}
+\setmainfont[Path=fonts/,UprightFont=cmunrm.otf,BoldFont=cmunbx.otf,
+  ItalicFont=cmunti.otf,BoldItalicFont=cmunbi.otf]{cmunrm.otf}
+% Even an inherited sans switch must retain the requested CMU Serif Latin face.
+\setsansfont[Path=fonts/,UprightFont=cmunrm.otf,BoldFont=cmunbx.otf,
+  ItalicFont=cmunti.otf,BoldItalicFont=cmunbi.otf]{cmunrm.otf}
+\setmonofont[Path=fonts/,UprightFont=cmuntt.otf,BoldFont=cmuntb.otf,
+  ItalicFont=cmunit.otf,BoldItalicFont=cmuntx.otf]{cmuntt.otf}
+\setCJKmainfont[Path=fonts/,BoldFont=FandolSong-Bold.otf,
+  ItalicFont=FandolKai-Regular.otf,BoldItalicFont=FandolKai-Regular.otf]{FandolSong-Regular.otf}
+\setCJKsansfont[Path=fonts/,BoldFont=FandolHei-Bold.otf,
+  ItalicFont=FandolHei-Regular.otf,BoldItalicFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}
+\setCJKmonofont[Path=fonts/,BoldFont=FandolSong-Bold.otf,
+  ItalicFont=FandolKai-Regular.otf,BoldItalicFont=FandolKai-Regular.otf]{FandolSong-Regular.otf}
+\setCJKfamilyfont{zhsong}[Path=fonts/,BoldFont=FandolSong-Bold.otf,
+  ItalicFont=FandolKai-Regular.otf,BoldItalicFont=FandolKai-Regular.otf]{FandolSong-Regular.otf}
+\setCJKfamilyfont{zhhei}[Path=fonts/,BoldFont=FandolHei-Bold.otf,
+  ItalicFont=FandolHei-Regular.otf,BoldItalicFont=FandolHei-Bold.otf]{FandolHei-Regular.otf}
+\setCJKfamilyfont{zhfs}[Path=fonts/,BoldFont=FandolFang-Regular.otf,
+  ItalicFont=FandolFang-Regular.otf,BoldItalicFont=FandolFang-Regular.otf]{FandolFang-Regular.otf}
+\setCJKfamilyfont{zhkai}[Path=fonts/,BoldFont=FandolKai-Regular.otf,
+  ItalicFont=FandolKai-Regular.otf,BoldItalicFont=FandolKai-Regular.otf]{FandolKai-Regular.otf}
+\providecommand{\songti}{}\renewcommand{\songti}{\CJKfamily{zhsong}}
+\providecommand{\heiti}{}\renewcommand{\heiti}{\CJKfamily{zhhei}}
+\providecommand{\fangsong}{}\renewcommand{\fangsong}{\CJKfamily{zhfs}}
+\providecommand{\kaishu}{}\renewcommand{\kaishu}{\CJKfamily{zhkai}}
+\newcommand{\songfont}{\rmfamily\upshape\songti}
+\newcommand{\termfont}{\rmfamily\upshape\kaishu}
+\newcommand{\theoremfont}{\normalfont\rmfamily\upshape\fangsong}
+\newcommand{\headingfont}{\normalfont\rmfamily\bfseries\heiti}
+\newcommand{\annotationtitlefont}{\normalfont\songfont\bfseries}
+\newcommand{\coverfont}{\normalfont\songfont}
+\providecommand{\termcn}[1]{{\termfont #1}}
+\newtheoremstyle{portable-statement}{6pt}{6pt}{\theoremfont}{0pt}{\headingfont}{：}{0.5em}{}
+\newtheoremstyle{portable-example}{6pt}{6pt}{\normalfont\songfont}{0pt}{\headingfont}{：}{0.5em}{}
+\newtheoremstyle{portable-note}{6pt}{6pt}{\normalfont\songfont}{0pt}{\annotationtitlefont}{：}{0.5em}{}
+% Explicit author/translator/editor notes never inherit statement FangSong.
+\newenvironment{translationnote}[1][译校注]{\par\begingroup\normalfont\songfont
+  \noindent{\annotationtitlefont #1：}\ignorespaces}{\par\endgroup}
+\makeatletter
+\@ifundefined{setkomafont}{%
+  \patchcmd{\@footnotetext}{\footnotesize}{\footnotesize\normalfont\songfont}{}{%
+    \PackageError{portable-math-fonts}{Cannot set footnote typography}{Check the footnote package integration.}}%
+}{\setkomafont{footnote}{\normalfont\songfont}}
+\makeatother
+\makeatletter
+\renewenvironment{proof}[1][\proofname]{\par
+  \pushQED{\qed}\normalfont\songfont
+  \topsep6\p@\@plus6\p@\relax\trivlist
+  \item[\hskip\labelsep{\headingfont #1\@addpunct{.}}]\ignorespaces
+}{\popQED\endtrivlist\@endpefalse}
+\makeatother
+\AtBeginDocument{\normalfont\songfont\setstretch{1.3}%
+  \special{pdf:mapfile fonts/math/portable-math.map}}

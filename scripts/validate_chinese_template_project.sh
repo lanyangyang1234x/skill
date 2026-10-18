@@ -20,7 +20,7 @@ while (( $# )); do
 done
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-for required in "$main_tex" compile.sh .latexmkrc terminology.tsv; do
+for required in "$main_tex" compile.sh .latexmkrc terminology.tsv portable-math-fonts.sty fonts/manifest.json; do
   if [[ ! -e "$project_dir/$required" ]]; then
     printf 'Missing required Chinese Template Project v2 resource: %s\n' "$required" >&2
     exit 1
@@ -29,12 +29,14 @@ done
 
 main_path="$project_dir/$main_tex"
 
-if ! grep -Fq '\documentclass[UTF8,12pt,fontset=fandol]{ctexart}' "$main_path"; then
-  printf 'Chinese Template Project v2 must keep the portable ctexart Fandol font setting.\n' >&2
+if ! grep -Fq '\documentclass[UTF8,12pt,fontset=none]{ctexart}' "$main_path"; then
+  printf 'Chinese Template Project v2 must keep the portable ctexart 12pt fontset=none setting.\n' >&2
   exit 1
 fi
 
-if grep -Eq '\\(newcommand|renewcommand|providecommand)\{\\Translation(Editor|Tool)\}\{[[:space:]]*(译者姓名|使用模型或工具|工具/模型显示名)[[:space:]]*\}' "$main_path"; then
+python3 "$script_dir/validate_font_bundle.py" "$project_dir" --main "$main_tex"
+
+if grep -Eq '\\(newcommand|renewcommand|providecommand)\{\\Translation(Editor|Tool)\}\{[[:space:]]*(译者姓名|使用模型或工具|工具/模型显示名|模型名称)[[:space:]]*\}' "$main_path"; then
   printf 'Chinese Template Project v2 translator/tool metadata placeholders remain in: %s\n' "$project_dir/$main_tex" >&2
   exit 1
 fi
@@ -113,6 +115,7 @@ fi
 
 (
   cd "$project_dir"
+  export TFMFONTS="./fonts/math//:${TFMFONTS:-}"
   # Precompile the body before indexing. These fixed passes do not establish
   # pagination convergence; inspect the derived files and continue if needed.
   xelatex -interaction=nonstopmode -halt-on-error "$main_tex"
@@ -136,6 +139,9 @@ if (( validate_figures )); then
     "$project_dir/$pdf_name" "$project_dir/figure-manifest.tsv" \
     --output-dir "$project_dir/work/figure-page-qa"
 fi
+
+python3 "$script_dir/validate_project_fonts.py" "$project_dir/$pdf_name" \
+  --log "$project_dir/$log_name" --report "$validation_dir/font-validation.json"
 
 python3 "$script_dir/inspect_build_log.py" \
   "$project_dir/$log_name" "$project_dir/$pdf_name" \

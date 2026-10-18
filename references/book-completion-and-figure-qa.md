@@ -2,6 +2,8 @@
 
 Use this reference for books, long monographs, figure-bearing sources, or any task that asks for visual fidelity. Apply the current task's scope: a whole-book audit needs complete source coverage; a targeted figure repair needs complete coverage of its authorized figures and their affected pages. Preserve correct figures unless the user requests a different presentation or the audit finds a verified problem.
 
+When the user supplies only a screenshot for a local figure edit, that original image is the authoritative figure source: record its hash and bounds rather than inventing a PDF page. Do not request a whole source book merely to replace clearly identified labels. For image-only output, verify the final image and protected pixels; TeX compilation, font embedding and final-PDF occurrence checks are not applicable. If the edited image is inserted into a TeX project, inspect that compiled occurrence too.
+
 ## Complete-Book Gate
 
 For an authorized whole-book translation, account for every source page and logical unit in order: front matter, chapters, unnumbered passages, proofs, exercises, footnotes, figures, captions, appendices, bibliography, and index when present. Record any user-authorized exclusions explicitly; a blank page or an excluded publisher catalogue must not conceal missing mathematical content.
@@ -48,23 +50,32 @@ The coverage checker validates its recorded ranges and the figure checker valida
 
 ## Choose the Figure Method for the Current Goal
 
-Determine whether the current task prioritizes exact source appearance, mathematical structure, or reading clarity. Reuse a recorded choice when it is already clear; do not repeatedly ask the user or replace correct diagrams merely to standardize a technology.
+First record the user's required implementation and figure range, then determine whether the task prioritizes exact source appearance, mathematical structure, or reading clarity. Prefer editable TikZ/TikZ-CD for new mathematical diagrams when they can meet the source requirements. An explicit native-TikZ requirement takes precedence over a crop recommendation. Reuse the confirmed choice within the same task; preserve correct existing diagrams and a request limited to simple or specified diagrams.
 
 | Current goal | Method and acceptance |
 |---|---|
-| Exact source appearance, such as “一模一样”, “和原图一致”, or “只把英文换成中文” | Use `source-pixel-locked` crops or a verified label-only hybrid. Preserve source non-language pixels and geometry; replace only the authorized labels. A redraw that is merely visually similar does not satisfy this goal. |
+| Explicit “必须 TikZ”, “全部原图用 TikZ”, including “一模一样” | Rebuild every in-scope diagram in native TikZ/TikZ-CD. Match source appearance as well as mathematical relationships: coordinates, label positions, arrowhead and line styles, routes, crossings, proportions and grouping. A crop, label-only hybrid, traced glyph outlines, or raster hidden inside `tikzpicture` does not satisfy native reconstruction. |
+| Exact source appearance without a required native method, or a label-only edit | Use verified native geometry when it can meet the appearance constraint; source-pixel-locked crops or verified label-only hybrids remain appropriate where exact source pixels or an explicit label-only scope are required. Do not replace correct existing native diagrams. |
 | Mathematical structure fidelity | TikZ, `tikz-cd`, existing XY-pic, a clean source crop, or a verified hybrid may be suitable. Check every node, edge, arrow direction/type, route, label, relation, and meaningful grouping. Position changes must not introduce different mathematical meaning. |
 | Reading clarity | Choose a verifiable representation with readable labels, sufficient scale, balanced spacing, and correct relationships. Native reconstruction or moderate enlargement may help when source appearance is not an exact constraint. Preserve the source mathematics and record meaningful presentation changes. |
 
-Node counts, arrow counts, or the presence of a bent arrow are not automatic method gates. A larger grid may be completely reconstructible, while a two-node curved figure may require source rendering to preserve an unambiguous route. Curves, loops, crossings, layer ordering, pale fills, source-specific glyphs, and dense labels increase the verification burden; choose a crop when reconstruction would require guessing. Correct existing native diagrams do not become defective because another project used crops.
+Node counts, arrow counts, or the presence of a bent arrow are not automatic method gates. Curves, loops, crossings, layer ordering, pale fills, source-specific glyphs, and dense labels increase the verification burden. When native TikZ is required, inspect higher-resolution source renders and adjacent context; if a detail remains unreadable, mark that detail unresolved and continue independent work. Do not silently fall back to a screenshot. Where no native requirement applies, retaining or cropping an ambiguous source is preferable to invented geometry.
+
+### Native TikZ constraints
+
+- Keep mathematical and translated labels as editable TeX. Compare every node/label, its relative position, arrow start/end, arrowhead, solid/dashed/dotted style, bends, attachment points, crossings, integral legends, and visible bounding box. Matching topology or counts alone is insufficient.
+- Inspect the original full page and figure, render the native candidate at its final physical size, and compare side by side or with an overlay that makes geometry differences visible. Inspect the final compiled occurrence too; correct standalone code does not prove placement.
+- Do not use `\resizebox`, `\scalebox`, `adjustbox`, or whole-diagram `scale`/`transform shape` to squeeze a diagram or table into the page. Correct native coordinates, spacing, text wrapping, or an authorized page arrangement and check again; retain legible labels and the source proportions. A source's local geometric transform is a drawing primitive, not permission for a blanket shrink wrapper.
+- Tables must preserve rows, columns, cell contents, merged cells, rules, alignment and visible grouping. Use native table code unless the user also requires tables to be TikZ. A request that all figures be native does not automatically authorize replacing unrelated tables.
+- Source mistakes or missing parts require the original context and a recorded reason. Apply the user's authorized errata policy and the book's visual style; do not silently correct or blindly trace an error.
 
 ### Verification Protocol
 
 1. **Scope and goal:** record the authorized figure range and presentation goal, plus protected labels, geometry, background, and sizing requirements.
 2. **Source inspection:** view the entire source page and then the figure at useful scale. Inventory visible objects, arrow direction/type, crossings, labels, shading, integral legends, and meaningful spacing before editing.
-3. **Method choice:** choose the representation that can meet the goal with evidence. Exact appearance requires the pixel-locked rules below. For structure or clarity, native diagrams remain candidates when all relevant relationships and output details can be checked; uncertainty is a reason to retain or crop the source, not to guess.
+3. **Method choice:** honor an explicit native-TikZ requirement first. Choose a representation that can meet both method and appearance goals with evidence. Apply the pixel-locked rules below only when source-pixel preservation is the selected method; an exact native reconstruction follows the native constraints above. Never silently relax a user requirement because reconstruction is difficult.
 4. **Label ownership:** assign each translated label to exactly one raster or TeX layer. Check ordinary prose separately from mathematical symbols, formulas, personal names, and references.
-5. **Candidate check:** compare source and candidate at the intended physical display size. Verify missing/extra nodes or arrows, topology, signs and indices, integral labels, aspect ratio, clipping, background, and legibility. In exact mode, compare unchanged non-language regions against the authoritative crop; in other modes, document deliberate presentation differences.
+5. **Candidate check:** compare source and candidate at the intended physical display size. Verify missing/extra nodes or arrows, topology, signs and indices, exact label locations, arrow routes/attachments/styles, integral labels, aspect ratio, clipping, background, and legibility. For pixel-locked assets compare unchanged non-language regions against the source crop; for exact native diagrams compare geometry and text placement at matching physical size. Record any authorized presentation differences.
 6. **Final PDF check:** inspect actual output occurrences, including transparent masks and their placement. An asset file check alone is insufficient.
 7. **Promotion and evidence:** record the chosen method and checks in `figure-manifest.tsv`; later crop or processing runs must not silently change the method, path, or accepted asset.
 
@@ -87,14 +98,14 @@ Use `scripts/figure_asset_lock.py record ...` for promoted raster assets and run
 
 ## Source-Pixel-Locked Mode
 
-Use this mode when the user requires exact appearance. A switch to structure or clarity equivalence needs support in the current user request; it cannot be inferred from the difficulty of exact preservation.
+Use this mode when source-pixel preservation is selected and the user has not required native TikZ. Exact visual fidelity can also be required of a native diagram; it does not automatically authorize raster substitution. A switch to structure or clarity equivalence needs support in the current user request; it cannot be inferred from the difficulty of exact preservation.
 
 - Render a lossless crop from the authoritative source PDF, normally at 450–600 dpi, preserving every non-language pixel: geometry, fills, curves, arrows, object positions, line weights, and aspect ratio. Record the actual resolution and physical size; do not invent detail absent from the source.
 - Replace only the authorized language labels. Keep a source crop, original label bounds, translated label bounds, and a comparison of unchanged regions.
 - Regenerate only from the fresh opaque source crop, never from an already translated or transparent derivative.
 - Transparency may remove only the verified exterior page background. Preserve integral black backgrounds, intentional white regions, shadows, and pale fills; an indiscriminate “remove all white” threshold fails this requirement. Retain a flat source background when alpha conversion would damage source appearance.
 - Label removal must not touch a mathematical glyph or drawing path. When a label overlaps geometry, use a source-backed reconstruction of the affected region that can be checked, or leave the item unresolved and continue other authorized work. Do not invent hidden geometry.
-- A native redraw with matching topology is not pixel-locked. Use it only when the task permits structural or visual equivalence rather than requiring source pixels, and record that goal accurately.
+- A native redraw with matching topology is not pixel-locked and does not by itself meet exact visual fidelity. When the user requires native TikZ, verify the native geometry under the separate constraints above and report the method accurately.
 - Compare the translated asset with the source crop and inspect its final compiled occurrence. Verify geometry at the same physical size; a reflowed Chinese book need not reproduce the original whole-page layout.
 
 ## Crop Bounds, Transparency, and Size

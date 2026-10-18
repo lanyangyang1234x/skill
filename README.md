@@ -2,7 +2,7 @@
 
 <h1>PDF 转中文 TeX</h1>
 
-<p><strong>3.1 · 数学 PDF → 忠实中文 LaTeX → 可验证 PDF</strong></p>
+<p><strong>3.2 · 数学 PDF → 忠实中文 LaTeX → 可验证 PDF</strong></p>
 
 <p>保留章节顺序、编号、公式、定理、证明、练习、图形、交叉引用与参考文献。</p>
 
@@ -21,16 +21,16 @@
 
 ```bash
 git clone https://github.com/lanyangyang1234x/skill.git \
-  ~/.codex/skills/pdf-to-chinese-tex
+  ~/.agents/skills/pdf-to-chinese-tex
 ```
 
-上述是来源仓库安装方式；本地交付的 3.1 源包以实际版本为准，安装本地源包时保留旧技能后复制完整目录。然后在 Codex 中调用：
+上述是来源仓库安装方式；本地交付的 3.2 源包以实际版本为准，安装本地源包时保留旧技能后复制完整目录。然后在 Codex 中调用：
 
 ```text
 使用 $pdf-to-chinese-tex 将这本数学 PDF 翻译成中文 LaTeX 和 PDF。
 ```
 
-新项目沿用已选模板，未指定时默认 Sage-Olive 并说明；未知署名留空或匿名，不阻塞译写。既有项目沿用现有工程和约定。工作顺序是：
+每个新任务必须询问本次模板：新项目列出可用模板，既有项目询问沿用现工程还是改用指定模板。本次请求已明确模板或要求保持现有版式时视为已回答；同一任务“继续”不重问。未回答前可盘点源文，不自动套用 Sage-Olive 或迁移版式。未知署名留空或匿名，不阻塞译写。工作顺序是：
 
 `识别任务与保护范围` → `源文件/台账核验` → `按批译写与审校` → `编译与成书检查` → `交付包独立重建`
 
@@ -39,23 +39,19 @@ git clone https://github.com/lanyangyang1234x/skill.git \
 默认安装路径为：
 
 ```text
-~/.codex/skills/pdf-to-chinese-tex
+~/.agents/skills/pdf-to-chinese-tex
 ```
 
-如果你已经设置了 `CODEX_HOME`，则使用：
-
-```text
-$CODEX_HOME/skills/pdf-to-chinese-tex
-```
+只保留一个可发现的安装入口；旧副本和备份移到 skills 扫描目录之外，不能在 `~/.codex/skills` 与 `~/.agents/skills` 同时安装同一技能。
 
 ### 核心能力
 
-3.1 在既有项目经验与中文方法接入的基础上，精简主入口、按任务加载专题，并修复工具与工作流的契约问题。新建翻译、既有项目审计和定点修订使用各自的改动范围；书籍翻译默认每批完成中文句群审校，再做数学保护复核。保护个人批注、正确图形和已确认的版式；改善中文语序与衔接时保持假设、量词、证明步骤、公式和源文单元。
+3.2 在既有项目经验与中文方法接入的基础上，精简主入口、按任务加载专题，并修复工具与工作流的契约问题。新建翻译、既有项目审计和定点修订使用各自的改动范围；书籍翻译默认每批完成中文句群审校，再做数学保护复核。保护个人批注、正确图形和已确认的版式；改善中文语序与衔接时保持假设、量词、证明步骤、公式和源文单元。
 
 | 内容保真 | 图形保真 |
 | --- | --- |
-| 原始 PDF 优先；Markdown 只作可靠底稿 | 一模一样模式默认使用源像素锁定裁图 |
-| 保留编号、公式、交叉引用和大小写 | 按外观、结构或阅读目标选择可核验的方法 |
+| 原始 PDF 优先；Markdown 只作可靠底稿 | 原生 TikZ 优先；明确要求 TikZ 时不得用截图替代 |
+| 保留编号、公式、交叉引用和大小写 | 逐项核标签位置、箭头样式、坐标与尺寸比例 |
 | 中文表达与数学含义分别审校；原书疑误单列 | 源书与 TeX 双向图清单，包含 XY-pic 和行内图式 |
 
 | 过程可追溯 | 运行可控 |
@@ -80,26 +76,28 @@ python3 scripts/verify_chinese_writing_vendor.py
 
 | 模板 | 视觉与使用场景 |
 | --- | --- |
-| `Sage-Olive` | 随机风景封面、版权页、彩色数学环境、打包 Fandol/Libertinus 字体 |
+| `Sage-Olive` | 随机风景封面、版权页、彩色数学环境、打包 Fandol/CMU 与 CM/AMS/RSFS 字体 |
 | `Chinese Template Project v2` | 本项目采用的 A4 酒红/金色章节层、中文定理环境、可点击目录、元数据署名和源图插入接口 |
 | `MathTranslations` | 彩色暖纸封面、动漫人物徽记、中文定理环境、术语索引、长证明和习题/答案双向链接 |
 
-三个模板均使用 XeLaTeX；Project v2 的可复用文件位于 [`assets/templates/chinese-template-project-v2/`](assets/templates/chinese-template-project-v2/)，MathTranslations 位于 [`assets/templates/mathtranslations-template/`](assets/templates/mathtranslations-template/)。
+三个模板均使用 XeLaTeX 与完整相对路径字体包；正文/证明/例题宋体、定理陈述仿宋、术语楷体、标题黑体配 CMU Serif 粗体，正文 12pt、1.3 倍行距。完整角色与嵌入验收见 [字体约定](references/font-policy.md)。Project v2 的可复用文件位于 [`assets/templates/chinese-template-project-v2/`](assets/templates/chinese-template-project-v2/)，MathTranslations 位于 [`assets/templates/mathtranslations-template/`](assets/templates/mathtranslations-template/)。
 
 ### 图形：按当前目标选择方法
 
 | 判定 | 规则 |
 | --- | --- |
-| 源图外观精确一致 | 源像素锁定裁图或仅替换文字的可验证混合层；非语言像素、几何、填充、箭头和比例保持。 |
+| 明确要求 TikZ 或全部原图用 TikZ | 指定范围全部原生 TikZ/TikZ-CD；同时核原书标签内容与位置、节点、箭头起止/头型/虚实/路径、填充和尺寸比例。不能以截图、描边字形或拓扑近似代替。 |
+| 源图外观精确一致 | 可核验的原生重建；未限定原生方法且需要保留源像素或只改文字时，可用像素锁定裁图或标签混合层。 |
 | 数学结构保真 | TikZ、tikz-cd、既有 XY-pic、源裁图或混合方法均可；逐项核节点、方向、箭型、路径、标签和关系。 |
 | 阅读清晰 | 在保留数学结构的前提下选择可核验且易读的方法，可适度调整尺寸与间距，并记录呈现变化。 |
 
-节点数、箭头数或弯箭的存在不是固定门槛。需要猜测曲线、遮挡或标签关联时保留源图；正确既有图形不因技术偏好替换。图内普通英文需要翻译，数学符号和人名按其身份保留。裁图资产检查之外，还须核最终 PDF 的实际图像、透明蒙版、使用次序、尺寸与页位置，并查看改动影响的邻页。
+默认优先原生 TikZ/TikZ-CD；节点数、箭头数或弯箭的存在不是固定门槛。严格 TikZ 范围中读不清的细节应回查原页并单列，不能悄换截图。保留正确既有图形与用户限定的简单图/局部范围。禁止用 `resizebox`、`scalebox`、`adjustbox` 或整图 `scale` 压缩图/表格掩盖溢出；修正原生间距和版面后重验。图内普通英文需要翻译，数学符号和人名按其身份保留。裁图资产检查之外，还须核最终 PDF 的实际图像、透明蒙版、使用次序、尺寸与页位置，并查看改动影响的邻页。
 
 双向图清单、标签归属、透明化边界与精确模式见 [`references/book-completion-and-figure-qa.md`](references/book-completion-and-figure-qa.md)。这些是工作要求，台账脚本不会自动发现所有源图或证明成品中的图形正确。
 
 ### 质量门
 
+- [ ] 本次模板已询问并确认；完整字体与许可随包，缺字/替代及实际嵌入已核。
 - [ ] 源 PDF 已快照并校验 SHA-256、字节数和页数。
 - [ ] 授权范围内的源页覆盖、术语、中文表达、公式/数学和图形结果分别记录；排除项与剩余项明确。
 - [ ] 真实 TeX 交叉引用、编号和引用键通过检查。
@@ -136,6 +134,8 @@ python3 scripts/verify_chinese_writing_vendor.py
 | `batch_checkpoint.py` | 并行/多阶段协调；`--check --require-complete --require-verified` 检查已结束的最新输出责任；不是全书覆盖验证 |
 | 模板验证器 | 仅匹配模板；`--allow-anonymous` 支持已选匿名信用，Sage 另有 `--without-contents`；不自动修改呈现 |
 | `package_release.py` | 含 PDF 发布包，验证归档后仍须独立解压重建；仅 TeX 的源包另见发布专题 |
+| `validate_font_bundle.py` | 核字体及许可清单哈希，拒绝工程外符号链接；不证明样页角色和字号 |
+| `validate_project_fonts.py` | 检查最终 PDF 字体嵌入及日志字体错误；不代替字体角色的实际样页核验 |
 | `verify_chinese_writing_vendor.py` | 校验方法库、完整上游归档与同源哈希，不代表语言或数学审校 |
 
 <details>
@@ -243,13 +243,14 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 
 ### Highlights
 
-- Version 3.1 supports new translation, existing-project audit, and targeted repair with separate scopes and evidence. Chinese expression review is integrated into every book-translation batch by default.
-- Use the confirmed template for new projects, defaulting to Sage-Olive when unspecified; unknown translator/tool credit may stay blank or anonymous. Existing projects retain their established structure.
+- Version 3.2 supports new translation, existing-project audit, and targeted repair with separate scopes and evidence. Chinese expression review is integrated into every book-translation batch by default.
+- Ask for the template at the beginning of every independent task, including whether an existing project should retain its template. An explicit current choice counts as an answer; continuations reuse it. Do not silently default to Sage-Olive. Unknown translator/tool credit may stay blank or anonymous.
 - Treat the rendered source PDF as authoritative; use Markdown as a read-only drafting scaffold when reliable.
 - Keep terminology, source-page coverage, figure provenance, and batch checkpoints in durable ledgers.
 - Use the pinned `chinese-writing` 2.13.3 snapshot through [the mathematics adaptation](references/chinese-writing-integration.md); improve Chinese without adding source-absent arguments or applying an original-article approval workflow to ordinary translation.
 - Each book batch proceeds through translation, mathematics/terminology checks, Chinese sentence-group review, mathematical protection checks, and compilation/merge; the user does not need to request Chinese review separately.
-- Select figure methods for exact appearance, mathematical structure, or readability. Exact mode preserves non-language pixels and geometry; structural/readability modes permit verifiable native diagrams or crops without fixed node/arrow thresholds.
+- Prefer editable native TikZ/TikZ-CD. Explicit native requirements prohibit raster substitution; exact native diagrams must match label positions, geometry and arrow styles as well as topology. Do not squeeze whole diagrams or tables with resizebox/scalebox/adjustbox or blanket scale wrappers. Source-pixel preservation remains available when no native requirement applies.
+- Use portable Fandol/CMU font roles: Song for body/proofs/examples, Fang for theorem statements, Kai for terms, Hei and bold CMU Serif for headings; Computer Modern/AMS/RSFS for mathematics, 12pt body and 1.3 line spacing. Bundle licenses, inspect role-specific pages, and verify actual font embedding.
 - Reconcile source figures with TeX in both directions, including XY-pic and inline diagrams, and check actual PDF occurrences, alpha masks, order, and affected neighboring pages.
 - Reject silent figure overwrites and verify promoted assets with SHA-256 before compilation and release.
 - Treat compilation, source fidelity, Chinese review, visual QA, and independent archive rebuild as separate acceptance gates. Snapshot/ledger checks do not establish completed behavioral tests.
@@ -258,7 +259,7 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 
 | Template | Description |
 | --- | --- |
-| `Sage-Olive` | Random landscape cover, copyright page, colored mathematical environments, bundled Fandol/Libertinus fonts |
+| `Sage-Olive` | Random landscape cover, copyright page, colored mathematical environments, bundled Fandol/CMU and CM/AMS/RSFS fonts |
 | `Chinese Template Project v2` | A4 burgundy/gold chapter layer, Chinese theorem layer, clickable contents, metadata credit line, source-relative figure insertion |
 | `MathTranslations` | Warm-paper color cover, anime character badge, Chinese theorem environments, terminology index, long-proof links, and linked exercises/answers |
 
@@ -288,6 +289,8 @@ The pinned `chinese-writing` snapshot retains its upstream MIT license; the `exa
 ```bash
 python3 tests/test_batch_checkpoint.py
 python3 tests/test_chinese_writing_vendor.py
+python3 tests/test_project_fonts.py
+python3 tests/test_font_bundle.py
 python3 scripts/verify_chinese_writing_vendor.py
 ```
 

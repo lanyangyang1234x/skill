@@ -1,8 +1,8 @@
-\documentclass[UTF8,12pt,fontset=fandol]{ctexart}
+\documentclass[UTF8,12pt,fontset=none]{ctexart}
 
 % Project v2: portable A4 Chinese mathematical layout.
 \usepackage[paper=a4paper,left=2.5cm,right=2.5cm,top=2.8cm,bottom=2.8cm]{geometry}
-\usepackage{fontspec,xeCJK}
+\usepackage{portable-math-fonts}
 \usepackage{amsmath,amsthm,amssymb,mathrsfs,mathtools}
 \usepackage{graphicx,titlesec,array,enumitem,tabularx}
 \usepackage[dvipsnames]{xcolor}
@@ -20,11 +20,6 @@
 \definecolor{mtink}{HTML}{252433}
 \definecolor{mtpaper}{HTML}{FBF8F1}
 
-% These fallbacks keep the template portable.  A project may replace them
-% with bundled CM Unicode files when exact Latin glyph matching is required.
-\IfFontExistsTF{Latin Modern Roman}{\setmainfont{Latin Modern Roman}}{}
-\IfFontExistsTF{FandolSong-Regular}{\setCJKmainfont{FandolSong-Regular}}{}
-\IfFontExistsTF{FandolHei-Regular}{\setCJKsansfont{FandolHei-Regular}}{}
 \pagestyle{plain}
 
 % Replace these values after the user confirms the project metadata.
@@ -35,19 +30,30 @@
 \newcommand{\CompletionDate}{完成日期}
 \newcommand{\TranslationCreditLine}{本中文译本由\TranslationEditor 使用 \TranslationTool 完成。}
 
-% Chinese theorem and proof layer.
-\theoremstyle{plain}
+% Chinese theorem and proof layer; text roles are independent of box layout.
+\theoremstyle{portable-statement}
 \newtheorem{definition}{定义}[section]
+\theoremstyle{portable-note}
 \newtheorem{remark}[definition]{注}
+\theoremstyle{portable-example}
 \newtheorem{example}[definition]{例}
+\theoremstyle{portable-statement}
 \newtheorem{fact}[definition]{事实}
+\theoremstyle{portable-note}
 \newtheorem{caution}[definition]{注意}
+\theoremstyle{portable-statement}
 \newtheorem{lemma}[definition]{引理}
+\theoremstyle{portable-statement}
 \newtheorem{proposition}[definition]{命题}
+\theoremstyle{portable-statement}
 \newtheorem{corollary}[definition]{推论}
+\theoremstyle{portable-statement}
 \newtheorem{claim}[definition]{断言}
+\theoremstyle{portable-statement}
 \newtheorem{theorem}[definition]{定理}
+\theoremstyle{portable-statement}
 \newtheorem{condition}[definition]{条件}
+\theoremstyle{portable-example}
 \newtheorem{problem}[definition]{问题}
 
 \providecommand{\sectionautorefname}{第}
@@ -66,13 +72,13 @@
 \providecommand{\problemautorefname}{问题}
 
 \makeatletter
-\renewcommand{\proofname}{\textbf{证明}}
+\renewcommand{\proofname}{证明}
 \renewenvironment{proof}[1][\proofname]{\par
   \pushQED{\qed}%
   \normalfont
   \topsep6\p@\@plus6\p@\relax
   \trivlist
-  \item[\hskip\labelsep\normalfont\bfseries#1\@addpunct{.}]\ignorespaces
+  \item[\hskip\labelsep\headingfont #1\@addpunct{.}]\ignorespaces
 }{\popQED\endtrivlist\@endpefalse}
 \makeatother
 \renewcommand{\qedsymbol}{\ensuremath{\square}}
@@ -120,21 +126,21 @@
   \thispagestyle{plain}%
   \vspace*{-0.5cm}%
   \makebox[\textwidth][r]{%
-    {\fontsize{18pt}{18pt}\selectfont\scshape
+    {\headingfont\fontsize{18pt}{18pt}\selectfont
       \ifInAppendix Appendix\else Chapter\fi}\enspace
-    {\fontsize{62pt}{62pt}\selectfont\bfseries\thesection}}%
+    {\headingfont\fontsize{62pt}{62pt}\selectfont\thesection}}%
   \par\vspace{-0.25cm}%
   \noindent\rule{\dimexpr\textwidth-\chapterNumSpace\relax}{0.45pt}%
 }
 \titleformat{\section}[display]
-  {\normalfont}{\ChapterSectionLabel}{0cm}
+  {\headingfont}{\ChapterSectionLabel}{0cm}
   {\raggedleft\rightskip=\chapterNumSpace\fontsize{30pt}{35pt}\selectfont\bfseries}
   [\vspace{0.3cm}]
 \newcommand{\sectionbreak}{\clearpage}
 \titleformat{name=\section,numberless}[block]
-  {\normalfont\Large\bfseries\centering}{}{0pt}{}
+  {\headingfont\Large\centering}{}{0pt}{}
 \titlespacing{\section}{0pt}{0pt}{0pt}
-\ctexset{subsection={format=\large\bfseries}}
+\ctexset{subsection={format=\headingfont\large}}
 
 % Exercise/answer links.
 \newcounter{exercise}[subsection]
@@ -150,7 +156,7 @@
   \expandafter\label\expandafter{\exercise@label}%
   \noindent\maybehyperref{\exercise@answerlabel}{\textbf{\theexercise.}}\quad\ignorespaces}
 \newenvironment{exercises}{%
-  \par\medskip\noindent{\large\bfseries 习题}\par\smallskip
+  \par\medskip\noindent{\headingfont\large 习题}\par\smallskip
   \begingroup\setlength{\parindent}{0pt}\renewcommand{\item}{\exercise@item}%
 }{\par\endgroup\medskip}
 \newcommand{\answer@item}{%
@@ -176,12 +182,18 @@
 \setlength{\parindent}{2em}
 \setlength{\parskip}{0pt}
 \setlength{\emergencystretch}{2em}
-\linespread{1.16}
+\setstretch{1.3}
 
+\ctexset{
+  subsubsection={format=\headingfont\normalsize},
+  paragraph={format=\headingfont\normalsize},
+  subparagraph={format=\headingfont\normalsize}
+}
 \begin{document}
 \begin{titlepage}
+    \coverfont
   \thispagestyle{empty}\pagecolor{mtpaper}
-  \color{mtburgundy}\rule{\textwidth}{1.2pt}\\[0.1cm]
+  \noindent\color{mtburgundy}\rule{\textwidth}{1.2pt}\\[0.1cm]
   \color{mtgold}\rule{\textwidth}{0.8pt}\\[1.5cm]
   \begin{center}
     {\color{mtburgundy}\fontsize{27pt}{34pt}\selectfont\bfseries

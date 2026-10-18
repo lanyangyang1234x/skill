@@ -51,7 +51,7 @@
 \newcommand{\SageSourceLanguage}{原文语言}
 \newcommand{\SageApplyTypography}{%
   \allowdisplaybreaks[3]
-  \setstretch{1.32}%
+  \setstretch{1.3}%
   \setlength{\parskip}{0.46em plus 0.10em minus 0.04em}%
   \setlength{\parindent}{2em}%
   \setlength{\emergencystretch}{3em}%
@@ -70,12 +70,12 @@
   \renewcommand{\floatpagefraction}{0.75}%
 }
 
-\setkomafont{section}{\sffamily\fontsize{23pt}{30pt}\selectfont\bfseries\color{SageInk}}
-\setkomafont{subsection}{\sffamily\fontsize{16pt}{23pt}\selectfont\bfseries\color{SageInk}}
-\setkomafont{subsubsection}{\sffamily\large\bfseries\color{SageInk}}
-\setkomafont{paragraph}{\sffamily\normalsize\bfseries\color{SageInk}}
-\setkomafont{sectionentry}{\sffamily\large\bfseries\color{SageInk}}
-\setkomafont{sectionentrypagenumber}{\sffamily\normalsize\bfseries\color{SageInk}}
+\setkomafont{section}{\headingfont\fontsize{23pt}{30pt}\selectfont\bfseries\color{SageInk}}
+\setkomafont{subsection}{\headingfont\fontsize{16pt}{23pt}\selectfont\bfseries\color{SageInk}}
+\setkomafont{subsubsection}{\headingfont\large\bfseries\color{SageInk}}
+\setkomafont{paragraph}{\headingfont\normalsize\bfseries\color{SageInk}}
+\setkomafont{sectionentry}{\headingfont\large\bfseries\color{SageInk}}
+\setkomafont{sectionentrypagenumber}{\headingfont\normalsize\bfseries\color{SageInk}}
 \RedeclareSectionCommand[beforeskip=1.3\baselineskip,afterskip=1.05\baselineskip]{section}
 \RedeclareSectionCommand[beforeskip=1.15\baselineskip,afterskip=0.65\baselineskip]{subsection}
 
@@ -164,6 +164,7 @@
 
 \newcommand{\MakeSageCover}{%
   \begin{titlepage}
+    \coverfont
     \thispagestyle{empty}
     \begin{tikzpicture}[remember picture,overlay]
       \path[clip] (current page.south west) rectangle (current page.north east);
@@ -174,7 +175,7 @@
 
       \node[anchor=north west,text=SageCoverCream!92,inner sep=0pt]
         at ([xshift=1.65cm,yshift=-1.55cm]current page.north west)
-        {\sffamily\fontsize{10.5pt}{14pt}\selectfont
+        {\coverfont\fontsize{10.5pt}{14pt}\selectfont
           \addfontfeatures{LetterSpace=8}\SageCoverSeries};
       \draw[SageCoverGold,line width=1.1pt]
         ([xshift=1.65cm,yshift=-3.15cm]current page.north west) --
@@ -182,18 +183,18 @@
       \node[anchor=north west,text=SageCoverCream,inner sep=0pt,
         text width=0.82\paperwidth,align=left]
         at ([xshift=1.65cm,yshift=-3.75cm]current page.north west)
-        {\sffamily\fontsize{38pt}{47pt}\selectfont\bfseries\SageChineseTitle};
+        {\coverfont\fontsize{38pt}{47pt}\selectfont\bfseries\SageChineseTitle};
       \ifstrempty{\SageChineseSubtitle}{}{%
         \node[anchor=north west,text=SageCoverCream!84,inner sep=0pt,
           text width=0.82\paperwidth,align=left]
           at ([xshift=1.68cm,yshift=-8.55cm]current page.north west)
-          {\sffamily\fontsize{13.5pt}{18pt}\selectfont\SageChineseSubtitle};
+          {\coverfont\fontsize{13.5pt}{18pt}\selectfont\SageChineseSubtitle};
       }
       \ifstrempty{\SageEnglishTitle}{}{%
         \node[anchor=north west,text=SageCoverCream!72,inner sep=0pt,
           text width=0.82\paperwidth,align=left]
           at ([xshift=1.68cm,yshift=-9.45cm]current page.north west)
-          {\normalfont\upshape\sffamily\fontsize{10.5pt}{14pt}\selectfont
+          {\normalfont\upshape\coverfont\fontsize{10.5pt}{14pt}\selectfont
             \addfontfeatures{LetterSpace=5}\SageEnglishTitle};
       }
 
@@ -236,7 +237,7 @@
       \raggedright
       \setstretch{1}
       \setlength{\parskip}{0.38em}
-      {\sffamily\fontsize{25pt}{33pt}\selectfont\bfseries\color{SageInk}版权及使用说明\par}
+      {\headingfont\fontsize{25pt}{33pt}\selectfont\bfseries\color{SageInk}版权及使用说明\par}
       \vspace{0.95cm}
       {\color{SageGold}\rule{3.1cm}{1.05pt}\par}
       \vspace{1.05cm}

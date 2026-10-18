@@ -14,7 +14,7 @@ if [[ ! -f "$main" ]]; then
   exit 1
 fi
 
-for required in sage-math.sty fonts fetch_random_cover.py; do
+for required in sage-math.sty portable-math-fonts.sty fonts/manifest.json fetch_random_cover.py; do
   if [[ ! -e "$required" ]]; then
     printf 'Missing template dependency: %s\n' "$required" >&2
     exit 1
@@ -25,28 +25,7 @@ if [[ ! -s assets/cover/selected-cover.jpg && ! -s assets/cover/selected-cover.p
   python3 fetch_random_cover.py
 fi
 
-required_fonts=(
-  FandolFang-Regular.otf
-  FandolHei-Regular.otf
-  FandolKai-Regular.otf
-  FandolSong-Bold.otf
-  FandolSong-Regular.otf
-  LibertinusMono-Regular.otf
-  LibertinusSans-Bold.otf
-  LibertinusSans-Italic.otf
-  LibertinusSans-Regular.otf
-  LibertinusSerif-Bold.otf
-  LibertinusSerif-BoldItalic.otf
-  LibertinusSerif-Italic.otf
-  LibertinusSerif-Regular.otf
-)
-
-for font in "${required_fonts[@]}"; do
-  if [[ ! -s "fonts/$font" ]]; then
-    printf 'Missing bundled font: fonts/%s\n' "$font" >&2
-    exit 1
-  fi
-done
+export TFMFONTS="./fonts/math//:${TFMFONTS:-}"
 
 xelatex -interaction=nonstopmode -halt-on-error "$main"
 if [[ -s "${main%.tex}.idx" ]]; then

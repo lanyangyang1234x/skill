@@ -29,19 +29,8 @@ required=(
   .latexmkrc
   compile.sh
   fetch_random_cover.py
-  fonts/FandolFang-Regular.otf
-  fonts/FandolHei-Regular.otf
-  fonts/FandolKai-Regular.otf
-  fonts/FandolSong-Bold.otf
-  fonts/FandolSong-Regular.otf
-  fonts/LibertinusMono-Regular.otf
-  fonts/LibertinusSans-Bold.otf
-  fonts/LibertinusSans-Italic.otf
-  fonts/LibertinusSans-Regular.otf
-  fonts/LibertinusSerif-Bold.otf
-  fonts/LibertinusSerif-BoldItalic.otf
-  fonts/LibertinusSerif-Italic.otf
-  fonts/LibertinusSerif-Regular.otf
+  portable-math-fonts.sty
+  fonts/manifest.json
 )
 
 for required in "${required[@]}"; do
@@ -74,53 +63,12 @@ if [[ -s "$project_dir/source-manifest.json" ]]; then
   python3 "$script_dir/source_manifest.py" check "$project_dir/source-manifest.json"
 fi
 
-font_commands=(
-  setmainfont
-  setsansfont
-  setmonofont
-  setCJKmainfont
-  setCJKsansfont
-  setCJKmonofont
-)
+python3 "$script_dir/validate_font_bundle.py" "$project_dir" --main "$main_tex"
 
-for command in "${font_commands[@]}"; do
-  count=$(grep -Ec "^[[:space:]]*\\\\${command}(\\[|\\{)" "$main_path" || true)
-  if [[ "$count" -ne 1 ]]; then
-    printf 'The fixed Sage-Olive typography requires exactly one \\%s declaration; found %s.\n' "$command" "$count" >&2
-    exit 1
-  fi
-done
-
-font_tokens=(
-  'UprightFont={LibertinusSerif-Regular.otf}'
-  'ItalicFont={LibertinusSerif-Italic.otf}'
-  'BoldFont={LibertinusSerif-Bold.otf}'
-  'BoldItalicFont={LibertinusSerif-BoldItalic.otf}'
-  'UprightFont={LibertinusSans-Regular.otf}'
-  'ItalicFont={LibertinusSans-Italic.otf}'
-  'BoldFont={LibertinusSans-Bold.otf}'
-  '\setmonofont[Path=fonts/]{LibertinusMono-Regular.otf}'
-  'UprightFont={FandolSong-Regular.otf}'
-  'BoldFont={FandolSong-Bold.otf}'
-  'ItalicFont={FandolKai-Regular.otf}'
-  'UprightFont={FandolHei-Regular.otf}'
-  'BoldFont={FandolHei-Regular.otf}'
-  'ItalicFont={FandolHei-Regular.otf}'
-  'BoldItalicFont={FandolHei-Regular.otf}'
-  '\setCJKmonofont[Path=fonts/]{FandolFang-Regular.otf}'
-)
-
-for token in "${font_tokens[@]}"; do
-  if ! grep -Fq "$token" "$main_path"; then
-    printf 'Required Sage-Olive font mapping is missing or changed: %s\n' "$token" >&2
-    exit 1
-  fi
-done
-
-if ! grep -Fq '\setkomafont{section}{\sffamily' "$project_dir/sage-math.sty" \
-    || ! grep -Fq '\setkomafont{subsection}{\sffamily' "$project_dir/sage-math.sty" \
-    || ! grep -Fq '\sffamily\fontsize{38pt}{47pt}\selectfont\bfseries\SageChineseTitle' "$project_dir/sage-math.sty"; then
-  printf 'Sage-Olive headings and cover title must use the bundled sans families (FandolHei / Libertinus Sans).\n' >&2
+if ! grep -Fq '\setkomafont{section}{\headingfont' "$project_dir/sage-math.sty" \
+    || ! grep -Fq '\setkomafont{subsection}{\headingfont' "$project_dir/sage-math.sty" \
+    || ! grep -Fq '\coverfont\fontsize{38pt}{47pt}\selectfont\bfseries\SageChineseTitle' "$project_dir/sage-math.sty"; then
+  printf 'Sage headings require Fandol Hei / CMU Serif Bold; the cover title requires Fandol Song.\n' >&2
   exit 1
 fi
 
@@ -145,7 +93,7 @@ if [[ -n "$contents_line" ]] && ! (( copyright_line < contents_line )); then
   exit 1
 fi
 
-if grep -Eq '\\renewcommand\{\\Sage(ChineseTitle|Author|ChineseEditor|ProductionTool|CopyrightDate|SourceLanguage)\}\{[[:space:]]*(中文标题|作者|中文译制者|中文译制负责人|译者姓名|使用模型或工具|工具/模型显示名|完成时间|原文语言)[[:space:]]*\}' "$main_path" \
+if grep -Eq '\\renewcommand\{\\Sage(ChineseTitle|Author|ChineseEditor|ProductionTool|CopyrightDate|SourceLanguage)\}\{[[:space:]]*(中文标题|作者|中文译制者|中文译制负责人|译者姓名|使用模型或工具|工具/模型显示名|模型名称|完成时间|原文语言)[[:space:]]*\}' "$main_path" \
     || grep -Eq '\\renewcommand\{\\SageEnglishTitle\}\{(ENGLISH TITLE|English Title)\}' "$main_path"; then
   printf 'Template metadata placeholders remain in: %s\n' "$project_dir/$main_tex" >&2
   exit 1
@@ -224,6 +172,7 @@ fi
 
 (
   cd "$project_dir"
+  export TFMFONTS="./fonts/math//:${TFMFONTS:-}"
   # Precompile the body before indexing. These fixed passes do not establish
   # pagination convergence; inspect the derived files and continue if needed.
   xelatex -interaction=nonstopmode -halt-on-error "$main_tex"
@@ -248,6 +197,9 @@ if (( validate_figures )); then
     "$project_dir/$pdf_name" "$project_dir/figure-manifest.tsv" \
     --output-dir "$project_dir/work/figure-page-qa"
 fi
+
+python3 "$script_dir/validate_project_fonts.py" "$project_dir/$pdf_name" \
+  --log "$project_dir/$log_name" --report "$validation_dir/font-validation.json"
 
 python3 "$script_dir/inspect_build_log.py" \
   "$project_dir/$log_name" "$project_dir/$pdf_name" \

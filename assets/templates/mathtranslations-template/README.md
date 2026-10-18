@@ -17,7 +17,7 @@
 ./compile.sh template.tex
 ```
 
-模板使用 `fontset=fandol`，需要安装 XeLaTeX 和 TeX Live 的 Fandol/Computer Modern Unicode 字体。
+每个新任务先确认本次模板。模板使用 `fontset=none`，由 `portable-math-fonts.sty` 以相对路径读取自带的 Fandol/CMU 和 CM/AMS/RSFS 字体；完整复制 `fonts/` 及许可与清单。仍需安装 XeLaTeX 与相关 TeX 宏包。正文12pt、1.3倍行距，宋体正文/证明/例题，仿宋陈述，楷体术语，黑体配CMU粗体标题。
 
 ## 使用前修改
 
