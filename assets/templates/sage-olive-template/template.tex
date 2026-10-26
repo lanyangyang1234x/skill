@@ -13,6 +13,7 @@
   footskip=1.15cm
 ]{geometry}
 \usepackage{portable-math-fonts}
+\usepackage[chinese]{chinese-headings} % English retypesetting from this entrypoint: use [english] (helpers pass through).
 
 \usepackage{microtype}
 \usepackage{amsmath,amssymb,amsthm,mathtools,mathrsfs}
@@ -38,6 +39,13 @@
 \theoremstyle{portable-note}
 \newtheorem{remark}[theorem]{注}
 \renewcommand{\proofname}{证明}
+\makeatletter
+\renewenvironment{proof}[1][\proofname]{\par
+  \pushQED{\qed}\normalfont\songfont
+  \topsep6\p@\@plus6\p@\relax\trivlist
+  \item[\hskip\labelsep{\headingfont\ChineseProofName{#1\@addpunct{.}}}]\ignorespaces
+}{\popQED\endtrivlist\@endpefalse}
+\makeatother
 
 % Replace all metadata below. Keep long English subtitles short enough for one line.
 \renewcommand{\SageCoverSeries}{中文数学文献}

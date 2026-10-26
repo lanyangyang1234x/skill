@@ -46,6 +46,18 @@ def main() -> int:
         findings.append('Missing portable-math-fonts.sty')
     elif manifest.get('style_sha256') != hashlib.sha256(style.read_bytes()).hexdigest():
         findings.append('Portable typography style differs from the selected template manifest')
+    companions = manifest.get('companion_styles', {})
+    if not isinstance(companions, dict):
+        findings.append('companion_styles must map project-local style paths to SHA-256 hashes')
+    else:
+        for relative, expected in companions.items():
+            path = project / relative
+            if path.is_symlink() or not path.resolve().is_relative_to(project):
+                findings.append(f'Companion typography style must be project-local: {relative}')
+            elif not path.is_file():
+                findings.append(f'Missing companion typography style: {relative}')
+            elif hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+                findings.append(f'Companion typography style SHA-256 mismatch: {relative}')
     if args.main:
         main_path = project / args.main
         if not main_path.is_file():
@@ -58,7 +70,7 @@ def main() -> int:
         if not re.search(r'\\usepackage\{portable-math-fonts\}', source):
             findings.append('Main TeX must load portable-math-fonts')
         if re.search(r'\\(?:setmainfont|setsansfont|setmonofont|setCJKmainfont|setCJKsansfont|setCJKmonofont)\b', source):
-            findings.append('Keep font declarations in portable-math-fonts.sty; main-file overrides are not allowed')
+            findings.append('Keep font declarations in project-local typography styles; main-file overrides are not allowed')
     for item in findings:
         print('ERROR: ' + item)
     if findings:

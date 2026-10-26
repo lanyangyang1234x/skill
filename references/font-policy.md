@@ -9,7 +9,7 @@
 | 正文、证明、例题及其正文 | Fandol 宋体 | CMU Serif | 正文 12pt、1.3 倍行距 |
 | 定理、定义、引理、命题、推论等陈述 | Fandol 仿宋 | CMU Serif | 标题和陈述分别配置，不用整段楷体代替仿宋 |
 | 术语强调 | Fandol 楷体 | 保留原词拼写及所需字形 | 只作用于明确的术语范围，不让公式或整段正文继承 |
-| 章节标题及数学环境标题 | Fandol 黑体 | CMU Serif 粗体 | 不自动转为全大写或 small caps |
+| 内页章节标题及数学环境标题 | Noto Serif CJK SC SemiBold（600） | CMU Serif Bold | 保留字号；环境名称与编号另作字面中心校准，不自动转为全大写或 small caps |
 | 公式 | 不以中文字体代画数学符号 | Computer Modern、AMS、RSFS | 保留 `\mathbb`、`\mathcal`、`\mathscr` 等语义字体；不悄换 Libertinus Math、Times 或 Unicode 数学方案 |
 | 脚注、译校注正文 | Fandol 宋体 | CMU Serif | 注释标题用宋体粗体；保留注释内容、编号与颜色 |
 | 封面中文 | Fandol 宋体 | CMU Serif | 字号和粗体按所选封面设计单独设置；不能因此丢掉风景、彩色框或人物构图 |
@@ -18,11 +18,24 @@
 
 ## 模板中的实现
 
-三个内置模板各自携带 `portable-math-fonts.sty`、`fonts/manifest.json`、字体文件及 `fonts/licenses/`。初始化时复制所选模板的完整依赖，不能引用 skill 安装目录里的样式或字体。
+三个内置中文模板各自携带 `portable-math-fonts.sty`、独立的 `chinese-headings.sty`、`fonts/manifest.json`、字体文件及 `fonts/licenses/`。初始化时复制所选模板的完整依赖，包含 Noto Serif CJK SC SemiBold 字体及其 OFL，不能引用 skill 安装目录里的样式或字体。
 
-样式提供 `\songfont`、`\theoremfont`、`\termfont`/`\termcn{...}`、`\headingfont`、`\annotationtitlefont`、`\coverfont`，以及 `translationnote` 译校注环境。将它们接入实际使用的正文/环境/标题接口；不能仅在导言区声明字体而让定理框、证明、脚注或 TikZ 节点继续覆盖成旧字体。
+共享 `portable-math-fonts.sty` 保留原配置，提供 `\songfont`、`\theoremfont`、`\termfont`/`\termcn{...}`、`\headingfont`、`\annotationtitlefont`、`\coverfont` 及 `translationnote` 等接口。中文 `template.tex` 在共享样式之后显式加载 `\usepackage[chinese]{chinese-headings}`，由该附加样式接入内页标题和数学环境的校准。不能仅声明字体而让实际环境继续覆盖成旧字体。
 
-- 以工程内相对路径加载字体并映射常规、粗体、斜体与粗斜体。没有真正粗体的中文字族不要静默生成伪粗体；标题使用已有的宋体/黑体粗体文件。
+`chinese-headings` 默认及 `[english]` 模式均不作修改。从已更新的中文入口改作英文时，将加载行改为 `\usepackage[english]{chinese-headings}`；保留辅助命令的直通定义，不只删除加载行。现有英文工程若未使用这些辅助命令，仍无需加载此样式。英文等非中文原语言重排任务不启用 `[chinese]`，不改英文模板路径、共享字体样式或西文字形。三个中文模板采用同一规则；新中文工程使用此配置，既有工程须有本次字体迁移授权。
+
+## 环境名称与编号的字面中心
+
+中文环境名和 CMU 编号分别按对应正文正体“设”的实际字面中心校准。定理类陈述参照 Fandol 仿宋；证明、例和注记参照 Fandol 宋体 Regular。测量参照字时显式恢复正文正体，不继承标题的粗体。名称与数字按实际字形测量，尾标点随对应字形协调，不把基线相同当成视觉居中，也不把一次工程的 `0.08em` 等偏移设成通用常量。
+
+校准保留字号、字宽和原生可伸缩 CJKglue。逐字定位时仍保留字间胶；不得把整个名称冻结在不可伸缩盒中而改变正文断行。仅调整环境头的字面位置，保护编号内容、正文、证明内容、公式、图、标签与链接；章/节标题采用新的中文字体，但不套环境名的纵向校准。封面及译校注标题仍用原有宋体角色。
+
+纯汉字环境名可逐字保留字间胶；英文或含宏的名称须保持宏实参和正常字距，不能对英文逐字插入 CJKglue。证明标签本来位于固定标签盒中；包含 `\autoref`、数学或其他宏的可选证明标题整体测量与输出，不逐 token 拆开。
+
+
+## 资源与迁移边界
+
+- 以工程内相对路径加载字体并映射常规、粗体、斜体与粗斜体。没有对应字形的中文字族不要静默生成伪粗体；中文标题加载真实 SemiBold 文件，译校注标题仍用真实宋体粗体。
 - 常用数学 Type1/TFM 与映射随模板携带；宏包、XeLaTeX 和其他构建依赖仍需正常 TeX 环境。自带字体不等于整个 TeX 发行版离线打包。
 - 不使用 `/System/Library/Fonts`、`/Users/...` 等本机绝对字体路径，不使用空分支的 `IfFontExistsTF` 静默替代。
 - 模板升级只用于新工程或已授权迁移。已有项目有同名宏或自定义注释环境时，在其接口上适配，不替换其内部标签、内容、蓝字和计数器。
@@ -31,6 +44,6 @@
 
 1. 核 `fonts/manifest.json` 中的文件与哈希，以及源工程内实际字体声明；字体许可随包保留。
 2. 编译显式主文件，检查缺字、找不到字体、缺粗体/斜体字形与字体替代警告；不能用屏蔽警告通过检查。
-3. 在最终 PDF 检查正文、定理陈述、证明、例题、术语、标题、脚注、译校注、封面和数学字母样页。比较真实使用的字体角色和最终可读性。
+3. 在最终 PDF 检查正文、定理陈述、证明、例题、术语、标题、脚注、译校注、封面和数学字母样页。标题专项至少查看章/节标题、环境名—编号—正文首字、例/注记及证明；核对正文正体参照、字面居中与原生字间胶。授权迁移时比较受影响断行、分页和导航，不能只凭字体名或编译成功判断无副作用。
 4. 运行 `python3 scripts/validate_project_fonts.py MAIN.pdf --log MAIN.log --report work/validation/fonts.json` 检查 PDF 中全部实际字体嵌入。嵌入通过只证明文件层结果，不证明每个文本角色用对字体，也不证明数学保真。
 5. 发布包的独立重建及可编译源码包的验证按[审计证据与独立重建](audit-evidence-and-release.md#仅交付-tex-时)执行，再核字体和样页；构建不得回到原工程或 skill 目录找字体。仅交付 TeX 仍可内部编译检查字体；用户明确禁止编译或生成 PDF 时，相应 PDF 检查才记为不适用。环境不足则记未验，字体、许可和相对引用的完整性照常检查。

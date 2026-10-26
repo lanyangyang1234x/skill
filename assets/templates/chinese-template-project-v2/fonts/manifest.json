@@ -8,7 +8,8 @@
     "headings": "Fandol Hei / CMU Serif Bold",
     "footnotes_and_notes": "Fandol Song; note headings Song Bold",
     "cover": "Fandol Song; independent sizes",
-    "math": "Computer Modern + AMS + RSFS, traditional TeX math"
+    "math": "Computer Modern + AMS + RSFS, traditional TeX math",
+    "chinese_headings": "Chinese opt-in: Noto Serif CJK SC SemiBold (600) / CMU Serif Bold; environment heads centred on regular body 设"
   },
   "files": {
     "FandolFang-Regular.otf": "d838ad32ce2244d8144f408c37fe71065aba6fbbc80759a4d2aa2033948d5bc9",
@@ -234,7 +235,13 @@
     "math/rsfs5.pfb": "b00533850eeb81e23fe8457c9e2c74eceda33aa2eacc03b5527d39dafc98d454",
     "math/rsfs5.tfm": "2d249b2e2162c3c90631fece3d3bf136b9908ad5014bb6f4ba93349261a64964",
     "math/rsfs7.pfb": "3bf8d640e357b56c2c453f9a58666c4ba162abca2c5f1bcb7164bd8c77d3f5e0",
-    "math/rsfs7.tfm": "e297800adb9ce3be66837f230a258cf134c1a56b916a9daa12c2d58870b67c3a"
+    "math/rsfs7.tfm": "e297800adb9ce3be66837f230a258cf134c1a56b916a9daa12c2d58870b67c3a",
+    "NotoSerifCJKsc-SemiBold.otf": "d627b53dbcde61e07de1498d2623a8b287f78585ffbc90cc0618d0caaa2ed6b0",
+    "licenses/NotoSerifCJK-OFL.txt": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2",
+    "licenses/NotoSerifCJK-copyright.txt": "1d35de2768877ea6a0bd3d5f7876b1f3a372bd8e1dcadd11281dd10ff1fe66da"
   },
-  "style_sha256": "a8b2e2198ea2d24a59b4f44ba093ab2ec6fb5ef3337d39378fe2f5eb8667d908"
+  "style_sha256": "a8b2e2198ea2d24a59b4f44ba093ab2ec6fb5ef3337d39378fe2f5eb8667d908",
+  "companion_styles": {
+    "chinese-headings.sty": "c41071087266ff0e1e38dc0d9a1a9c93213f80a49906b77b17350eef468db851"
+  }
 }

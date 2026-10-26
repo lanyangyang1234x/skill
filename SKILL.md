@@ -2,7 +2,7 @@
 name: pdf-to-chinese-tex
 description: "将数学 PDF 或 Markdown 转录稿译为中文 LaTeX/PDF，或按要求保留原语言重排；也用于既有数学译稿的原书对照、术语、中文表达、图表与引用修订。"
 metadata:
-  version: "3.3.0"
+  version: "3.3.1"
 ---
 
 # PDF to Chinese TeX
@@ -68,7 +68,9 @@ metadata:
 
 ## 模板与工具选择
 
-按任务开头确认的模板工作，不自动指定模板。新建工程使用便携的 Fandol/CMU 字体分工：正文、证明、例题用宋体，定理类陈述用仿宋，术语强调用楷体，章节和环境标题用黑体配 CMU Serif 粗体；西文正文用 CMU Serif，公式用 Computer Modern、AMS 与 RSFS。脚注和译校注用宋体、注释标题用宋体粗体，封面中文用宋体。正文 12pt、1.3 倍行距；具体接口与验收见[字体约定](references/font-policy.md)。既有工程只在本次授权范围内改字体，不因加载 skill 改造全部版式。
+按任务开头确认的模板工作，不自动指定模板。新建中文工程使用便携字体：正文、证明、例题用 Fandol 宋体，定理类陈述用仿宋，术语强调用楷体；内页中文章节和环境标题用 Noto Serif CJK SC SemiBold（600），西文标题与编号保留 CMU Serif Bold。数学环境名称与编号分别按对应正文正体“设”的字面中心校准，保留原生 CJKglue，不套固定偏移。脚注和译校注用宋体、注释标题用宋体粗体，封面中文用宋体。西文正文用 CMU Serif，公式用 Computer Modern、AMS 与 RSFS；正文 12pt、1.3 倍行距。具体接口与验收见[字体约定](references/font-policy.md)。既有工程只在本次授权范围内改字体，不因加载 skill 改造全部版式。
+
+三个中文模板通过入口中的 `\usepackage[chinese]{chinese-headings}` 启用独立标题样式；共享 `portable-math-fonts.sty` 保持原配置。`chinese-headings` 默认及 `[english]` 均不作修改，英文等非中文原语言重排任务不得启用 `[chinese]`。字体与各自许可随模板携带；这项更新只用于新中文工程或已授权迁移，不改变封面、字号、编号内容和公式。
 
 图形默认优先使用可编辑的 TikZ/TikZ-CD，并逐项对照原书的标签内容与位置、节点坐标、箭头起止/头型/虚实/路线和尺寸比例。用户要求“必须 TikZ”或“全部原图用 TikZ”时，其指定范围内必须原生重建，包含正合列、映射等线性图式，不能用截图、描边字形或套一层 `tikzpicture` 充数；“一模一样”同时要求原书外观，不能退化成拓扑相同。禁止用 `resizebox`、`scalebox`、`adjustbox` 或整体 `scale` 压缩整图/表格以掩盖溢出或错位；在原生坐标和排版层修正后重新看页。保留正确既有图形及用户限定的简单图/局部范围；详细方法与例外处理见[图形验收](references/book-completion-and-figure-qa.md#choose-the-figure-method-for-the-current-goal)。
 

@@ -19,6 +19,7 @@
 % ---------- 页面、字体与数学 ----------
 \usepackage[paper=a4paper,left=2.5cm,right=2.5cm,top=2.8cm,bottom=2.8cm]{geometry}
 \usepackage{portable-math-fonts}
+\usepackage[chinese]{chinese-headings} % English retypesetting from this entrypoint: use [english] (helpers pass through).
 \usepackage{amsmath,amsthm,amssymb,mathrsfs,mathtools}
 \usepackage{graphicx,tikz,tikz-cd,titlesec}
 \usepackage{array,booktabs,longtable}
@@ -163,19 +164,19 @@
   {6pt}{6pt}% 上下间距
   {\theoremfont}% 正文字体
   {0pt}% 缩进
-  {\headingfont}% 中文黑体、西文 CMU Serif 粗体
-  {：}% 标题后的中文标点
+  {\headingfont}% 中文 Noto Serif CJK SC SemiBold、西文 CMU Serif Bold
+  {\ChineseHeadingPunctuation{：}}% 标题后的中文标点
   {0.5em}% 标题与正文间距
-  {}%
+  {\ChineseStatementHead{#1}{#2}{#3}}%
 
 \newtheoremstyle{mtsong}%
   {6pt}{6pt}%
   {\songfont}%
   {0pt}%
   {\headingfont}%
-  {：}%
+  {\ChineseHeadingPunctuation{：}}%
   {0.5em}%
-  {}%
+  {\ChinesePlainStatementHead{#1}{#2}{#3}}%
 
 \theoremstyle{mtfang}
 \newtheorem{definition}{定义}[subsection]
@@ -240,7 +241,7 @@
   \normalfont\songfont
   \topsep6\p@\@plus6\p@\relax
   \trivlist
-  \item[\hskip\labelsep\headingfont #1：]\ignorespaces
+  \item[\hskip\labelsep\headingfont\ChineseProofName{#1：}]\ignorespaces
 }{%
   \popQED\endtrivlist\@endpefalse
 }

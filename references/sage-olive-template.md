@@ -12,6 +12,7 @@ assets/templates/sage-olive-template/
   template.tex
   sage-math.sty
   portable-math-fonts.sty
+  chinese-headings.sty
   .latexmkrc
   compile.sh
   fetch_random_cover.py
@@ -37,8 +38,9 @@ Initialize `terminology.tsv` before validation. If the project contains any rast
 - Use `\MakeSageCover`, then `\MakeSageCopyright`, then usually `\MakeSageContents`.
 - Keep the copyright page immediately after the cover and before contents.
 - Keep the copyright block in the upper-middle zone: the bundled default uses `\\vspace*{0.23\\paperheight}` before the block. Adjust only when the project's metadata length requires it, preserving comfortable bottom whitespace.
-- Keep the complete `portable-math-fonts.sty`, `fonts/manifest.json`, font files and licenses inside the project, loaded by relative paths. Do not use system-specific font names or silent fallbacks.
-- Follow [font-policy.md](font-policy.md): Fandol Song for body/proofs/examples, Fang for theorem statements, Kai for terms, Hei with bold CMU Serif for section/environment headings; Song for notes and cover Chinese. Western text uses CMU Serif, mathematics uses Computer Modern/AMS/RSFS, with 12pt body and 1.3 line spacing.
+- Keep the complete `portable-math-fonts.sty`, `chinese-headings.sty`, `fonts/manifest.json`, font files and licenses (including Noto's OFL) inside the project, loaded by relative paths. Do not use system-specific font names or silent fallbacks.
+- Follow [font-policy.md](font-policy.md): Fandol Song for body/proofs/examples, Fang for theorem statements, Kai for terms, Noto Serif CJK SC SemiBold (600) for interior Chinese headings, and CMU Serif Bold for Latin headings/numbers. Keep Song Bold for editorial-note titles and Song for cover Chinese. Western body text uses CMU Serif, mathematics uses Computer Modern/AMS/RSFS, with 12pt body and 1.3 line spacing.
+- The Chinese `template.tex` explicitly loads `\usepackage[chinese]{chinese-headings}` after the shared font style. Environment names and numbers align to upright body-font `设` (Fang or Song Regular), preserving native CJKglue, sizes, numbering content and formulas; use measured centres, not a fixed offset. The sidecar is a no-op by default or with `[english]`; do not enable `[chinese]` for English or other non-Chinese source-language-preserving work or alter shared `portable-math-fonts.sty`. Apply this update only to new Chinese projects or authorized migrations.
 - Preserve the landscape cover, colors, boxes and page geometry. Font roles do not authorize changing the template design. Verify the local font manifest and actual PDF font embedding, then inspect the role-specific sample pages.
 - Use dynamic running heads: the inner/left side shows the current `section` number and title, while the outer/right side shows the current `subsection` number and title (for example, `1 全正性` and `1.2 m 维空间中 2-平面的 Grassmannian`). Keep them in the bundled body fonts, light gray, with the template's thin rule below the header. Do not replace them with static book-title or author text.
 - Do not add packages or change styling unless the source requires it.

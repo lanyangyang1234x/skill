@@ -2,7 +2,7 @@
 
 <h1>PDF 转中文 TeX</h1>
 
-<p><strong>3.3 · 数学 PDF → 忠实中文 LaTeX → 可验证 PDF</strong></p>
+<p><strong>3.3.1 · 数学 PDF → 忠实中文 LaTeX → 可验证 PDF</strong></p>
 
 <p>保留章节顺序、编号、公式、定理、证明、练习、图形、交叉引用与参考文献。</p>
 
@@ -24,7 +24,7 @@ git clone https://github.com/lanyangyang1234x/skill.git \
   ~/.agents/skills/pdf-to-chinese-tex
 ```
 
-上述是来源仓库安装方式；本地交付的 3.3 源包以实际版本为准，安装本地源包时保留旧技能后复制完整目录。然后在 Codex 中调用：
+上述是来源仓库安装方式；本地交付的 3.3.1 源包以实际版本为准，安装本地源包时保留旧技能后复制完整目录。然后在 Codex 中调用：
 
 ```text
 使用 $pdf-to-chinese-tex 将这本数学 PDF 翻译成中文 LaTeX 和 PDF。
@@ -46,7 +46,9 @@ git clone https://github.com/lanyangyang1234x/skill.git \
 
 ### 核心能力
 
-3.3 修正 MathTranslations 封面的双语标题：按实际宽度调整字号，中文、原文各一行，保留完整题名；明确人名不翻译。补入公式断行与异常空白、长箭标签、矩阵表格的版式方法，并接入本地新版中文数学表达方法。全量术语外证按用户要求逐项留证；源码交付与禁止编译分别处理。
+3.3.1 仅更新三个中文模板的内页标题：中文采用 Noto Serif CJK SC SemiBold（600），西文与编号保留 CMU Serif Bold；数学环境名称及编号按对应正文正体“设”的字面中心校准，保留原生 CJKglue。通过独立中文样式启用，保留源语言的英文任务不启用；不更换封面，不改变字号、编号内容和公式，也不据此宣称全书内容已审计。
+
+3.3 的 MathTranslations 双语封面题名、人名保留源拼写、公式与图表版式方法及中文数学表达方法继续保留。全量术语外证按用户要求逐项留证；源码交付与禁止编译分别处理。
 
 新建翻译、既有项目审计和定点修订使用各自的改动范围；书籍翻译默认每批完成中文句群审校，再做数学保护复核。保护个人批注、正确图形和已确认的版式；改善中文语序与衔接时保持假设、量词、证明步骤、公式和源文单元。
 
@@ -80,11 +82,13 @@ python3 scripts/verify_chinese_writing_vendor.py
 
 | 模板 | 视觉与使用场景 |
 | --- | --- |
-| `Sage-Olive` | 随机风景封面、版权页、彩色数学环境、打包 Fandol/CMU 与 CM/AMS/RSFS 字体 |
+| `Sage-Olive` | 随机风景封面、版权页、彩色数学环境、打包 Fandol/Noto/CMU 与 CM/AMS/RSFS 字体 |
 | `Chinese Template Project v2` | 本项目采用的 A4 酒红/金色章节层、中文定理环境、可点击目录、元数据署名和源图插入接口 |
 | `MathTranslations` | 彩色暖纸封面、动漫人物徽记、中文定理环境、术语索引、长证明和习题/答案双向链接 |
 
-三个模板均使用 XeLaTeX 与完整相对路径字体包；正文/证明/例题宋体、定理陈述仿宋、术语楷体、标题黑体配 CMU Serif 粗体，正文 12pt、1.3 倍行距。完整角色与嵌入验收见 [字体约定](references/font-policy.md)。Project v2 的可复用文件位于 [`assets/templates/chinese-template-project-v2/`](assets/templates/chinese-template-project-v2/)，MathTranslations 位于 [`assets/templates/mathtranslations-template/`](assets/templates/mathtranslations-template/)。
+三个中文模板均使用 XeLaTeX 与完整相对路径字体包；正文/证明/例题宋体、定理陈述仿宋、术语楷体，内页中文标题为 Noto Serif CJK SC SemiBold（600），西文标题与编号为 CMU Serif Bold；正文 12pt、1.3 倍行距。数学环境名称与编号分别以对应正文正体“设”的字面中心校准：陈述用仿宋，证明、例和注记用宋体，测量时不继承标题粗体，也不固定下移 `0.08em`。
+
+中文 `template.tex` 显式加载 `\usepackage[chinese]{chinese-headings}`；默认或 `[english]` 加载不作修改，英文等非中文原语言重排任务不启用中文选项。共享 `portable-math-fonts.sty` 和英文路径保持原样。更新只用于新中文工程或已授权迁移，字体及许可（含 Noto 的 OFL）随项目打包。完整角色与验收见 [字体约定](references/font-policy.md)。Project v2 的可复用文件位于 [`assets/templates/chinese-template-project-v2/`](assets/templates/chinese-template-project-v2/)，MathTranslations 位于 [`assets/templates/mathtranslations-template/`](assets/templates/mathtranslations-template/)。
 
 ### 图形：按当前目标选择方法
 
@@ -247,14 +251,16 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 
 ### Highlights
 
-- Version 3.3 keeps separate scopes for new translation, existing-project audit, and targeted repair. MathTranslations cover titles occupy two lines total, with measured font sizes; personal names retain their source spelling. Chinese expression review is integrated into every book-translation batch by default.
+- Version 3.3.1 changes only the three Chinese templates' interior headings: Noto Serif CJK SC SemiBold (600) for Chinese, with CMU Serif Bold retained for Latin text and numbers. Environment names and numbers align optically to the corresponding upright body font's Chinese reference glyph; native CJKglue is preserved. Covers, font sizes, numbering content and mathematics are unchanged. This font update does not establish a completed content audit.
+- Keep separate scopes for new translation, existing-project audit, and targeted repair. MathTranslations cover titles occupy two lines total, with measured font sizes; personal names retain their source spelling. Chinese expression review is integrated into every book-translation batch by default.
 - Ask for the template at the beginning of every independent task, including whether an existing project should retain its template. An explicit current choice counts as an answer; continuations reuse it. Do not silently default to Sage-Olive. Unknown translator/tool credit may stay blank or anonymous.
 - Treat the rendered source PDF as authoritative; use Markdown as a read-only drafting scaffold when reliable.
 - Keep terminology, source-page coverage, figure provenance, and batch checkpoints in durable ledgers.
 - Use the pinned `chinese-writing` 2.13.3 library and the local 2.14.0-local.2 mathematics supplement through [the mathematics adaptation](references/chinese-writing-integration.md); improve Chinese without adding source-absent arguments or applying an original-article approval workflow to ordinary translation.
 - Each book batch proceeds through translation, mathematics/terminology checks, Chinese sentence-group review, mathematical protection checks, and compilation/merge; the user does not need to request Chinese review separately.
 - Prefer editable native TikZ/TikZ-CD. Explicit native requirements prohibit raster substitution; exact native diagrams must match label positions, geometry and arrow styles as well as topology. Do not squeeze whole diagrams or tables with resizebox/scalebox/adjustbox or blanket scale wrappers. Source-pixel preservation remains available when no native requirement applies.
-- Use portable Fandol/CMU font roles: Song for body/proofs/examples, Fang for theorem statements, Kai for terms, Hei and bold CMU Serif for headings; Computer Modern/AMS/RSFS for mathematics, 12pt body and 1.3 line spacing. Bundle licenses, inspect role-specific pages, and verify actual font embedding.
+- For new Chinese projects or an authorized migration, use portable Fandol Song for body/proofs/examples, Fang for theorem statements, Kai for terms, Noto Serif CJK SC SemiBold (600) for interior Chinese headings, and CMU Serif Bold for Latin headings/numbers. Measure alignment against upright body-font `设` (Fang or Song), without inheriting heading bold or using a fixed offset. Keep Song Bold for editorial-note titles, the selected cover, Computer Modern/AMS/RSFS mathematics, 12pt body and 1.3 line spacing. Bundle fonts and licenses, including Noto's OFL, and verify roles and embedding.
+- Chinese template entrypoints explicitly load `\usepackage[chinese]{chinese-headings}`. The package's default and `[english]` modes are no-ops. Do not enable `[chinese]` for English or other non-Chinese source-language-preserving work; keep its template paths, shared `portable-math-fonts.sty` and Latin typography unchanged.
 - Reconcile source figures with TeX in both directions, including XY-pic and inline diagrams, and check actual PDF occurrences, alpha masks, order, and affected neighboring pages.
 - Reject silent figure overwrites and verify promoted assets with SHA-256 before compilation and release.
 - Treat compilation, source fidelity, Chinese review, visual QA, and independent archive rebuild as separate acceptance gates. Snapshot/ledger checks do not establish completed behavioral tests.
@@ -263,7 +269,7 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 
 | Template | Description |
 | --- | --- |
-| `Sage-Olive` | Random landscape cover, copyright page, colored mathematical environments, bundled Fandol/CMU and CM/AMS/RSFS fonts |
+| `Sage-Olive` | Random landscape cover, copyright page, colored mathematical environments, bundled Fandol/Noto/CMU and CM/AMS/RSFS fonts |
 | `Chinese Template Project v2` | A4 burgundy/gold chapter layer, Chinese theorem layer, clickable contents, metadata credit line, source-relative figure insertion |
 | `MathTranslations` | Warm-paper color cover, anime character badge, Chinese theorem environments, terminology index, long-proof links, and linked exercises/answers |
 
@@ -295,6 +301,7 @@ python3 tests/test_batch_checkpoint.py
 python3 tests/test_chinese_writing_vendor.py
 python3 tests/test_project_fonts.py
 python3 tests/test_font_bundle.py
+python3 tests/test_chinese_headings.py
 python3 scripts/verify_chinese_writing_vendor.py
 ```
 

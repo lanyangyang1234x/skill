@@ -3,6 +3,7 @@
 % Project v2: portable A4 Chinese mathematical layout.
 \usepackage[paper=a4paper,left=2.5cm,right=2.5cm,top=2.8cm,bottom=2.8cm]{geometry}
 \usepackage{portable-math-fonts}
+\usepackage[chinese]{chinese-headings} % English retypesetting from this entrypoint: use [english] (helpers pass through).
 \usepackage{amsmath,amsthm,amssymb,mathrsfs,mathtools}
 \usepackage{graphicx,titlesec,array,enumitem,tabularx}
 \usepackage[dvipsnames]{xcolor}
@@ -78,7 +79,7 @@
   \normalfont
   \topsep6\p@\@plus6\p@\relax
   \trivlist
-  \item[\hskip\labelsep\headingfont #1\@addpunct{.}]\ignorespaces
+  \item[\hskip\labelsep\headingfont\ChineseProofName{#1\@addpunct{.}}]\ignorespaces
 }{\popQED\endtrivlist\@endpefalse}
 \makeatother
 \renewcommand{\qedsymbol}{\ensuremath{\square}}

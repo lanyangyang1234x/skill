@@ -47,6 +47,35 @@ class FontBundleTests(unittest.TestCase):
         self.style.write_text('changed')
         self.check_result(1)
 
+    def add_companion(self):
+        style = self.project / 'chinese-headings.sty'
+        style.write_text('fixture Chinese-only heading profile')
+        manifest = json.loads(self.manifest.read_text())
+        manifest['companion_styles'] = {
+            style.name: hashlib.sha256(style.read_bytes()).hexdigest()
+        }
+        self.manifest.write_text(json.dumps(manifest))
+        return style
+
+    def test_complete_companion_passes(self):
+        self.add_companion()
+        self.check_result(0)
+
+    def test_changed_companion_fails(self):
+        self.add_companion().write_text('stale heading calibration')
+        self.check_result(1)
+
+    def test_missing_companion_fails(self):
+        self.add_companion().unlink()
+        self.check_result(1)
+
+    def test_external_companion_fails(self):
+        style = self.add_companion()
+        external = self.base / 'external-headings.sty'
+        style.rename(external)
+        style.symlink_to(external)
+        self.check_result(1)
+
     def test_external_fonts_directory_symlink_fails(self):
         target = self.base / 'external-fonts'
         self.fonts.rename(target)
