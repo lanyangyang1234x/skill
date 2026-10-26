@@ -23,6 +23,8 @@
 
 先修改 `template.tex` 开头的书目信息宏（例如 `\BookTitleCN`、`\Translator` 和 `\TranslationDate`），再替换示例正文。人物徽记可以直接替换为同名 PNG；如果更换文件名，也要同步修改 `\includegraphics`。
 
+封面题名共两行：中文一行、完整原文一行。标题宏按实际宽度调整字号，不要在 `\BookTitleCN` / `\BookTitleEN` 中手动分行。很长的题名可减小 `\MTCoverTitleIndent`，再检查封面的字号与边界；不截短原题或缩放字形。人名保留源拼写，不作音译。
+
 人物图是用户提供并经过版式处理的素材，来源和再分发许可未核实。公开发布译本或二次分发仓库前，请确认拥有相应使用权，或替换为已获许可的图片。
 
 该目录是独立模板变体，不会覆盖仓库现有的 `assets/templates/chinese-template-project-v2/`。

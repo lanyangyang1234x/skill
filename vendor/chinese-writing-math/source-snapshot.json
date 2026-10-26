@@ -1,0 +1,94 @@
+{
+  "source_skill": "chinese-writing",
+  "source_version": "2.14.0-local.2",
+  "copied_on": "2026-10-25",
+  "source_kind": "offline local installed skill; no remote synchronization",
+  "source_skill_sha256": "eaa84bdb2de3860e7681d8e0ad1237f97ebbf14c198dba3f4386d3a81323defa",
+  "purpose": "Mathematical translation methods and cases supplement; original chinese-writing 2.13.3 vendor snapshot is unchanged.",
+  "files": [
+    {
+      "path": "references/mathematical-translation.md",
+      "source_path": "references/mathematical-translation.md",
+      "source_sha256": "68e703c6010bb7941cd810f8b130dfc17973e764b96d8d76daa289d9a2a0af62",
+      "installed_sha256": "68e703c6010bb7941cd810f8b130dfc17973e764b96d8d76daa289d9a2a0af62",
+      "adaptation": "unchanged"
+    },
+    {
+      "path": "references/mathematical-editing.md",
+      "source_path": "references/mathematical-editing.md",
+      "source_sha256": "5ec592fb99ee275eb6619889cdec518e4cbe4e19c2508404ec4faa3f1ad62d53",
+      "installed_sha256": "56c5c5ec12786b8701f7004483b82db0ec12267b376a5877caf5921ede6fd690",
+      "adaptation": "Only three generic-method relative links rerouted to the existing chinese-writing 2.13.3 library."
+    },
+    {
+      "path": "references/mathematical-expression.md",
+      "source_path": "references/mathematical-expression.md",
+      "source_sha256": "065ed4c35ccffe35120cd0d3f200f0f3c096e51c86230f1778b35a3ecf81d058",
+      "installed_sha256": "065ed4c35ccffe35120cd0d3f200f0f3c096e51c86230f1778b35a3ecf81d058",
+      "adaptation": "unchanged"
+    },
+    {
+      "path": "references/mathematical-expression-cases.md",
+      "source_path": "references/mathematical-expression-cases.md",
+      "source_sha256": "19bc2e95cdf8d256e3b59d9b49e77752c7b8185bd222ef34ac8781640aa956f0",
+      "installed_sha256": "19bc2e95cdf8d256e3b59d9b49e77752c7b8185bd222ef34ac8781640aa956f0",
+      "adaptation": "unchanged"
+    },
+    {
+      "path": "references/mathematical-translation-cases.md",
+      "source_path": "references/mathematical-translation-cases.md",
+      "source_sha256": "e64b4609c61faff6970dbb171273d7cbe474f25aadc55f3cacad2fb8bd253acf",
+      "installed_sha256": "e64b4609c61faff6970dbb171273d7cbe474f25aadc55f3cacad2fb8bd253acf",
+      "adaptation": "unchanged"
+    },
+    {
+      "path": "references/mathematical-editing-cases.md",
+      "source_path": "references/mathematical-editing-cases.md",
+      "source_sha256": "f5c9460832450478ff766872ffc19f61d14cff84566478d2f96b46ae27306528",
+      "installed_sha256": "f5c9460832450478ff766872ffc19f61d14cff84566478d2f96b46ae27306528",
+      "adaptation": "unchanged"
+    },
+    {
+      "path": "references/li-wenwei-reading.md",
+      "source_path": "references/li-wenwei-reading.md",
+      "source_sha256": "f623a3cdfef8c7ab4c95001607bb574473151544599b8b72d52bda2ea200c117",
+      "installed_sha256": "f623a3cdfef8c7ab4c95001607bb574473151544599b8b72d52bda2ea200c117",
+      "adaptation": "unchanged"
+    },
+    {
+      "path": "references/li-wenwei-chapter-coverage.md",
+      "source_path": "references/li-wenwei-chapter-coverage.md",
+      "source_sha256": "a9c145571a7e0e8dfd25413a9c3c08256b68ba4bf256c442df0392df10914764",
+      "installed_sha256": "6a5b7df3a2466bd933c4d49ff2e6eeb965a562c11b5540f985c01a21c8e4e6f3",
+      "adaptation": "Trailing empty line removed for Git whitespace validation; content unchanged."
+    },
+    {
+      "path": "references/li-wenwei-corpus.json",
+      "source_path": "references/li-wenwei-corpus.json",
+      "source_sha256": "b392fb1e9d3ed57b8867ae318c1a3fae832daedfa51741b28380bcfcee6956a8",
+      "installed_sha256": "b392fb1e9d3ed57b8867ae318c1a3fae832daedfa51741b28380bcfcee6956a8",
+      "adaptation": "unchanged"
+    },
+    {
+      "path": "LICENSE",
+      "source_path": "LICENSE",
+      "source_sha256": "9d2f16f531f1b67cb888fa2e7fab1a51ba7e715f153fa17e3ee9cf7d96389310",
+      "installed_sha256": "9d2f16f531f1b67cb888fa2e7fab1a51ba7e715f153fa17e3ee9cf7d96389310",
+      "adaptation": "unchanged"
+    },
+    {
+      "path": "references/literature.md",
+      "source_path": "references/literature.md",
+      "source_sha256": "8d46458f93409089795868a98ca5f3fe0eb5046b8ee39884c89272cf2b8c430b",
+      "installed_sha256": "34c6886c95eb3db14cfb49fe4b0803b6bad41a8c67e3529e9673e537180fee0f",
+      "adaptation": "Retained mathematical-editing and mathematical-expression source sections only; added excerpt label."
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "source_path": "THIRD_PARTY_NOTICES.md",
+      "source_sha256": "4ae8f4db0bb00e809477c6c63aa3acf91f8fae86db5c5683287c55d95963e636",
+      "installed_sha256": "3e8394cb87e22307f528d9306ece7036e8bc3c1d8cf7166e118ddc09a199acb6",
+      "adaptation": "Retained Humanizer-zh complete MIT notice and Li Wenwei analysis attribution; omitted unrelated teaching-example and general-literature notices; added supplement provenance."
+    }
+  ]
+}

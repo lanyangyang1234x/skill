@@ -2,13 +2,15 @@
 
 Use this reference for books, long monographs, figure-bearing sources, or any task that asks for visual fidelity. Apply the current task's scope: a whole-book audit needs complete source coverage; a targeted figure repair needs complete coverage of its authorized figures and their affected pages. Preserve correct figures unless the user requests a different presentation or the audit finds a verified problem.
 
+For retypesetting that retains the source language, preserve that language in prose and figure labels. Instructions below about translating ordinary English or checking Chinese apply only to the authorized translation scope.
+
 When the user supplies only a screenshot for a local figure edit, that original image is the authoritative figure source: record its hash and bounds rather than inventing a PDF page. Do not request a whole source book merely to replace clearly identified labels. For image-only output, verify the final image and protected pixels; TeX compilation, font embedding and final-PDF occurrence checks are not applicable. If the edited image is inserted into a TeX project, inspect that compiled occurrence too.
 
 ## Complete-Book Gate
 
 For an authorized whole-book translation, account for every source page and logical unit in order: front matter, chapters, unnumbered passages, proofs, exercises, footnotes, figures, captions, appendices, bibliography, and index when present. Record any user-authorized exclusions explicitly; a blank page or an excluded publisher catalogue must not conceal missing mathematical content.
 
-Before delivery, apply the requested output scope: when the user explicitly wants TeX only, PDF build/render/click checks below are not applicable; perform source and source-package checks as defined in [audit-evidence-and-release.md](audit-evidence-and-release.md#仅交付-tex-时).
+Before delivery, distinguish output scope from verification scope: a TeX-only deliverable may still be compiled internally, with rendered-page and link checks appropriate to the changes. Skip compilation and the corresponding PDF checks only when the user explicitly prohibits compiling or generating a PDF; missing tools leave those checks unverified. Apply the source-package and compilable-package rules in [audit-evidence-and-release.md](audit-evidence-and-release.md#仅交付-tex-时), without expanding a local source edit into a whole-book rebuild.
 
 1. Close the source-page coverage range and distinguish translated, verified, excluded, and unresolved content.
 2. Compare logical-item counts by chapter or section, then compare the actual content; equal counts alone do not establish fidelity.

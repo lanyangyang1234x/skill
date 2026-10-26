@@ -1,0 +1,61 @@
+{
+  "as_of": "2026-10-24",
+  "scope": "Five downloadable Chinese book PDFs on author book page, including public partial draft; not all future works. Full extraction/indexing; chapter-wide selected-block analysis, not exhaustive semantic reading.",
+  "books": [
+    {
+      "title": "《代数学方法》卷一",
+      "file": "Al-jabr-1.pdf",
+      "url": "https://wwli.asia/downloads/books/Al-jabr-1.pdf",
+      "compiled": "2026-09-20",
+      "pages": 445,
+      "sha256": "235201339105be1ec03dee6102240d73199b759d9ae8b6e786955d25263a3df0",
+      "chapter_appendix_units": 10,
+      "section_bookmarks": 83,
+      "selected_blocks": 20
+    },
+    {
+      "title": "《代数学方法》卷二",
+      "file": "Al-jabr-2.pdf",
+      "url": "https://wwli.asia/downloads/books/Al-jabr-2.pdf",
+      "compiled": "2026-10-20",
+      "pages": 650,
+      "sha256": "b478859fb330c67802a76f7b36de5446283612ec1ac1a6b86bc8461252e2d81e",
+      "chapter_appendix_units": 11,
+      "section_bookmarks": 107,
+      "selected_blocks": 22
+    },
+    {
+      "title": "《代数学方法》卷三（已公开部分）",
+      "file": "Al-jabr-3-partial.pdf",
+      "url": "https://wwli.asia/downloads/books/Al-jabr-3-partial.pdf",
+      "compiled": "2026-08-13",
+      "pages": 395,
+      "sha256": "0aedcc477d5bc1a6304b987f5904216cfc86d3fc15ac5046822266af29e1eb56",
+      "chapter_appendix_units": 15,
+      "section_bookmarks": 128,
+      "selected_blocks": 30
+    },
+    {
+      "title": "《代数学讲义》",
+      "file": "EAlg-Notes.pdf",
+      "url": "https://wwli.asia/downloads/books/EAlg-Notes.pdf",
+      "compiled": "2026-10-16",
+      "pages": 709,
+      "sha256": "df7f23cac7456bb3ecc9e61c806750fa1a9577ac4e035a455e024dd3449ec9d2",
+      "chapter_appendix_units": 18,
+      "section_bookmarks": 153,
+      "selected_blocks": 35
+    },
+    {
+      "title": "《模形式初步》",
+      "file": "Modulform.pdf",
+      "url": "https://wwli.asia/downloads/books/Modulform.pdf",
+      "compiled": "2026-03-27",
+      "pages": 393,
+      "sha256": "1fa47e9de5f29f6d03c54872e9b17f1adecf6e129ee92db045cedb302b84a3eb",
+      "chapter_appendix_units": 13,
+      "section_bookmarks": 79,
+      "selected_blocks": 25
+    }
+  ]
+}

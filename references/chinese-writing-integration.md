@@ -4,18 +4,22 @@
 
 本 skill 内置 [Ou-Liu-Red-Sugar/chinese-writing](https://github.com/Ou-Liu-Red-Sugar/chinese-writing) 的固定快照，版本 **2.13.3**，提交 **9818d89aee474ef813f9c5d8a6164e0cb265fe1b**，获取日期 **2026-10-10**。[完整上游源码](../vendor/chinese-writing-upstream.zip)保留全部 46 个原文件；日常读取 `vendor/chinese-writing/` 中 38 个未改动的方法、模板、示例和许可证文件。安装入口、代理指令及上游维护工具只在归档中保留，避免被识别为另一个 skill。`vendor/chinese-writing.lock.json` 分别记录方法库和完整归档哈希；`scripts/verify_chinese_writing_vendor.py` 离线校验两者及同源关系。
 
-这些材料作为本任务选择采用的方法。当前用户要求、数学原文、保护范围和本适配边界优先于其中面向原创写作的流程。普通翻译不需要独立安装、联网同步、网页 Chat 协作或额外的人工阶段审批。
+另内置本机 `chinese-writing` **2.14.0-local.2** 的[数学方法补充快照](../vendor/chinese-writing-math/THIRD_PARTY_NOTICES.md)，保留 12 项组句方法、20 组英中表达案例、数学译稿/编辑边界案例及原阅读范围；[来源与哈希](../vendor/chinese-writing-math/source-snapshot.json)独立登记，不改动上述上游快照和锁文件。日常直接使用本地方法，不回查李文威书稿、不联网更新；阅读依据仅在维护或追查具体出处时读。跨章分析不等于已逐页逐句精读全部书稿。
+
+当前用户要求、数学原文、保护范围和本适配边界优先于这些方法中面向原创写作的流程。普通翻译不需要独立安装、网页 Chat 协作或额外的人工阶段审批。
 
 | 当前问题 | 读取内置方法 |
 |---|---|
-| 主语、回指、英语语序、公式引入、重复设定 | [句子组成](../vendor/chinese-writing/references/sentence-construction.md)，重点查“主干”“搭配核对”“前后句的承接对象” |
+| 数学译写或已有译稿润色，每批入口 | [数学译稿审校](../vendor/chinese-writing-math/references/mathematical-translation.md)与[12 项组句方法](../vendor/chinese-writing-math/references/mathematical-expression.md)；语义与 TeX 边界见[数学保真编辑](../vendor/chinese-writing-math/references/mathematical-editing.md) |
+| 长定语、对象承接、定义解释、证明任务、公式句法或语气难句 | 按类型读[20 组表达案例](../vendor/chinese-writing-math/references/mathematical-expression-cases.md)；逻辑/否定/原书重复的取舍见[译稿边界案例](../vendor/chinese-writing-math/references/mathematical-translation-cases.md) |
+| 主语、回指、搭配与一般句法需进一步分析 | [句子组成](../vendor/chinese-writing/references/sentence-construction.md)，重点查“主干”“搭配核对”“前后句的承接对象” |
 | 因果/转折/条件被译错、为顺句补造理由 | 同文件的“伪承接检查”“常用衔接表达”“从分句关系重组句群” |
 | 句界、中文停顿、公式前后标点 | 同文件的“标点与第1版的交付”，按实际句法转用；不引入其整篇草图流程 |
 | 保持必要的条件和判断强度、精简审计报告 | [限定与防御性措辞](../vendor/chinese-writing/references/qualification.md)及[精简报告模板](../vendor/chinese-writing/assets/concise-report.md) |
 | 技术说明或报告的混排、术语与数值 | [成稿校对](../vendor/chinese-writing/references/technical-document-style.md)；公式和代码语法仍按原样 |
 | 用户另行要求原创导读、补充说明或实质重写 | [workflow](../vendor/chinese-writing/references/workflow.md)、[编排](../vendor/chinese-writing/references/composition.md)和[专项分工](../vendor/chinese-writing/references/specialist-checks.md)，限授权新增文字；完整上游入口在源码归档中 |
 
-只读与当前问题相关的参考，避免每批加载整仓库。
+同一批连续作业可沿用已读规则；有难句时只读相应案例。先辨认本段是对象引入、定义、构造、验证、归约、计算还是收束，再选组句方法，避免只列保真禁令却不改善翻译腔。已经自然且忠实的句子保留，不以删字数量、检测分数或“像李文威”验收。
 
 ## 在翻译书工作流中的位置
 
@@ -32,7 +36,7 @@
 ## 一批译文怎样审校
 
 1. 给审读者当前中文段落、相邻上下文、源文位置、已确认术语和保护约定。中文首读先凭稿面记录可读性问题，不用译者的意图或自评分替正文补义；随后对照原文检验候选改法。数学审读者从开始就取得原文和必要定义，避免单靠流畅度判断数学正确。
-2. 指出具体问题：主语/回指不清、修饰范围不明、必要条件误作充分条件、并列共用谓语不合、公式接不上、英文式标点或重复启动同一设定。对合理的长句、重复和衔接保留判断，不按“短句越多越好”或禁词表改稿。
+2. 先按本段数学任务使用组句方法：对象先出现，后句接住前句对象，将数学动作放在谓语上；区分“还需证明”和“只需证明”，让公式成为整句的一部分。只改变原有信息的中文组织，不补原书没有的理由。再指出具体问题：主语/回指不清、修饰范围不明、必要条件误作充分条件、并列共用谓语不合、公式接不上、英文式标点或重复启动同一设定。对合理的长句、重复和衔接保留判断，不按“短句越多越好”或禁词表改稿。
 3. 修改后核假设、量词、否定、结论强度、存在对象及所属范畴、证明步骤和公式/编号。需要新数学内容才能顺畅的地方记为待核，回到原文，不自行补造。
 4. 中文审读与数学复核分别保存实际意见。以当前任务粒度保留源位置、旧句、新句、理由与结果，复用项目已有审计记录；不为一处改句另造整套台账。
 5. 最后连读前后中文，并检查数学保护比对。中文定稿者可决定语序和标点；数学检查未通过的候选不能合并。字体、行距、注记颜色、框线等呈现参数仍由项目授权决定。
@@ -49,4 +53,6 @@
 
 内置原创方法和工具遵守其 [MIT LICENSE](../vendor/chinese-writing/LICENSE)；教学示例 `examples/independence-correlation/` 按 [CC BY-NC-SA 4.0](../vendor/chinese-writing/examples/independence-correlation/LICENSE.md) 单独授权，详见 [THIRD_PARTY_NOTICES](../vendor/chinese-writing/THIRD_PARTY_NOTICES.md)。示例用于理解方法，不作为当前译稿正文、数学权威或已运行的测试成绩。
 
-更新快照在技能维护或用户已授权更新时进行：先保留旧快照，再核新版本、适配差异、许可证和本地引用，并重建锁文件。日常翻译使用固定版本，不自动 `git pull`。如需运行上游维护验证器，先把完整源码解压到任务临时目录，再从该目录运行；不得将其中的独立入口重新安装到本 skill 的方法库。文件/结构校验不能证明中文审读或数学审计已完成。
+补充快照的来源及适用许可另见其[第三方说明](../vendor/chinese-writing-math/THIRD_PARTY_NOTICES.md)。它保留 Humanizer-zh 的完整 MIT 声明和李文威书稿的分析身份，不携带书稿全文；案例是自拟校准材料，不是原作者原句或独立测试成绩。
+
+更新快照在技能维护或用户已授权更新时进行：先保留旧快照，再核新版本、适配差异、许可证和本地引用，并更新对应锁文件或补充快照清单；两套来源分别校验，不能把本地整合版误称为原上游提交。日常翻译使用固定版本，不自动 `git pull`。如需运行上游维护验证器，先把完整源码解压到任务临时目录，再从该目录运行；不得将其中的独立入口重新安装到本 skill 的方法库。文件/结构校验不能证明中文审读或数学审计已完成。

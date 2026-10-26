@@ -7,7 +7,7 @@
 % 模板约定：
 % 1. 正文中文使用宋体，专用术语首次定义时使用楷体，定理、定义、命题、推论、引理使用仿宋，注使用宋体.
 % 2. 英文正文使用有衬线 Computer Modern Unicode（CMU Serif）.
-% 3. 新概念首次出现统一使用 \newterm{键}{中文术语}{English term}，显示为“楷体中文术语（English term）”，并自动加入术语索引.
+% 3. 需要首次英文释名并加入术语索引时可用 \newterm{键}{中文术语}{English term}；不是每个新概念都须英文括注.
 % 4. 同一术语后续再次出现时直接正常书写中文，不必重复楷体，也不必重复英文原词.
 % 5. 文档最后调用 \printterminology，自动列出中文术语、英文术语与第一次出现的页码.
 % 6. 只有“注”和“例”环境以 \diamond 标志结束；proof 仍以 \square 结束.
@@ -46,7 +46,7 @@
 \setstretch{1.3}
 
 % ---------- 译本元信息：实际使用时只需修改这里 ----------
-% 封面标题：中文译名 + 原书名
+% 封面标题共两行：中文译名一行、完整原书名一行，不在元信息内手动换行。
 % 右下角只显示：版次 · 出版社 · 年份 / 译者 / 使用模型 / 更新时间
 \newcommand{\BookTitleCN}{代数学}
 \newcommand{\BookTitleEN}{Algebra}
@@ -57,6 +57,39 @@
 \newcommand{\Translator}{译者姓名}
 \newcommand{\ModelUsed}{模型名称}
 \newcommand{\TranslationDate}{完成日期}
+
+% 标题以实际字体测宽，逐次减小字号；不缩放字形、不截短原题、不自动折行。
+% 特别长的题名可先减小左缩进，仍须检查封面的可读性。
+\newlength{\MTCoverTitleIndent}
+\setlength{\MTCoverTitleIndent}{2cm}
+\newsavebox{\MTCoverTitleBox}
+\newdimen\MTCoverTitleSize
+\newdimen\MTCoverTitleMinimum
+\newdimen\MTCoverTitleWidth
+\newif\ifMTCoverTitleRetry
+% 参数：起始字号、最小字号（均为 pt 数值）、颜色/字形、完整题名。
+\newcommand{\MTCoverTitleLine}[4]{%
+  \par\begingroup
+  \MTCoverTitleWidth=\dimexpr\linewidth-\MTCoverTitleIndent\relax
+  \MTCoverTitleSize=#1pt\relax
+  \MTCoverTitleMinimum=#2pt\relax
+  \loop
+    \sbox{\MTCoverTitleBox}{{#3%
+      \fontsize{\the\MTCoverTitleSize}{1.3\MTCoverTitleSize}\selectfont #4}}%
+    \MTCoverTitleRetryfalse
+    \ifdim\wd\MTCoverTitleBox>\MTCoverTitleWidth
+      \ifdim\MTCoverTitleSize>\MTCoverTitleMinimum
+        \advance\MTCoverTitleSize by -0.5pt
+        \MTCoverTitleRetrytrue
+      \else
+        \PackageError{MathTranslations}{Cover title exceeds available width}%
+          {Reduce MTCoverTitleIndent or review the cover layout; keep the full title.}%
+      \fi
+    \fi
+  \ifMTCoverTitleRetry\repeat
+  \noindent\hspace*{\MTCoverTitleIndent}\usebox{\MTCoverTitleBox}\par
+  \endgroup
+}
 
 % ================================================================
 %                         术语系统
@@ -436,8 +469,10 @@
     {\color{mtburgundy}\rule{\textwidth}{1.2pt}} \\[0.1cm]
     {\color{mtgold}\rule{\textwidth}{0.8pt}} \\[1.5cm]
 
-    \hspace{2cm} {\color{mtburgundy}\fontsize{45pt}{60pt}\selectfont \bfseries \BookTitleCN} \\[0.8cm]
-    \hspace{2cm} {\color{mtink}\fontsize{25pt}{30pt}\selectfont \textit{\BookTitleEN}} \\[1.5cm]
+    \MTCoverTitleLine{45}{16}{\color{mtburgundy}\bfseries}{\BookTitleCN}
+    \vspace{0.8cm}
+    \MTCoverTitleLine{25}{11}{\color{mtink}\itshape}{\BookTitleEN}
+    \vspace{1.5cm}
 
     {\color{mtgold}\rule{\textwidth}{0.6pt}} \\[2cm]
 

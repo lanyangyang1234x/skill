@@ -2,7 +2,7 @@
 
 <h1>PDF 转中文 TeX</h1>
 
-<p><strong>3.2 · 数学 PDF → 忠实中文 LaTeX → 可验证 PDF</strong></p>
+<p><strong>3.3 · 数学 PDF → 忠实中文 LaTeX → 可验证 PDF</strong></p>
 
 <p>保留章节顺序、编号、公式、定理、证明、练习、图形、交叉引用与参考文献。</p>
 
@@ -24,7 +24,7 @@ git clone https://github.com/lanyangyang1234x/skill.git \
   ~/.agents/skills/pdf-to-chinese-tex
 ```
 
-上述是来源仓库安装方式；本地交付的 3.2 源包以实际版本为准，安装本地源包时保留旧技能后复制完整目录。然后在 Codex 中调用：
+上述是来源仓库安装方式；本地交付的 3.3 源包以实际版本为准，安装本地源包时保留旧技能后复制完整目录。然后在 Codex 中调用：
 
 ```text
 使用 $pdf-to-chinese-tex 将这本数学 PDF 翻译成中文 LaTeX 和 PDF。
@@ -46,7 +46,9 @@ git clone https://github.com/lanyangyang1234x/skill.git \
 
 ### 核心能力
 
-3.2 在既有项目经验与中文方法接入的基础上，精简主入口、按任务加载专题，并修复工具与工作流的契约问题。新建翻译、既有项目审计和定点修订使用各自的改动范围；书籍翻译默认每批完成中文句群审校，再做数学保护复核。保护个人批注、正确图形和已确认的版式；改善中文语序与衔接时保持假设、量词、证明步骤、公式和源文单元。
+3.3 修正 MathTranslations 封面的双语标题：按实际宽度调整字号，中文、原文各一行，保留完整题名；明确人名不翻译。补入公式断行与异常空白、长箭标签、矩阵表格的版式方法，并接入本地新版中文数学表达方法。全量术语外证按用户要求逐项留证；源码交付与禁止编译分别处理。
+
+新建翻译、既有项目审计和定点修订使用各自的改动范围；书籍翻译默认每批完成中文句群审校，再做数学保护复核。保护个人批注、正确图形和已确认的版式；改善中文语序与衔接时保持假设、量词、证明步骤、公式和源文单元。
 
 | 内容保真 | 图形保真 |
 | --- | --- |
@@ -63,6 +65,8 @@ git clone https://github.com/lanyangyang1234x/skill.git \
 ### chinese-writing：固定快照与数学适配
 
 内置 [Ou-Liu-Red-Sugar/chinese-writing](https://github.com/Ou-Liu-Red-Sugar/chinese-writing) **2.13.3**，固定提交 `9818d89aee474ef813f9c5d8a6164e0cb265fe1b`。完整 46 文件上游源码保留在 [`vendor/chinese-writing-upstream.zip`](vendor/chinese-writing-upstream.zip)，日常只读 [`vendor/chinese-writing/`](vendor/chinese-writing/) 中的 38 文件方法库，数学翻译入口是 [`references/chinese-writing-integration.md`](references/chinese-writing-integration.md)。按当前问题读取句子、衔接、标点和限定语方法，日常使用不联网更新，也不需要另装上游技能。
+
+数学译稿优先使用独立的 [`2.14.0-local.2 数学补充快照`](vendor/chinese-writing-math/THIRD_PARTY_NOTICES.md)：12 项中文数学组句方法、20 组英中表达案例及数学保真编辑方法。它来自本机已更新的中文写作 skill，来源、适配与 SHA-256 单独登记；日常直接读取方法，不回查范本书。原 2.13.3 快照与锁文件继续保留。
 
 中文句群审校默认嵌入书籍每批翻译，不作为需要另行开启的选项。忠实翻译使用原书结构审校中文，不为顺句新增数学理由、删除原书重复或启动整篇原创文章的审批流程。用户另行授权的导读、注释和报告可以使用相应写作流程，并与译文分开。快照完整性检查只证明文件一致，不能证明中文审校或数学验证已经完成。
 
@@ -243,11 +247,11 @@ python3 scripts/batch_checkpoint.py batch-checkpoints.tsv --check --project-dir 
 
 ### Highlights
 
-- Version 3.2 supports new translation, existing-project audit, and targeted repair with separate scopes and evidence. Chinese expression review is integrated into every book-translation batch by default.
+- Version 3.3 keeps separate scopes for new translation, existing-project audit, and targeted repair. MathTranslations cover titles occupy two lines total, with measured font sizes; personal names retain their source spelling. Chinese expression review is integrated into every book-translation batch by default.
 - Ask for the template at the beginning of every independent task, including whether an existing project should retain its template. An explicit current choice counts as an answer; continuations reuse it. Do not silently default to Sage-Olive. Unknown translator/tool credit may stay blank or anonymous.
 - Treat the rendered source PDF as authoritative; use Markdown as a read-only drafting scaffold when reliable.
 - Keep terminology, source-page coverage, figure provenance, and batch checkpoints in durable ledgers.
-- Use the pinned `chinese-writing` 2.13.3 snapshot through [the mathematics adaptation](references/chinese-writing-integration.md); improve Chinese without adding source-absent arguments or applying an original-article approval workflow to ordinary translation.
+- Use the pinned `chinese-writing` 2.13.3 library and the local 2.14.0-local.2 mathematics supplement through [the mathematics adaptation](references/chinese-writing-integration.md); improve Chinese without adding source-absent arguments or applying an original-article approval workflow to ordinary translation.
 - Each book batch proceeds through translation, mathematics/terminology checks, Chinese sentence-group review, mathematical protection checks, and compilation/merge; the user does not need to request Chinese review separately.
 - Prefer editable native TikZ/TikZ-CD. Explicit native requirements prohibit raster substitution; exact native diagrams must match label positions, geometry and arrow styles as well as topology. Do not squeeze whole diagrams or tables with resizebox/scalebox/adjustbox or blanket scale wrappers. Source-pixel preservation remains available when no native requirement applies.
 - Use portable Fandol/CMU font roles: Song for body/proofs/examples, Fang for theorem statements, Kai for terms, Hei and bold CMU Serif for headings; Computer Modern/AMS/RSFS for mathematics, 12pt body and 1.3 line spacing. Bundle licenses, inspect role-specific pages, and verify actual font embedding.
